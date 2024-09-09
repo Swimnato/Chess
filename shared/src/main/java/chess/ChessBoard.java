@@ -30,8 +30,8 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        if (board[position.getRow()][position.getColumn()].getPieceType() == ChessPiece.PieceType.BLANK) {
-            board[position.getRow()][position.getColumn()] = new ChessPiece(piece);
+        if (board[position.getRow() - 1][position.getColumn() - 1].getPieceType() == ChessPiece.PieceType.BLANK) {
+            board[position.getRow() - 1][position.getColumn() - 1] = new ChessPiece(piece);
         } else {
             throw new RuntimeException("Piece already Exists in that location in the board!");
         }
@@ -45,7 +45,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow()][position.getColumn()];
+        return board[position.getRow() - 1][position.getColumn() - 1];
     }
 
     /**
