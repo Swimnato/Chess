@@ -65,7 +65,7 @@ public class ChessPiece {
             } else if (pieceType == PieceType.BISHOP) {
                 return ('B');
             } else if (pieceType == PieceType.KNIGHT) {
-                return ('K');
+                return ('N');
             } else if (pieceType == PieceType.ROOK) {
                 return ('R');
             } else {
@@ -79,7 +79,7 @@ public class ChessPiece {
             } else if (pieceType == PieceType.BISHOP) {
                 return ('b');
             } else if (pieceType == PieceType.KNIGHT) {
-                return ('k');
+                return ('n');
             } else if (pieceType == PieceType.ROOK) {
                 return ('r');
             } else {

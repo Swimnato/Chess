@@ -30,11 +30,11 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        if (board[position.getRow() - 1][position.getColumn() - 1].getPieceType() == ChessPiece.PieceType.BLANK) {
-            board[position.getRow() - 1][position.getColumn() - 1] = new ChessPiece(piece);
-        } else {
-            throw new RuntimeException("Piece already Exists in that location in the board!");
-        }
+        //if (board[position.getRow() - 1][position.getColumn() - 1].getPieceType() == ChessPiece.PieceType.BLANK) {
+        board[position.getRow() - 1][position.getColumn() - 1] = new ChessPiece(piece);
+        //} else {
+        //throw new RuntimeException("Piece already Exists in that location in the board!");
+        //}
     }
 
     /**
@@ -64,5 +64,16 @@ public class ChessBoard {
             board[0][col] = new ChessPiece(ChessGame.TeamColor.WHITE, OrderOfEdges[col]);
             board[7][7 - col] = new ChessPiece(ChessGame.TeamColor.BLACK, OrderOfEdges[col]);
         }
+    }
+
+    public String printSelf() {
+        String output = new String("Printing Matrix:\r\n");
+        for (var row : board) {
+            for (var piece : row) {
+                output = output + '|' + piece.printSelf();
+            }
+            output += "\r\n|";
+        }
+        return (output);
     }
 }
