@@ -62,7 +62,7 @@ public class ChessBoard {
             board[1][col] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
             board[6][col] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
             board[0][col] = new ChessPiece(ChessGame.TeamColor.WHITE, OrderOfEdges[col]);
-            board[7][7 - col] = new ChessPiece(ChessGame.TeamColor.BLACK, OrderOfEdges[col]);
+            board[7][col] = new ChessPiece(ChessGame.TeamColor.BLACK, OrderOfEdges[col]);
         }
     }
 
@@ -72,7 +72,7 @@ public class ChessBoard {
             for (var piece : row) {
                 output = output + '|' + piece.printSelf();
             }
-            output += "\r\n|";
+            output += "|\r\n";
         }
         return (output);
     }

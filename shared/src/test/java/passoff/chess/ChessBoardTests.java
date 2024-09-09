@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Objects;
+
 import static passoff.chess.TestUtilities.loadBoard;
 
 public class ChessBoardTests {
@@ -48,6 +50,7 @@ public class ChessBoardTests {
         actualBoard.resetBoard();
         System.out.println("Expected Output:\r\n" + expectedBoard.printSelf());
         System.out.println(actualBoard.printSelf());
+        System.out.println(Objects.equals(actualBoard.printSelf(), expectedBoard.printSelf()) ? "They are equal" : "They are not equal");
 
         Assertions.assertEquals(expectedBoard, actualBoard);
     }
