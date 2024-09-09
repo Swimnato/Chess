@@ -9,9 +9,18 @@ package chess;
 public class ChessBoard {
 
     private ChessPiece board[][];
+    private final ChessPiece.PieceType OrderOfEdges[] = {ChessPiece.PieceType.ROOK,
+            ChessPiece.PieceType.KNIGHT,
+            ChessPiece.PieceType.BISHOP,
+            ChessPiece.PieceType.QUEEN,
+            ChessPiece.PieceType.KING,
+            ChessPiece.PieceType.BISHOP,
+            ChessPiece.PieceType.KNIGHT,
+            ChessPiece.PieceType.ROOK};
 
     public ChessBoard() {
         board = new ChessPiece[8][8];
+        resetBoard();
     }
 
     /**
@@ -22,7 +31,9 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
         if (board[position.getRow()][position.getColumn()].getPieceType() == ChessPiece.PieceType.BLANK) {
-            board[position.getRow()][position.getColumn()] = piece;
+            board[position.getRow()][position.getColumn()] = new ChessPiece(piece);
+        } else {
+            throw new RuntimeException("Piece already Exists in that location in the board!");
         }
     }
 
@@ -34,7 +45,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        throw new RuntimeException("Not implemented");
+        return board[position.getRow()][position.getColumn()];
     }
 
     /**
@@ -42,6 +53,16 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        for (byte row = 2; row < 6; row++) {
+            for (byte col = 0; col < 8; col++) {
+                board[row][col] = new ChessPiece();
+            }
+        }
+        for (byte col = 0; col < 8; col++) {
+            board[1][col] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+            board[6][col] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+            board[0][col] = new ChessPiece(ChessGame.TeamColor.WHITE, OrderOfEdges[col]);
+            board[7][7 - col] = new ChessPiece(ChessGame.TeamColor.BLACK, OrderOfEdges[col]);
+        }
     }
 }

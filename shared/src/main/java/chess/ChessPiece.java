@@ -23,7 +23,8 @@ public class ChessPiece {
     }
 
     public ChessPiece(ChessPiece _pieceToCopy) {
-        
+        pieceType = _pieceToCopy.getPieceType();
+        pieceColor = _pieceToCopy.getTeamColor();
     }
 
     /**
@@ -51,6 +52,40 @@ public class ChessPiece {
      */
     public PieceType getPieceType() {
         return pieceType;
+    }
+
+    public char printSelf() {
+        if (pieceType == PieceType.BLANK) {
+            return (' ');
+        } else if (pieceColor == ChessGame.TeamColor.WHITE) {
+            if (pieceType == PieceType.KING) {
+                return ('K');
+            } else if (pieceType == PieceType.QUEEN) {
+                return ('Q');
+            } else if (pieceType == PieceType.BISHOP) {
+                return ('B');
+            } else if (pieceType == PieceType.KNIGHT) {
+                return ('K');
+            } else if (pieceType == PieceType.ROOK) {
+                return ('R');
+            } else {
+                return ('P');
+            }
+        } else {
+            if (pieceType == PieceType.KING) {
+                return ('k');
+            } else if (pieceType == PieceType.QUEEN) {
+                return ('q');
+            } else if (pieceType == PieceType.BISHOP) {
+                return ('b');
+            } else if (pieceType == PieceType.KNIGHT) {
+                return ('k');
+            } else if (pieceType == PieceType.ROOK) {
+                return ('r');
+            } else {
+                return ('p');
+            }
+        }
     }
 
     /**
