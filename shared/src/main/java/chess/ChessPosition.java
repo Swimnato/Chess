@@ -30,4 +30,25 @@ public class ChessPosition {
     public int getColumn() {
         return col;
     }
+
+    @Override
+    public boolean equals(Object _other) {
+        if (this == _other) {
+            return true;
+        } else if (_other == null || _other.getClass() != this.getClass()) {
+            return false;
+        } else {
+            return (row == ((ChessPosition) _other).getRow() && col == ((ChessPosition) _other).getRow());
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return (row * 71 + col * 73);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + row + ',' + col + ')';
+    }
 }

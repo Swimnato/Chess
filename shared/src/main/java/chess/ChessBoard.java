@@ -8,8 +8,9 @@ package chess;
  */
 public class ChessBoard {
 
-    private ChessPiece board[][];
-    private final ChessPiece.PieceType OrderOfEdges[] = {ChessPiece.PieceType.ROOK,
+    private ChessPiece[][] board = new ChessPiece[8][8];
+
+    private static final ChessPiece.PieceType OrderOfEdges[] = {ChessPiece.PieceType.ROOK,
             ChessPiece.PieceType.KNIGHT,
             ChessPiece.PieceType.BISHOP,
             ChessPiece.PieceType.QUEEN,
@@ -19,8 +20,6 @@ public class ChessBoard {
             ChessPiece.PieceType.ROOK};
 
     public ChessBoard() {
-        board = new ChessPiece[8][8];
-        resetBoard();
     }
 
     /**
@@ -55,7 +54,7 @@ public class ChessBoard {
     public void resetBoard() {
         for (byte row = 2; row < 6; row++) {
             for (byte col = 0; col < 8; col++) {
-                board[row][col] = new ChessPiece();
+                board[row][col] = null;
             }
         }
         for (byte col = 0; col < 8; col++) {
@@ -66,14 +65,37 @@ public class ChessBoard {
         }
     }
 
-    public String printSelf() {
+    @Override
+    public String toString() {
         String output = new String("Printing Matrix:\r\n");
-        for (var row : board) {
-            for (var piece : row) {
-                output = output + '|' + piece.printSelf();
+        for (int x = board.length - 1; x >= 0; x--) {
+            for (int y = 0; y < board[0].length; y++) {
+                if (board[x][y] != null) {
+                    output = output + '|' + board[x][y];
+                } else {
+                    output += "| ";
+                }
             }
             output += "|\r\n";
         }
         return (output);
+    }
+
+    @Override
+    public boolean equals(Object _other) {
+        if (this == _other) {
+            return true;
+        } else if (_other == null || _other.getClass() != this.getClass()) {
+            return false;
+        } else {
+            String Board1 = this.toString();
+            String Board2 = _other.toString();
+            return Board1.equals(Board2);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return (board.toString()).hashCode();
     }
 }
