@@ -1,9 +1,6 @@
 package chess;
 
-import chess.rules.BishopRules;
-import chess.rules.KingRules;
-import chess.rules.KnightRules;
-import chess.rules.Rules;
+import chess.rules.*;
 
 import java.util.*;
 
@@ -114,6 +111,7 @@ public class ChessPiece {
             case BISHOP -> new BishopRules();
             case KING -> new KingRules();
             case KNIGHT -> new KnightRules();
+            case QUEEN -> new QueenRules();
             default -> null;
         };
         return output.getMoves(board, myPosition);
