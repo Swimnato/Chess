@@ -1,5 +1,9 @@
 package chess;
 
+import chess.rules.BishopRules;
+import chess.rules.KingRules;
+import chess.rules.Rules;
+
 import java.util.*;
 
 /**
@@ -105,21 +109,27 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        Rules output = switch (this.pieceType) {
+            case BISHOP -> new BishopRules();
+            case KING -> new KingRules();
+            default -> null;
+        };
+        return output.getMoves(board, myPosition);
+    }
 
-        Collection<ChessMove> output = List.of();
-        if (this.pieceType == PieceType.BISHOP) {
-            output = BishopMove(board, myPosition);
-        } else if(){
-            output = KingMove(board, myPosition);
-        }else {
-            throw new RuntimeException("Not Implemented!");
+    private Collection<ChessMove> KingMove(ChessBoard board, ChessPosition myPosition) {
+        for (byte i = 0; i < 3; i++) {
+            for (byte j = 0; j < 3; j++) {
+                int x = myPosition.getRow() + (i - 1);
+                int y = myPosition.getColumn() + (j - 1);
+
+            }
         }
-        return output;
+        return null;
     }
 
     private Collection<ChessMove> BishopMove(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> _output = new HashSet<>();
-        System.out.println(myPosition);
         for (byte direction = 0; direction < 4; direction++) { //we will test all 4 directions till the edge
             for (byte i = 1; i < 8; i++) {
                 int x = 0;
