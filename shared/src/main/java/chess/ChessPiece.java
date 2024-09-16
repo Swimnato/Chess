@@ -2,6 +2,7 @@ package chess;
 
 import chess.rules.BishopRules;
 import chess.rules.KingRules;
+import chess.rules.KnightRules;
 import chess.rules.Rules;
 
 import java.util.*;
@@ -112,59 +113,9 @@ public class ChessPiece {
         Rules output = switch (this.pieceType) {
             case BISHOP -> new BishopRules();
             case KING -> new KingRules();
+            case KNIGHT -> new KnightRules();
             default -> null;
         };
         return output.getMoves(board, myPosition);
-    }
-
-    private Collection<ChessMove> KingMove(ChessBoard board, ChessPosition myPosition) {
-        for (byte i = 0; i < 3; i++) {
-            for (byte j = 0; j < 3; j++) {
-                int x = myPosition.getRow() + (i - 1);
-                int y = myPosition.getColumn() + (j - 1);
-
-            }
-        }
-        return null;
-    }
-
-    private Collection<ChessMove> BishopMove(ChessBoard board, ChessPosition myPosition) {
-        HashSet<ChessMove> _output = new HashSet<>();
-        for (byte direction = 0; direction < 4; direction++) { //we will test all 4 directions till the edge
-            for (byte i = 1; i < 8; i++) {
-                int x = 0;
-                int y = 0;
-                if (direction < 2) {
-                    if (direction == 0) { //First Quadrant
-                        y = myPosition.getColumn() + i;
-                        x = myPosition.getRow() + i;
-                    } else { // Fourth Quadrant
-                        y = myPosition.getColumn() + i;
-                        x = myPosition.getRow() - i;
-                    }
-                } else {
-                    if (direction == 2) { // Third Quadrant
-                        y = myPosition.getColumn() - i;
-                        x = myPosition.getRow() - i;
-                    } else { // Second Quadrant
-                        y = myPosition.getColumn() - i;
-                        x = myPosition.getRow() + i;
-                    }
-                }
-                if (x < 9 && x > 0 && y < 9 && y > 0) {
-                    ChessPosition newPos = new ChessPosition(x, y);
-                    if (board.getPiece(newPos) == null || board.getPiece(newPos).getTeamColor() != this.getTeamColor()) {
-                        _output.add(new ChessMove(myPosition, newPos, null));
-                        if (board.getPiece(newPos) != null && board.getPiece(newPos).getTeamColor() != this.getTeamColor()) {
-                            break;
-                        }
-                    }
-                } else {
-                    break;
-                }
-            }
-        }
-        System.out.println(_output);
-        return _output;
     }
 }
