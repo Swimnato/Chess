@@ -112,6 +112,7 @@ public class ChessPiece {
             case KING -> new KingRules();
             case KNIGHT -> new KnightRules();
             case QUEEN -> new QueenRules();
+            case ROOK -> new RookRules();
             default -> null;
         };
         return output.getMoves(board, myPosition);
