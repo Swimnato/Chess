@@ -38,7 +38,7 @@ public class ChessPosition {
         } else if (_other == null || _other.getClass() != this.getClass()) {
             return false;
         } else {
-            return (row == ((ChessPosition) _other).getRow() && col == ((ChessPosition) _other).getRow());
+            return (this.toString().equals(_other.toString()));
         }
     }
 
