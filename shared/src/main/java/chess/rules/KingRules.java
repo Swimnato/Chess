@@ -24,11 +24,10 @@ public class KingRules extends Rules {
         for (int row = 1; row < 9; row++) { // Check for all other pieces moves;
             for (int col = 1; col < 9; col++) {
                 var curPiece = _board.getPiece(new ChessPosition(row, col));
-                if (curPiece != null && curPiece.getPieceType() != ChessPiece.PieceType.PAWN && curPiece.getTeamColor() != _board.getPiece(_StartingPosition).getTeamColor()) {
+                if (curPiece != null && curPiece.getPieceType() != ChessPiece.PieceType.PAWN && curPiece.getPieceType() != ChessPiece.PieceType.KING && curPiece.getTeamColor() != _board.getPiece(_StartingPosition).getTeamColor()) {
                     var enemyMoves = curPiece.pieceMoves(_board, new ChessPosition(row, col));
                     for (var move : enemyMoves) {
                         _allPossibleMovesForOtherPieces.add(move.getEndPosition());
-                        System.out.println("EnemyMove: " + move);
                     }
                 }
             }
@@ -36,7 +35,6 @@ public class KingRules extends Rules {
         ArrayList<ChessMove> myMoves = new ArrayList<ChessMove>(super.getMoves(_board, _StartingPosition)); // Get default moves;
         for (int i = 0; i < myMoves.size(); i++) { // delete moves;
             if (_allPossibleMovesForOtherPieces.contains(myMoves.get(i).getEndPosition())) {
-                System.out.println("Deleted: " + myMoves.get(i));
                 myMoves.remove(i);
             }
         }
