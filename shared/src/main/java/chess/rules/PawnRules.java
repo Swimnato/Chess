@@ -2,6 +2,7 @@ package chess.rules;
 
 import chess.*;
 
+import javax.management.remote.rmi.RMIConnectionImpl_Stub;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,10 +24,11 @@ public class PawnRules extends Rules {
 
         ChessPiece.PieceType promotionPiece = _StartingPosition.getRow() + direction == (myColor == ChessGame.TeamColor.WHITE ? 8 : 1) ? ChessPiece.PieceType.QUEEN : null;
 
-        if (_StartingPosition.getRow() == (myColor == ChessGame.TeamColor.WHITE ? 2 : 7)) {
-            _output.add(new ChessMove(_StartingPosition, new ChessPosition(_StartingPosition.getRow() + direction * 2, _StartingPosition.getColumn()), null));
+        ChessPosition newPos = new ChessPosition(_StartingPosition.getRow() + direction * 2, _StartingPosition.getColumn());
+        if (_StartingPosition.getRow() == (myColor == ChessGame.TeamColor.WHITE ? 2 : 7) && _board.getPiece(newPos) == null && _board.getPiece(new ChessPosition(_StartingPosition.getRow() + direction, _StartingPosition.getColumn())) == null) {
+            _output.add(new ChessMove(_StartingPosition, newPos, null));
         }
-        ChessPosition newPos = new ChessPosition(_StartingPosition.getRow() + direction, _StartingPosition.getColumn());
+        newPos = new ChessPosition(_StartingPosition.getRow() + direction, _StartingPosition.getColumn());
         if (newPos.isValid() && _board.getPiece(newPos) == null) {
             _output.add(new ChessMove(_StartingPosition, newPos, promotionPiece));
             if (promotionPiece != null) { // Because a pawn can turn into more than just a queen? I've never heard of this...
@@ -38,7 +40,7 @@ public class PawnRules extends Rules {
         }
         for (int i = -1; i < 2; i += 2) {
             newPos = new ChessPosition(_StartingPosition.getRow() + direction, _StartingPosition.getColumn() + i);
-            if (newPos.isValid() && _board.getPiece(newPos) != null) {
+            if (newPos.isValid() && _board.getPiece(newPos) != null && _board.getPiece(newPos).getTeamColor() != myColor) {
                 _output.add(new ChessMove(_StartingPosition, newPos, promotionPiece));
                 if (promotionPiece != null) { // Because a pawn can turn into more than just a queen? I've never heard of this...
                     for (int j = 0; j < 3; j++) {
