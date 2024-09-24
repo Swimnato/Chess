@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -63,9 +64,35 @@ public class ChessGame {
     }
 
     private Collection<ChessMove> validKingMoves(ChessPiece currentPiece, ChessPosition startPosition){
-        HashSet<ChessMove> moves = new HashSet<ChessMove>(currentPiece.pieceMoves(mainBoard, startPosition));
+        ArrayList<ChessMove> moves = new ArrayList<>(currentPiece.pieceMoves(mainBoard, startPosition));
+        HashSet<ChessPosition> _allPossibleMovesForOtherPieces = new HashSet<ChessPosition>();
 
-        
+        for (int row = 1; row < 9; row++) { // Check for all other pieces moves;
+            for (int col = 1; col < 9; col++) {
+                var curPiece = mainBoard.getPiece(new ChessPosition(row, col));
+                if (curPiece != null && curPiece.getPieceType() != ChessPiece.PieceType.PAWN && curPiece.getPieceType() != ChessPiece.PieceType.KING && curPiece.getTeamColor() != mainBoard.getPiece(startPosition).getTeamColor()) {
+                    var enemyMoves = curPiece.pieceMoves(mainBoard, new ChessPosition(row, col));
+                    for (var move : enemyMoves) {
+                        _allPossibleMovesForOtherPieces.add(move.getEndPosition());
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < moves.size(); i++) { // delete moves;
+            if (_allPossibleMovesForOtherPieces.contains(moves.get(i).getEndPosition())) {
+                moves.remove(i);
+            }
+        }
+        for (int i = 0; i < moves.size(); i++) { // Check for pawns
+            for (int j = -1; j < 2; j += 2) {
+                ChessPosition positionToCheck = new ChessPosition(moves.get(i).getEndPosition());
+                var piece = mainBoard.getPiece(new ChessPosition(positionToCheck.getRow() + j, positionToCheck.getColumn() + j));
+                if (piece != null && piece.getTeamColor() != mainBoard.getPiece(startPosition).getTeamColor() && piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                    moves.remove(i);
+                    break;
+                }
+            }
+        }
 
         return moves;
     }
