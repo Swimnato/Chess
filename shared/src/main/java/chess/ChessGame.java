@@ -11,7 +11,7 @@ import java.util.Collection;
 public class ChessGame {
 
     public ChessGame() {
-        throw new RuntimeException("Not implemented");
+
     }
 
     /**
@@ -35,7 +35,7 @@ public class ChessGame {
      */
     public enum TeamColor {
         WHITE,
-        White, BLACK
+        BLACK
     }
 
     /**

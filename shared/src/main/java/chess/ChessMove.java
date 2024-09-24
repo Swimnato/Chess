@@ -7,9 +7,10 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessMove {
-    private ChessPosition startPosition;
-    private ChessPosition endPosition;
-    private ChessPiece.PieceType promotionPiece;
+
+    ChessPosition startPosition;
+    ChessPosition endPosition;
+    ChessPiece.PieceType promotionPiece;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
@@ -22,14 +23,14 @@ public class ChessMove {
      * @return ChessPosition of starting location
      */
     public ChessPosition getStartPosition() {
-        return startPosition;
+        return new ChessPosition(startPosition);
     }
 
     /**
      * @return ChessPosition of ending location
      */
     public ChessPosition getEndPosition() {
-        return endPosition;
+        return new ChessPosition(endPosition);
     }
 
     /**
@@ -43,27 +44,40 @@ public class ChessMove {
     }
 
     @Override
-    public boolean equals(Object _other) {
-        if (this == _other) {
-            return true;
-        } else if (_other == null || _other.getClass() != this.getClass()) {
-            return false;
-        } else {
-            return (this.toString().equals(_other.toString()));
-        }
+    public String toString() {
+        return "SP: " + startPosition + " EP: " + endPosition + " PP: " + promotionPiece + "\r\n";
     }
 
     @Override
     public int hashCode() {
-        if (promotionPiece != null) {
-            return 7 * startPosition.hashCode() + 11 * endPosition.hashCode() + promotionPiece.hashCode();
-        } else {
-            return startPosition.hashCode() * 5 + endPosition.hashCode();
+        int hash1 = 0;
+        int hash2 = 0;
+        int hash3 = 0;
+        if(startPosition != null){
+            hash1 = startPosition.hashCode();
         }
+        if(endPosition != null){
+            hash2 = endPosition.hashCode();
+        }
+        if(promotionPiece != null){
+            hash3 = promotionPiece.hashCode();
+        }
+        return hash1 * 71 + hash2 * 73 + hash3 * 5;
     }
 
     @Override
-    public String toString() {
-        return "[CHESS MOVE] SP: " + startPosition + " EP: " + endPosition + " PP: " + promotionPiece + '\n';
+    public boolean equals(Object obj) {
+        if(obj == this){
+            return true;
+        }
+        else if (obj == null || obj.getClass() != this.getClass()){
+            return false;
+        }
+        else if (obj.toString().equals(this.toString())){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }

@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Objects;
-
 import static passoff.chess.TestUtilities.loadBoard;
 
 public class ChessBoardTests {
@@ -58,11 +56,11 @@ public class ChessBoardTests {
     public void pieceMoveAllPieces() {
         var board = new ChessBoard();
         board.resetBoard();
-        for (int i = 1; i <= 8; i++) {
-            for (int j = 1; j <= 8; j++) {
+        for(int i = 1; i <= 8; i++) {
+            for(int j = 1; j <= 8; j++) {
                 ChessPosition position = new ChessPosition(i, j);
                 ChessPiece piece = board.getPiece(position);
-                if (piece != null) {
+                if(piece != null) {
                     Assertions.assertDoesNotThrow(() -> piece.pieceMoves(board, position));
                 }
             }

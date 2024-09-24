@@ -2,7 +2,7 @@ package chess;
 
 import chess.rules.*;
 
-import java.util.*;
+import java.util.Collection;
 
 /**
  * Represents a single chess piece
@@ -11,17 +11,18 @@ import java.util.*;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    private ChessGame.TeamColor pieceColor;
-    private PieceType pieceType;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
-        this.pieceColor = pieceColor;
-        this.pieceType = type;
+    ChessGame.TeamColor myColor;
+    PieceType myType;
+
+    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        myColor = pieceColor;
+        myType = type;
     }
 
-    public ChessPiece(ChessPiece _pieceToCopy) {
-        pieceType = _pieceToCopy.getPieceType();
-        pieceColor = _pieceToCopy.getTeamColor();
+    public ChessPiece(ChessPiece _toCopy){
+        myColor = _toCopy.getTeamColor();
+        myType = _toCopy.getPieceType();
     }
 
     /**
@@ -40,63 +41,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        return pieceColor;
+        return myColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        return pieceType;
-    }
-
-    @Override
-    public String toString() {
-        if (pieceColor == ChessGame.TeamColor.WHITE) {
-            if (pieceType == PieceType.KING) {
-                return ("K");
-            } else if (pieceType == PieceType.QUEEN) {
-                return ("Q");
-            } else if (pieceType == PieceType.BISHOP) {
-                return ("B");
-            } else if (pieceType == PieceType.KNIGHT) {
-                return ("N");
-            } else if (pieceType == PieceType.ROOK) {
-                return ("R");
-            } else {
-                return ("P");
-            }
-        } else {
-            if (pieceType == PieceType.KING) {
-                return ("k");
-            } else if (pieceType == PieceType.QUEEN) {
-                return ("q");
-            } else if (pieceType == PieceType.BISHOP) {
-                return ("b");
-            } else if (pieceType == PieceType.KNIGHT) {
-                return ("n");
-            } else if (pieceType == PieceType.ROOK) {
-                return ("r");
-            } else {
-                return ("p");
-            }
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        return pieceColor.hashCode() * 17 + pieceType.hashCode() * 13;
-    }
-
-    @Override
-    public boolean equals(Object _other) {
-        if (this == _other) {
-            return true;
-        } else if (_other == null || _other.getClass() != this.getClass()) {
-            return false;
-        } else {
-            return (this.toString().equals(_other.toString()));
-        }
+        return myType;
     }
 
     /**
@@ -107,15 +59,59 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Rules output = switch (this.pieceType) {
+        Rules ruleset =  switch(myType){
             case BISHOP -> new BishopRules();
-            case KING -> new KingRules();
-            case KNIGHT -> new KnightRules();
-            case QUEEN -> new QueenRules();
             case ROOK -> new RookRules();
+            case QUEEN -> new QueenRules();
+            case KING -> new KingRules();
             case PAWN -> new PawnRules();
-            default -> null;
+            case KNIGHT -> new KnightRules();
         };
-        return output.getMoves(board, myPosition);
+        return ruleset.generateMoves(board, myPosition);
+    }
+
+    @Override
+    public String toString() {
+        if(myColor == ChessGame.TeamColor.WHITE){
+            return switch(myType){
+                case PAWN -> "P";
+                case ROOK -> "R";
+                case KING -> "K";
+                case KNIGHT -> "N";
+                case BISHOP -> "B";
+                case QUEEN -> "Q";
+            };
+        }
+        else{
+            return switch(myType){
+                case PAWN -> "p";
+                case ROOK -> "r";
+                case KING -> "k";
+                case KNIGHT -> "n";
+                case BISHOP -> "b";
+                case QUEEN -> "q";
+            };
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return myType.hashCode() * 11 + myColor.hashCode() * 13;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == this){
+            return true;
+        }
+        else if(obj == null || obj.getClass() != this.getClass()){
+            return false;
+        }
+        else if(this.myColor == ((ChessPiece) obj).myColor && this.myType == ((ChessPiece) obj).myType){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }
