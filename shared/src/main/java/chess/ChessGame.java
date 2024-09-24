@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -10,15 +11,19 @@ import java.util.Collection;
  */
 public class ChessGame {
 
-    public ChessGame() {
+    TeamColor turn;
+    ChessBoard mainBoard;
 
+    public ChessGame() {
+        turn = TeamColor.WHITE;
+        mainBoard = new ChessBoard();
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return turn;
     }
 
     /**
@@ -27,7 +32,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        turn = team;
     }
 
     /**
@@ -46,7 +51,23 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece currentPiece = mainBoard.getPiece(startPosition);
+        ChessPiece.PieceType currentType = currentPiece.getPieceType();
+        HashSet<ChessMove> moves = switch(currentType){
+            case KING -> new HashSet<ChessMove>(validKingMoves(currentPiece, startPosition));
+
+            default -> new HashSet<ChessMove>(currentPiece.pieceMoves(mainBoard, startPosition));
+
+        };
+        return moves;
+    }
+
+    private Collection<ChessMove> validKingMoves(ChessPiece currentPiece, ChessPosition startPosition){
+        HashSet<ChessMove> moves = new HashSet<ChessMove>(currentPiece.pieceMoves(mainBoard, startPosition));
+
+        
+
+        return moves;
     }
 
     /**
@@ -106,5 +127,9 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         throw new RuntimeException("Not implemented");
+    }
+
+    private changeTurn(){
+        turn = turn == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE;
     }
 }
