@@ -57,6 +57,20 @@ public class ChessBoard {
         return null;
     }
 
+    public int movePiece(ChessMove move){
+        if(!(move.getEndPosition().isValid(this)) && !(move.getStartPosition().isValid(this))){
+            return 1;
+        }
+        if(getPiece(move.getStartPosition()) == null){
+            return 2;
+        }
+
+        addPiece(move.getEndPosition(), getPiece(move.getStartPosition()));
+        addPiece(move.getStartPosition(), null);
+
+        return 0;
+    }
+
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)

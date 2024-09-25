@@ -54,23 +54,23 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece currentPiece = mainBoard.getPiece(startPosition);
         ChessPiece.PieceType currentType = currentPiece.getPieceType();
-        HashSet<ChessMove> moves = switch(currentType){
+        return switch(currentType){
             case KING -> new HashSet<ChessMove>(validKingMoves(currentPiece, startPosition));
 
             default -> new HashSet<ChessMove>(currentPiece.pieceMoves(mainBoard, startPosition));
 
         };
-        return moves;
     }
 
     private Collection<ChessMove> validKingMoves(ChessPiece currentPiece, ChessPosition startPosition){
         ArrayList<ChessMove> moves = new ArrayList<>(currentPiece.pieceMoves(mainBoard, startPosition));
         HashSet<ChessPosition> _allPossibleMovesForOtherPieces = new HashSet<ChessPosition>();
+        TeamColor currentColor = currentPiece.getTeamColor();
 
-        for (int row = 1; row < 9; row++) { // Check for all other pieces moves;
+        for (int row = 1; row < 9; row++) { // Check for all other piece's moves;
             for (int col = 1; col < 9; col++) {
                 var curPiece = mainBoard.getPiece(new ChessPosition(row, col));
-                if (curPiece != null && curPiece.getPieceType() != ChessPiece.PieceType.PAWN && curPiece.getPieceType() != ChessPiece.PieceType.KING && curPiece.getTeamColor() != mainBoard.getPiece(startPosition).getTeamColor()) {
+                if (curPiece != null && curPiece.getPieceType() != ChessPiece.PieceType.PAWN && curPiece.getTeamColor() != mainBoard.getPiece(startPosition).getTeamColor()) {
                     var enemyMoves = curPiece.pieceMoves(mainBoard, new ChessPosition(row, col));
                     for (var move : enemyMoves) {
                         _allPossibleMovesForOtherPieces.add(move.getEndPosition());
@@ -78,15 +78,22 @@ public class ChessGame {
                 }
             }
         }
+
+        ArrayList<Integer> IndexesToRemove = new ArrayList<Integer>();
         for (int i = 0; i < moves.size(); i++) { // delete moves;
             if (_allPossibleMovesForOtherPieces.contains(moves.get(i).getEndPosition())) {
-                moves.remove(i);
+                IndexesToRemove.add(i);
             }
         }
+
+        for(int i = IndexesToRemove.size() - 1; i >=0; i--){
+            moves.remove(IndexesToRemove.get(i).intValue());
+        }
+
         for (int i = 0; i < moves.size(); i++) { // Check for pawns
             for (int j = -1; j < 2; j += 2) {
                 ChessPosition positionToCheck = new ChessPosition(moves.get(i).getEndPosition());
-                var piece = mainBoard.getPiece(new ChessPosition(positionToCheck.getRow() + j, positionToCheck.getColumn() + j));
+                var piece = mainBoard.getPiece(new ChessPosition(positionToCheck.getRow() + (currentColor == TeamColor.WHITE ? - 1 : 1), positionToCheck.getColumn() + j));
                 if (piece != null && piece.getTeamColor() != mainBoard.getPiece(startPosition).getTeamColor() && piece.getPieceType() == ChessPiece.PieceType.PAWN) {
                     moves.remove(i);
                     break;
@@ -104,7 +111,18 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPosition startPosition = move.getStartPosition();
+        {
+            HashSet<ChessMove> validMoves = new HashSet<ChessMove>(validMoves(startPosition));
+            if (!validMoves.contains(move)) {
+                throw new InvalidMoveException("Move is not possible!");
+            }
+        }
+
+        int returnCode = mainBoard.movePiece(move);
+        if(returnCode != 0){
+            throw new InvalidMoveException("Move is not possible on board! Error Code: " + returnCode);
+        }
     }
 
     /**
@@ -156,7 +174,7 @@ public class ChessGame {
         throw new RuntimeException("Not implemented");
     }
 
-    private changeTurn(){
+    private void changeTurn(){
         turn = turn == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE;
     }
 }
