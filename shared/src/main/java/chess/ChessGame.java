@@ -122,6 +122,9 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPos = kingPosition(teamColor);
+        if(!kingPos.isValid(mainBoard)){
+            return false;
+        }
         int x = kingPos.getRow();
         int y = kingPos.getColumn();
 
@@ -148,7 +151,6 @@ public class ChessGame {
                 }
             }
         }
-
         return _allPossibleMovesForOtherPieces.contains(kingPos);
     }
 
@@ -166,7 +168,7 @@ public class ChessGame {
                 x = 1;
                 y++;
             }
-            if(y > mainBoard.getCols()){
+            if(y > mainBoard.getCols() && currentKing.getTeamColor() != teamColor && currentKing.getPieceType() != ChessPiece.PieceType.KING){
                 return new ChessPosition(0,0);
                 /*   Originally I made this code to throw an exception, because there should never be
                 a chess game with no king, but several of the test cases have no kings, so to make
@@ -185,6 +187,9 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         ChessPosition kingPos = kingPosition(teamColor);
+        if(!kingPos.isValid(mainBoard)){
+            return false;
+        }
         var moves = validMoves(kingPos);
 
         return (isInCheck(teamColor) && moves.isEmpty());
@@ -202,6 +207,9 @@ public class ChessGame {
             return false;
         }
         ChessPosition kingPos = kingPosition(teamColor);
+        if(!kingPos.isValid(mainBoard)){
+            return false;
+        }
         var moves = new ArrayList<ChessMove>(validMoves(kingPos));
         for(int row = 1; row <= mainBoard.getRows(); row++){
             for(int col = 1; col <= mainBoard.getRows(); col++){

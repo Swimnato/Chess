@@ -114,8 +114,9 @@ public class ChessBoard {
 
     @Override
     public String toString() {
-        String output = "|";
+        String output = "";
         for(int row = rows - 1; row >= 0; row--){
+            output = output + "|";
             for(int col = 0; col < cols; col++){
                 ChessPiece _curr = board[row][col];
                 if(_curr != null){
