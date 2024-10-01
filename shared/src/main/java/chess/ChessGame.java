@@ -74,44 +74,16 @@ public class ChessGame {
 
     private Collection<ChessMove> validKingMoves(ChessPiece currentPiece, ChessPosition startPosition){
         ArrayList<ChessMove> moves = new ArrayList<>(currentPiece.pieceMoves(mainBoard, startPosition));
-        HashSet<ChessPosition> _allPossibleMovesForOtherPieces = new HashSet<ChessPosition>();
-        TeamColor currentColor = currentPiece.getTeamColor();
-
-        for (int row = 1; row < 9; row++) { // Check for all other piece's moves;
-            for (int col = 1; col < 9; col++) {
-                var curPiece = mainBoard.getPiece(new ChessPosition(row, col));
-                if (curPiece != null && curPiece.getPieceType() != ChessPiece.PieceType.PAWN && curPiece.getTeamColor() != mainBoard.getPiece(startPosition).getTeamColor()) {
-                    var enemyMoves = curPiece.pieceMoves(mainBoard, new ChessPosition(row, col));
-                    for (var move : enemyMoves) {
-                        _allPossibleMovesForOtherPieces.add(move.getEndPosition());
-                    }
-                }
+        ArrayList<ChessMove> output = new ArrayList<>();
+        for(var move : moves){
+            ChessBoard backupBoard = mainBoard.cloneBoard();
+            mainBoard.movePiece(move);
+            if(!isInCheck(currentPiece.getTeamColor())){
+                output.add(move);
             }
+            mainBoard = backupBoard;
         }
-
-        ArrayList<Integer> IndexesToRemove = new ArrayList<Integer>();
-        for (int i = 0; i < moves.size(); i++) { // delete moves;
-            if (_allPossibleMovesForOtherPieces.contains(moves.get(i).getEndPosition())) {
-                IndexesToRemove.add(i);
-            }
-        }
-
-        for(int i = IndexesToRemove.size() - 1; i >=0; i--){
-            moves.remove(IndexesToRemove.get(i).intValue());
-        }
-
-        for (int i = 0; i < moves.size(); i++) { // Check for pawns
-            for (int j = -1; j < 2; j += 2) {
-                ChessPosition positionToCheck = new ChessPosition(moves.get(i).getEndPosition());
-                var piece = mainBoard.getPiece(new ChessPosition(positionToCheck.getRow() + (currentColor == TeamColor.WHITE ? - 1 : 1), positionToCheck.getColumn() + j));
-                if (piece != null && piece.getTeamColor() != mainBoard.getPiece(startPosition).getTeamColor() && piece.getPieceType() == ChessPiece.PieceType.PAWN) {
-                    moves.remove(i);
-                    break;
-                }
-            }
-        }
-
-        return moves;
+        return output;
     }
 
     /**
