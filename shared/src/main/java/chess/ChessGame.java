@@ -99,6 +99,9 @@ public class ChessGame {
         }
         {
             HashSet<ChessMove> validMoves = new HashSet<ChessMove>(validMoves(startPosition));
+            System.out.println(validMoves);
+            System.out.println(move);
+            System.out.println("\r\n\r\n");
             if (!validMoves.contains(move)) {
                 throw new InvalidMoveException("Move is not possible!");
             }
@@ -130,7 +133,7 @@ public class ChessGame {
                 y++;
             }
             if(y > mainBoard.getCols()){
-                break;
+                return false;
                 /*   Originally I made this code to throw an exception, because there should never be
                 a chess game with no king, but several of the test cases have no kings, so to make
                 the tests run I had to get rid of this :(                  */
