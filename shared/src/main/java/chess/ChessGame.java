@@ -198,7 +198,22 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if(isInCheck(teamColor)){
+            return false;
+        }
+        ChessPosition kingPos = kingPosition(teamColor);
+        var moves = new ArrayList<ChessMove>(validMoves(kingPos));
+        for(int row = 1; row <= mainBoard.getRows(); row++){
+            for(int col = 1; col <= mainBoard.getRows(); col++){
+                ChessPosition currentPosition = new ChessPosition(row,col);
+                ChessPiece currentPiece = mainBoard.getPiece(currentPosition);
+                if(currentPiece != null && currentPiece.getTeamColor() == teamColor){
+                    var pieceMoves = new ArrayList<ChessMove>(validMoves(currentPosition));
+                    moves.addAll(pieceMoves);
+                }
+            }
+        }
+        return moves.isEmpty();
     }
 
     /**
