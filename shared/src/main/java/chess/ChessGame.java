@@ -94,6 +94,9 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition startPosition = move.getStartPosition();
+        if(mainBoard.getPiece(startPosition) == null){
+            throw new InvalidMoveException("No piece to move!");
+        }
         {
             HashSet<ChessMove> validMoves = new HashSet<ChessMove>(validMoves(startPosition));
             if (!validMoves.contains(move)) {
@@ -127,7 +130,11 @@ public class ChessGame {
                 y++;
             }
             if(y > mainBoard.getCols()){
-                throw new RuntimeException("No " + teamColor + " King Exists!");
+                break;
+                /*   Originally I made this code to throw an exception, because there should never be
+                a chess game with no king, but several of the test cases have no kings, so to make
+                the tests run I had to get rid of this :(                  */
+                //throw new RuntimeException("No " + teamColor + " King Exists!");
             }
         }
         HashSet<ChessPosition> _allPossibleMovesForOtherPieces = new HashSet<ChessPosition>();
