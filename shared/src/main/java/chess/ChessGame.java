@@ -18,6 +18,7 @@ public class ChessGame {
     public ChessGame() {
         turn = TeamColor.WHITE;
         mainBoard = new ChessBoard();
+        mainBoard.resetBoard();
     }
 
     /**
@@ -120,26 +121,10 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ChessPiece currentKing = null;
-        ChessPosition kingPos = null;
-        byte x = 1;
-        byte y = 1;
-        while(currentKing == null || currentKing.getTeamColor() != teamColor || currentKing.getPieceType() != ChessPiece.PieceType.KING) {
-            kingPos = new ChessPosition(x,y);
-            currentKing = mainBoard.getPiece(kingPos);
-            x++;
-            if(x > mainBoard.getRows()){
-                x = 1;
-                y++;
-            }
-            if(y > mainBoard.getCols()){
-                return false;
-                /*   Originally I made this code to throw an exception, because there should never be
-                a chess game with no king, but several of the test cases have no kings, so to make
-                the tests run I had to get rid of this :(                  */
-                //throw new RuntimeException("No " + teamColor + " King Exists!");
-            }
-        }
+        ChessPosition kingPos = kingPosition(teamColor);
+        int x = kingPos.getRow();
+        int y = kingPos.getColumn();
+
         HashSet<ChessPosition> _allPossibleMovesForOtherPieces = new HashSet<ChessPosition>();
 
         for (int row = 1; row < 9; row++) { // Check for all the other piece's moves;
@@ -167,6 +152,31 @@ public class ChessGame {
         return _allPossibleMovesForOtherPieces.contains(kingPos);
     }
 
+
+    private ChessPosition kingPosition(TeamColor teamColor){
+        ChessPiece currentKing = null;
+        ChessPosition kingPos = null;
+        byte x = 1;
+        byte y = 1;
+        while(currentKing == null || currentKing.getTeamColor() != teamColor || currentKing.getPieceType() != ChessPiece.PieceType.KING) {
+            kingPos = new ChessPosition(x,y);
+            currentKing = mainBoard.getPiece(kingPos);
+            x++;
+            if(x > mainBoard.getRows()){
+                x = 1;
+                y++;
+            }
+            if(y > mainBoard.getCols()){
+                return new ChessPosition(0,0);
+                /*   Originally I made this code to throw an exception, because there should never be
+                a chess game with no king, but several of the test cases have no kings, so to make
+                the tests run I had to get rid of this :(                  */
+                //throw new RuntimeException("No " + teamColor + " King Exists!");
+            }
+        }
+        return kingPos;
+    }
+
     /**
      * Determines if the given team is in checkmate
      *
@@ -174,7 +184,10 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition kingPos = kingPosition(teamColor);
+        var moves = validMoves(kingPos);
+
+        return (isInCheck(teamColor) && moves.isEmpty());
     }
 
     /**
