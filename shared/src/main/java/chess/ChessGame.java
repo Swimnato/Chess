@@ -54,12 +54,22 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece currentPiece = mainBoard.getPiece(startPosition);
         ChessPiece.PieceType currentType = currentPiece.getPieceType();
-        return switch(currentType){
-            case KING -> new HashSet<ChessMove>(validKingMoves(currentPiece, startPosition));
-
-            default -> new HashSet<ChessMove>(currentPiece.pieceMoves(mainBoard, startPosition));
-
+        TeamColor currentColor = currentPiece.getTeamColor();
+        ArrayList<ChessMove> output = new ArrayList<>();
+        ArrayList<ChessMove> pieceMoves = switch(currentType){
+            case KING -> new ArrayList<>(validKingMoves(currentPiece, startPosition));
+            default -> new ArrayList<>(currentPiece.pieceMoves(mainBoard, startPosition));
         };
+        for(var move : pieceMoves){
+            ChessBoard boardBackup = mainBoard.cloneBoard();
+            mainBoard.movePiece(move);
+            if(!isInCheck(currentColor)){
+                output.add(move);
+            }
+            mainBoard = boardBackup;
+        }
+
+        return output;
     }
 
     private Collection<ChessMove> validKingMoves(ChessPiece currentPiece, ChessPosition startPosition){
@@ -132,7 +142,47 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece currentKing = null;
+        ChessPosition kingPos = null;
+        byte x = 1;
+        byte y = 1;
+        while(currentKing == null || currentKing.getTeamColor() != teamColor || currentKing.getPieceType() != ChessPiece.PieceType.KING) {
+            kingPos = new ChessPosition(x,y);
+            currentKing = mainBoard.getPiece(kingPos);
+            x++;
+            if(x > mainBoard.getRows()){
+                x = 1;
+                y++;
+            }
+            if(y > mainBoard.getCols()){
+                throw new RuntimeException("No " + teamColor + " King Exists!");
+            }
+        }
+        HashSet<ChessPosition> _allPossibleMovesForOtherPieces = new HashSet<ChessPosition>();
+
+        for (int row = 1; row < 9; row++) { // Check for all the other piece's moves;
+            for (int col = 1; col < 9; col++) {
+                var curPiece = mainBoard.getPiece(new ChessPosition(row, col));
+                if (curPiece != null && curPiece.getTeamColor() != teamColor) {
+                    if(curPiece.getPieceType() != ChessPiece.PieceType.PAWN) {
+                        var enemyMoves = curPiece.pieceMoves(mainBoard, new ChessPosition(row, col));
+                        for (var move : enemyMoves) {
+                            _allPossibleMovesForOtherPieces.add(move.getEndPosition());
+                        }
+                    }
+                    else{
+                        ChessPosition l = new ChessPosition(row + (teamColor == TeamColor.WHITE ? -1 : 1), col + 1);
+                        ChessPosition r = new ChessPosition(row + (teamColor == TeamColor.WHITE ? -1 : 1), col - 1);
+                        if(l.isValid(mainBoard))
+                            _allPossibleMovesForOtherPieces.add(l);
+                        if(r.isValid(mainBoard))
+                            _allPossibleMovesForOtherPieces.add(r);
+                    }
+                }
+            }
+        }
+
+        return _allPossibleMovesForOtherPieces.contains(kingPos);
     }
 
     /**
@@ -162,7 +212,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        mainBoard = board;
     }
 
     /**
@@ -171,7 +221,7 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return mainBoard;
     }
 
     private void changeTurn(){

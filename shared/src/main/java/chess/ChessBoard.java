@@ -24,6 +24,19 @@ public class ChessBoard {
         board = new ChessPiece[rows][cols];
     }
 
+    public ChessBoard cloneBoard(){
+        ChessBoard output = new ChessBoard();
+        for(int i = 1; i <= rows; i++){
+            for(int j = 1; j <= cols; j++){
+                ChessPosition currPos = new ChessPosition(i,j);
+                ChessPiece currPiece = getPiece(currPos);
+                if(currPiece != null)
+                    output.addPiece(currPos, new ChessPiece(getPiece(currPos)));
+            }
+        }
+        return output;
+    }
+
     public int getRows(){
         return rows;
     }
@@ -39,7 +52,10 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow() - 1][position.getColumn() - 1] = new ChessPiece(piece);
+        if(piece != null)
+            board[position.getRow() - 1][position.getColumn() - 1] = new ChessPiece(piece);
+        else
+            board[position.getRow() - 1][position.getColumn() - 1] = null;
     }
 
     /**
