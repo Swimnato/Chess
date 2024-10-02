@@ -98,6 +98,9 @@ public class ChessGame {
         if(mainBoard.getPiece(startPosition) == null){
             throw new InvalidMoveException("No piece to move!");
         }
+        if(mainBoard.getPiece(startPosition).getTeamColor() != turn){
+            throw new InvalidMoveException("Not your color!");
+        }
         {
             HashSet<ChessMove> validMoves = new HashSet<ChessMove>(validMoves(startPosition));
             System.out.println(validMoves);
@@ -112,6 +115,7 @@ public class ChessGame {
         if(returnCode != 0){
             throw new InvalidMoveException("Move is not possible on board! Error Code: " + returnCode);
         }
+        turn = turn == TeamColor.WHITE ? TeamColor.BLACK: TeamColor.WHITE;
     }
 
     /**
@@ -162,18 +166,18 @@ public class ChessGame {
         byte y = 1;
         while(currentKing == null || currentKing.getTeamColor() != teamColor || currentKing.getPieceType() != ChessPiece.PieceType.KING) {
             kingPos = new ChessPosition(x,y);
-            currentKing = mainBoard.getPiece(kingPos);
-            x++;
-            if(x > mainBoard.getRows()){
-                x = 1;
-                y++;
-            }
-            if(y > mainBoard.getCols() && currentKing.getTeamColor() != teamColor && currentKing.getPieceType() != ChessPiece.PieceType.KING){
+            if(!kingPos.isValid(mainBoard)){
                 return new ChessPosition(0,0);
                 /*   Originally I made this code to throw an exception, because there should never be
                 a chess game with no king, but several of the test cases have no kings, so to make
                 the tests run I had to get rid of this :(                  */
                 //throw new RuntimeException("No " + teamColor + " King Exists!");
+            }
+            currentKing = mainBoard.getPiece(kingPos);
+            x++;
+            if(x > mainBoard.getRows()){
+                x = 1;
+                y++;
             }
         }
         return kingPos;
