@@ -14,15 +14,33 @@ public class ChessPiece {
 
     ChessGame.TeamColor myColor;
     PieceType myType;
+    boolean firstMove;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         myColor = pieceColor;
         myType = type;
+        firstMove = false;
+    }
+
+    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type, boolean firstMove) {
+        myColor = pieceColor;
+        myType = type;
+        this.firstMove = firstMove;
+    }
+
+    public boolean isFirstMove(){
+        return firstMove;
     }
 
     public ChessPiece(ChessPiece _toCopy){
         myColor = _toCopy.getTeamColor();
         myType = _toCopy.getPieceType();
+    }
+
+    public ChessPiece(ChessPiece _toCopy, boolean firstMove){
+        myColor = _toCopy.getTeamColor();
+        myType = _toCopy.getPieceType();
+        this.firstMove = firstMove;
     }
 
     /**

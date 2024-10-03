@@ -14,6 +14,7 @@ public class ChessGame {
 
     TeamColor turn;
     ChessBoard mainBoard;
+    ChessBoard previousBoard;
 
     public ChessGame() {
         turn = TeamColor.WHITE;
@@ -59,6 +60,7 @@ public class ChessGame {
         ArrayList<ChessMove> output = new ArrayList<>();
         ArrayList<ChessMove> pieceMoves = switch(currentType){
             case KING -> new ArrayList<>(validKingMoves(currentPiece, startPosition));
+            case PAWN -> new ArrayList<>(validPawnMoves(currentPiece, startPosition));
             default -> new ArrayList<>(currentPiece.pieceMoves(mainBoard, startPosition));
         };
         for(var move : pieceMoves){
@@ -87,6 +89,38 @@ public class ChessGame {
         return output;
     }
 
+    private Collection<ChessMove> validPawnMoves(ChessPiece currentPiece, ChessPosition startPosition){
+        var currentMoveset = new ArrayList<>(currentPiece.pieceMoves(mainBoard, startPosition));
+        var row = startPosition.getRow();
+        var col = startPosition.getColumn();
+        int direction = (currentPiece.getTeamColor() == TeamColor.WHITE ? 1 : -1);
+
+        //now we check for enpassant
+        for(short side = -1; side < 2; side += 2){
+            ChessPosition pieceToSidePos = new ChessPosition(row,col + side);
+            if(pieceToSidePos.isValid(mainBoard)) {
+                ChessPiece pieceToSide = mainBoard.getPiece(pieceToSidePos);
+                if (pieceToSide != null && pieceToSide.getPieceType() == ChessPiece.PieceType.PAWN && pieceToSide.getTeamColor() != currentPiece.getTeamColor()) { // if there is an enemy pawn to our side
+                    ChessPiece previousPieceToSide = previousBoard.getPiece(pieceToSidePos);
+                    if (previousPieceToSide == null) {
+                        ChessPosition spaceToSideBackAStepPos = new ChessPosition(row + (direction * 2), col + side);
+                        if(spaceToSideBackAStepPos.isValid(mainBoard)){
+                            ChessPiece spaceToSideBackAStep = previousBoard.getPiece(spaceToSideBackAStepPos);
+                            if (spaceToSideBackAStep != null && spaceToSideBackAStep.getTeamColor() != currentPiece.getTeamColor() && spaceToSideBackAStep.getPieceType() == ChessPiece.PieceType.PAWN) { // to see if the pawn was back two spaces before
+                                ChessBoard backupPrevious = previousBoard.cloneBoard();
+                                backupPrevious.movePiece(new ChessMove(spaceToSideBackAStepPos, pieceToSidePos, null));
+                                if (backupPrevious.equals(mainBoard)) { // to make sure this was the previous move
+                                    currentMoveset.add(new ChessMove(startPosition, new ChessPosition(row + direction, col + side), null));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return currentMoveset;
+    }
     /**
      * Makes a move in a chess game
      *
@@ -94,6 +128,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        ChessBoard soonToBePreviousBoard = mainBoard.cloneBoard();
         ChessPosition startPosition = move.getStartPosition();
         if(mainBoard.getPiece(startPosition) == null){
             throw new InvalidMoveException("No piece to move!");
@@ -103,9 +138,6 @@ public class ChessGame {
         }
         {
             HashSet<ChessMove> validMoves = new HashSet<ChessMove>(validMoves(startPosition));
-            System.out.println(validMoves);
-            System.out.println(move);
-            System.out.println("\r\n\r\n");
             if (!validMoves.contains(move)) {
                 throw new InvalidMoveException("Move is not possible!");
             }
@@ -116,6 +148,7 @@ public class ChessGame {
             throw new InvalidMoveException("Move is not possible on board! Error Code: " + returnCode);
         }
         turn = turn == TeamColor.WHITE ? TeamColor.BLACK: TeamColor.WHITE;
+        previousBoard = soonToBePreviousBoard;
     }
 
     /**
