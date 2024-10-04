@@ -232,8 +232,9 @@ public class CastlingTests {
 
         //move left rook
         game.makeMove(new ChessMove(new ChessPosition(1, 1), new ChessPosition(1, 4), null));
+        System.out.println(game.getBoard());
         game.makeMove(new ChessMove(new ChessPosition(7, 1), new ChessPosition(6, 1), null));
-
+        System.out.println(game.getBoard());
         //move rook back to starting spot
         game.makeMove(new ChessMove(new ChessPosition(1, 4), new ChessPosition(1, 1), null));
         /*

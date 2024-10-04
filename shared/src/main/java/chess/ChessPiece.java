@@ -35,6 +35,7 @@ public class ChessPiece {
     public ChessPiece(ChessPiece _toCopy){
         myColor = _toCopy.getTeamColor();
         myType = _toCopy.getPieceType();
+        firstMove = _toCopy.isFirstMove();
     }
 
     public ChessPiece(ChessPiece _toCopy, boolean firstMove){
@@ -125,7 +126,7 @@ public class ChessPiece {
         else if(obj == null || obj.getClass() != this.getClass()){
             return false;
         }
-        else if(this.myColor == ((ChessPiece) obj).myColor && this.myType == ((ChessPiece) obj).myType){
+        else if(this.myColor == ((ChessPiece) obj).myColor && this.myType == ((ChessPiece) obj).myType && this.isFirstMove() == ((ChessPiece) obj).isFirstMove()){
             return true;
         }
         else{

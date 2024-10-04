@@ -55,6 +55,9 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece currentPiece = mainBoard.getPiece(startPosition);
+        if(currentPiece == null){
+            return null;
+        }
         ChessPiece.PieceType currentType = currentPiece.getPieceType();
         TeamColor currentColor = currentPiece.getTeamColor();
         ArrayList<ChessMove> output = new ArrayList<>();
@@ -64,12 +67,12 @@ public class ChessGame {
             default -> new ArrayList<>(currentPiece.pieceMoves(mainBoard, startPosition));
         };
         for(var move : pieceMoves){
-            ChessBoard boardBackup = mainBoard.cloneBoard();
+            ChessBoard boardBackup = new ChessBoard(mainBoard);
             mainBoard.movePiece(move);
             if(!isInCheck(currentColor)){
                 output.add(move);
             }
-            mainBoard = boardBackup;
+            mainBoard = new ChessBoard(boardBackup);
         }
 
         return output;
@@ -79,13 +82,49 @@ public class ChessGame {
         ArrayList<ChessMove> moves = new ArrayList<>(currentPiece.pieceMoves(mainBoard, startPosition));
         ArrayList<ChessMove> output = new ArrayList<>();
         for(var move : moves){
-            ChessBoard backupBoard = mainBoard.cloneBoard();
+            ChessBoard backupBoard = new ChessBoard(mainBoard);
             mainBoard.movePiece(move);
             if(!isInCheck(currentPiece.getTeamColor())){
                 output.add(move);
             }
-            mainBoard = backupBoard;
+            mainBoard = new ChessBoard(backupBoard);
         }
+
+        //check for castling
+        if(currentPiece.isFirstMove() && !isInCheck(currentPiece.getTeamColor())){
+            for(short direction = -1; direction < 2; direction += 2){
+                int row = startPosition.getRow();
+                int col = startPosition.getColumn();
+                ChessPosition checkedPosition = (new ChessPosition(row,col));
+                for(col = startPosition.getColumn(); checkedPosition.isValid(mainBoard); col += direction){
+                    checkedPosition = (new ChessPosition(row,col));
+                    if(checkedPosition.isValid(mainBoard)){
+                        if(mainBoard.getPiece(checkedPosition) != null){
+                            if((mainBoard.getPiece(checkedPosition).getPieceType() != ChessPiece.PieceType.ROOK && mainBoard.getPiece(checkedPosition).getPieceType() != ChessPiece.PieceType.KING ) || !mainBoard.getPiece(checkedPosition).isFirstMove()){
+                                break;
+                            }
+                            else{
+                                if(mainBoard.getPiece(checkedPosition).getPieceType() == ChessPiece.PieceType.ROOK && mainBoard.getPiece(checkedPosition).isFirstMove()) {
+                                    ChessBoard backupBoard = new ChessBoard(mainBoard);
+
+                                    ChessPosition firstMove = new ChessPosition(row, startPosition.getColumn() + direction);
+                                    mainBoard.movePiece(new ChessMove(startPosition, firstMove, null));
+                                    if (!isInCheck(currentPiece.getTeamColor())) {
+                                        ChessPosition secondMove = new ChessPosition(row, startPosition.getColumn() + direction * 2);
+                                        mainBoard.movePiece(new ChessMove(startPosition, secondMove, null));
+                                        if (!isInCheck(currentPiece.getTeamColor())) {
+                                            output.add(new ChessMove(startPosition, secondMove, null));
+                                        }
+                                    }
+                                    mainBoard = new ChessBoard(backupBoard);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         return output;
     }
 
@@ -107,7 +146,7 @@ public class ChessGame {
                         if(spaceToSideBackAStepPos.isValid(mainBoard)){
                             ChessPiece spaceToSideBackAStep = previousBoard.getPiece(spaceToSideBackAStepPos);
                             if (spaceToSideBackAStep != null && spaceToSideBackAStep.getTeamColor() != currentPiece.getTeamColor() && spaceToSideBackAStep.getPieceType() == ChessPiece.PieceType.PAWN) { // to see if the pawn was back two spaces before
-                                ChessBoard backupPrevious = previousBoard.cloneBoard();
+                                ChessBoard backupPrevious = new ChessBoard(previousBoard);
                                 backupPrevious.movePiece(new ChessMove(spaceToSideBackAStepPos, pieceToSidePos, null));
                                 if (backupPrevious.equals(mainBoard)) { // to make sure this was the previous move
                                     currentMoveset.add(new ChessMove(startPosition, new ChessPosition(row + direction, col + side), null));
@@ -128,7 +167,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        ChessBoard soonToBePreviousBoard = mainBoard.cloneBoard();
+        ChessBoard soonToBePreviousBoard = new ChessBoard(mainBoard);
         ChessPosition startPosition = move.getStartPosition();
         if(mainBoard.getPiece(startPosition) == null){
             throw new InvalidMoveException("No piece to move!");
@@ -142,13 +181,12 @@ public class ChessGame {
                 throw new InvalidMoveException("Move is not possible!");
             }
         }
-
         int returnCode = mainBoard.movePiece(move);
         if(returnCode != 0){
             throw new InvalidMoveException("Move is not possible on board! Error Code: " + returnCode);
         }
         turn = turn == TeamColor.WHITE ? TeamColor.BLACK: TeamColor.WHITE;
-        previousBoard = soonToBePreviousBoard;
+        previousBoard = new ChessBoard(soonToBePreviousBoard);
     }
 
     /**
