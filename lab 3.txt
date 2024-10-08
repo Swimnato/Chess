@@ -1,0 +1,137 @@
+actor Client
+participant Server
+participant Handler
+participant Service
+participant DataAccess
+database db
+
+entryspacing 0.9
+group #navy Registration #white
+Client -> Server: [POST] /user\n{"username":" ", "password":" ", "email":" "}
+Server -> Handler: {"username":" ", "password":" ", "email":" "}
+Handler -> Service: register(RegisterRequest)
+Service -> DataAccess: getUser(username)
+DataAccess <-> db:Find UserData by username
+DataAccess --> Service: UserData
+Service --> Handler: if(UserData != null)
+Handler --> Server: "Username Already Taken"
+Server --> Client: 400\n"Username Already Taken"
+Service ->> DataAccess:createUser(userData)
+DataAccess ->> db:Add UserData
+Service ->> DataAccess:createAuth(authData)
+DataAccess ->> db:Add AuthData
+Service --> Handler: RegisterResult
+Handler --> Server: {"username" : " ", "authToken" : " "}
+Server --> Client: 200\n{"username" : " ", "authToken" : " "}
+end
+
+group #orange Login #white
+Client -> Server: [POST] /session\n{username, password}
+Server -> Handler: {"username" : " ", "password" : ""}
+Handler -> Service : login(username, password)
+Service -> DataAccess : getUser(username)
+DataAccess <-> db : Find UserData by username
+DataAccess --> Service : UserData
+Service --> Handler : if(UserData == null || password != UserData.password)
+Handler--> Server : "Invalid Username/Password!"
+Server --> Client : 400\n"Invalid Username/Password!"
+Service ->> DataAccess:createAuth(authData)
+DataAccess ->> db:Add AuthData
+Service --> Handler : LoginResult
+Handler --> Server : {"username" : " ", "authToken" : " "}
+Server --> Client : 200\n{"username" : " ", "authToken" : " "}
+
+end
+
+group #green Logout #white
+Client -> Server: [DELETE] /session\nauthToken
+Server -> Handler: authToken
+Handler -> Service: delete(AuthToken)
+Service -> DataAccess: delete(AuthToken)
+DataAccess <-> db: Find User By AuthToken
+DataAccess ->> db: Delete AuthToken From Lookup Table
+DataAccess --> Service: LogoutSuccessfull
+Service --> Handler: LogoutSuccessfull
+Handler --> Server: if(LogoutSuccessfull) "Logout Successfull!"
+Server --> Client: 200\n"Logout Successfull!"
+Handler --> Server: else "Invalid Session!"
+Server --> Client: 400\n"Invalid Session!"
+end
+
+group #red List Games #white
+Client -> Server: [GET] /game\nauthToken
+Server -> Handler: authToken
+Handler -> Service: ListGames(authToken)
+Service -> DataAccess: getGamesForUser(authToken)
+DataAccess <-> db: Find User By Authtoken
+DataAccess --> Service: if(UserData == null)
+Service --> Handler: null
+Handler --> Server: "Session invalid!"
+Server --> Client: 400\n"Session invalid!"
+DataAccess <-> db: Get Games By Username
+DataAccess --> Service: Games
+Service --> Handler: Games
+Handler --> Server: {"Games": [" ", ... , " "]}
+Server --> Client: 200\n{"Games": [" ", ... , " "]}
+end
+
+group #purple Create Game #white
+Client -> Server: [POST] /game\nauthToken\n{gameName}
+Server -> Handler: authToken, gameName
+Handler -> Service: createGame(gameName, authToken)
+Service -> DataAccess: getUser(authToken)
+DataAccess <-> db: Find User By Authtoken
+DataAccess --> Service: UserData
+Service --> Handler: if(UserData == null) null
+Handler --> Server: "Session invalid!"
+Server --> Client: 400\n"Session invalid!"
+Service -> Service : createGame(UserData.username)
+Service ->> DataAccess: addGame(UserData.username, newGame)
+DataAccess ->> db: Add Game to Database
+Service -> Handler: newGame.gameID
+Handler -> Server: {"GameID" : " "}
+Server -> Client: 200\n{"GameID" : " "}
+end
+
+group #yellow Join Game #black
+Client -> Server: [PUT] game\nauthToken\n{playerColor, gameID}
+Server -> Handler: authToken, {playerColor, gameID}
+Handler -> Service: authToken, playerColor, gameID
+Service -> DataAccess: getUser(authToken)
+DataAccess <-> db: Get User by authToken
+DataAccess --> Service: userData
+Service --> Handler: if(userData == null)
+Handler --> Server: "Session invalid!"
+Server --> Client: 400\n"Session invalid!"
+Service -> DataAccess: getGame(gameID)
+DataAccess <-> db: Get Game by gameID
+DataAccess --> Service: GameData
+Service --> Handler: if(GameData == null)
+Handler --> Server: "Game Doesn't Exist!"
+Server --> Client: 404\n"Game Doesn't Exist!"
+Service ->> DataAccess :if(GameData.players >= 2) addSpectator(GameData, UserData)
+DataAccess ->> db: Add User to Game as spectator
+Service --> Handler: if(GameData.players >= 2) GameData
+Handler --> Server: {"Text" : "Added as Spectator", "Game" : " "}
+Server --> Client: 200\n{"Text" : "Added as Spectator", "Game" : " "}
+Service --> Handler: if(!game.colorAvailable(playerColor))
+Handler --> Server: "Color not available!"
+Server --> Client: 400\n"Color not available!"
+Service ->> DataAccess: addPlayerToGame(Userdata,GameData,playerColor)
+DataAccess ->> db: Add User to Game As Desired Color
+Service --> Handler: GameData
+Handler -> Server: {"Text" : "Added Game!", "Game" : " "}
+Server -> Client: 200\n{"Text" : "Added Game!", "Game" : " "}
+end
+
+group #gray Clear application #white
+Client -> Server: [DELETE] /db
+Server -> Handler: [DELETE] /db
+Handler ->> Service: deleteDB()
+Service ->> DataAccess: deleteDB()
+DataAccess ->> db: Delete Everything
+Handler --> Server: if(!exceptionThrown) "Database Cleared!"
+Server -> Client: 200\n"Database Cleared!"
+Handler -> Server: "Error Deleting Database: [exceptionThrown]"
+Server -> Client: 500\n"Error Deleting Database: [exceptionThrown]"
+end
