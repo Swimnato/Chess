@@ -10,12 +10,15 @@ group #navy Registration #white
 Client -> Server: [POST] /user\n{"username":" ", "password":" ", "email":" "}
 Server -> Handler: {"username":" ", "password":" ", "email":" "}
 Handler -> Service: register(RegisterRequest)
+Service --> Handler: if(DataIsNotValid)
+Handler --> Server: { "message": "Error: bad request" }
+Server --> Client: 400\n{ "message": "Error: bad request" }
 Service -> DataAccess: getUser(username)
 DataAccess <-> db:Find UserData by username
 DataAccess --> Service: UserData
 Service --> Handler: if(UserData != null)
-Handler --> Server: "Username Already Taken"
-Server --> Client: 400\n"Username Already Taken"
+Handler --> Server: { "message": "Error: already taken" }
+Server --> Client: 403\n{ "message": "Error: already taken" }
 Service ->> DataAccess:createUser(userData)
 DataAccess ->> db:Add UserData
 Service ->> DataAccess:createAuth(authData)
@@ -23,6 +26,7 @@ DataAccess ->> db:Add AuthData
 Service --> Handler: RegisterResult
 Handler --> Server: {"username" : " ", "authToken" : " "}
 Server --> Client: 200\n{"username" : " ", "authToken" : " "}
+Server --> Client: catch(Exception)\n500\n{ "message": "Error: (description of error)" }
 end
 
 group #orange Login #white
@@ -33,14 +37,14 @@ Service -> DataAccess : getUser(username)
 DataAccess <-> db : Find UserData by username
 DataAccess --> Service : UserData
 Service --> Handler : if(UserData == null || password != UserData.password)
-Handler--> Server : "Invalid Username/Password!"
-Server --> Client : 400\n"Invalid Username/Password!"
+Handler--> Server : { "message": "Error: unauthorized" }
+Server --> Client : 401\n{ "message": "Error: unauthorized" }
 Service ->> DataAccess:createAuth(authData)
 DataAccess ->> db:Add AuthData
 Service --> Handler : LoginResult
 Handler --> Server : {"username" : " ", "authToken" : " "}
 Server --> Client : 200\n{"username" : " ", "authToken" : " "}
-
+Server --> Client: catch(Exception)\n500\n{ "message": "Error: (description of error)" }
 end
 
 group #green Logout #white
@@ -52,10 +56,11 @@ DataAccess <-> db: Find User By AuthToken
 DataAccess ->> db: Delete AuthToken From Lookup Table
 DataAccess --> Service: LogoutSuccessfull
 Service --> Handler: LogoutSuccessfull
-Handler --> Server: if(LogoutSuccessfull) "Logout Successfull!"
-Server --> Client: 200\n"Logout Successfull!"
-Handler --> Server: else "Invalid Session!"
-Server --> Client: 400\n"Invalid Session!"
+Handler --> Server: if(LogoutSuccessfull) {}
+Server --> Client: 200\n{}
+Handler --> Server: { "message": "Error: unauthorized" }
+Server --> Client: 401\n{ "message": "Error: unauthorized" }
+Server --> Client: catch(Exception)\n500\n{ "message": "Error: (description of error)" }
 end
 
 group #red List Games #white
@@ -66,62 +71,63 @@ Service -> DataAccess: getGamesForUser(authToken)
 DataAccess <-> db: Find User By Authtoken
 DataAccess --> Service: if(UserData == null)
 Service --> Handler: null
-Handler --> Server: "Session invalid!"
-Server --> Client: 400\n"Session invalid!"
+Handler --> Server: { "message": "Error: unauthorized" }
+Server --> Client: 401\n{ "message": "Error: unauthorized" }
 DataAccess <-> db: Get Games By Username
 DataAccess --> Service: Games
 Service --> Handler: Games
-Handler --> Server: {"Games": [" ", ... , " "]}
-Server --> Client: 200\n{"Games": [" ", ... , " "]}
+Handler --> Server: { "games": [{"gameID": 1234, "whiteUsername":"", "blackUsername":"", "gameName:""} ]}
+Server --> Client: 200\n{ "games": [{"gameID": 1234, "whiteUsername":"", "blackUsername":"", "gameName:""} ]}
+Server --> Client: catch(Exception)\n500\n{ "message": "Error: (description of error)" }
 end
 
 group #purple Create Game #white
 Client -> Server: [POST] /game\nauthToken\n{gameName}
 Server -> Handler: authToken, gameName
 Handler -> Service: createGame(gameName, authToken)
+Service --> Handler: if(DataIsNotValid)
+Handler --> Server: { "message": "Error: bad request" }
+Server --> Client: 400\n{ "message": "Error: bad request" }
 Service -> DataAccess: getUser(authToken)
 DataAccess <-> db: Find User By Authtoken
 DataAccess --> Service: UserData
 Service --> Handler: if(UserData == null) null
-Handler --> Server: "Session invalid!"
-Server --> Client: 400\n"Session invalid!"
+Handler --> Server: { "message": "Error: unauthorized" }
+Server --> Client: 401\n{ "message": "Error: unauthorized" }
 Service -> Service : createGame(UserData.username)
 Service ->> DataAccess: addGame(UserData.username, newGame)
 DataAccess ->> db: Add Game to Database
 Service -> Handler: newGame.gameID
-Handler -> Server: {"GameID" : " "}
-Server -> Client: 200\n{"GameID" : " "}
+Handler -> Server: { "gameID": 1234 }
+Server -> Client: 200\n{ "gameID": 1234 }
+Server --> Client: catch(Exception)\n500\n{ "message": "Error: (description of error)" }
 end
 
 group #yellow Join Game #black
 Client -> Server: [PUT] game\nauthToken\n{playerColor, gameID}
 Server -> Handler: authToken, {playerColor, gameID}
-Handler -> Service: authToken, playerColor, gameID
+Handler -> Service: joinGame(authToken, playerColor, gameID)
 Service -> DataAccess: getUser(authToken)
 DataAccess <-> db: Get User by authToken
 DataAccess --> Service: userData
 Service --> Handler: if(userData == null)
-Handler --> Server: "Session invalid!"
-Server --> Client: 400\n"Session invalid!"
+Handler --> Server: { "message": "Error: unauthorized" }
+Server --> Client: 401\n{ "message": "Error: unauthorized" }
 Service -> DataAccess: getGame(gameID)
 DataAccess <-> db: Get Game by gameID
 DataAccess --> Service: GameData
 Service --> Handler: if(GameData == null)
-Handler --> Server: "Game Doesn't Exist!"
-Server --> Client: 404\n"Game Doesn't Exist!"
-Service ->> DataAccess :if(GameData.players >= 2) addSpectator(GameData, UserData)
-DataAccess ->> db: Add User to Game as spectator
-Service --> Handler: if(GameData.players >= 2) GameData
-Handler --> Server: {"Text" : "Added as Spectator", "Game" : " "}
-Server --> Client: 200\n{"Text" : "Added as Spectator", "Game" : " "}
+Handler --> Server: { "message": "Error: bad request" }
+Server --> Client: 400\n{ "message": "Error: bad request" }
 Service --> Handler: if(!game.colorAvailable(playerColor))
-Handler --> Server: "Color not available!"
-Server --> Client: 400\n"Color not available!"
+Handler --> Server: { "message": "Error: already taken" }
+Server --> Client: 403\n{ "message": "Error: already taken" }
 Service ->> DataAccess: addPlayerToGame(Userdata,GameData,playerColor)
 DataAccess ->> db: Add User to Game As Desired Color
 Service --> Handler: GameData
-Handler -> Server: {"Text" : "Added Game!", "Game" : " "}
-Server -> Client: 200\n{"Text" : "Added Game!", "Game" : " "}
+Handler -> Server: {}
+Server -> Client: 200\n{}
+Server --> Client: catch(Exception)\n500\n{ "message": "Error: (description of error)" }
 end
 
 group #gray Clear application #white
@@ -130,8 +136,7 @@ Server -> Handler: [DELETE] /db
 Handler ->> Service: deleteDB()
 Service ->> DataAccess: deleteDB()
 DataAccess ->> db: Delete Everything
-Handler --> Server: if(!exceptionThrown) "Database Cleared!"
-Server -> Client: 200\n"Database Cleared!"
-Handler -> Server: "Error Deleting Database: [exceptionThrown]"
-Server -> Client: 500\n"Error Deleting Database: [exceptionThrown]"
+Handler --> Server: {}
+Server --> Client: 200\n{}
+Server --> Client: catch(Exception)\n500\n{ "message": "Error: (description of error)" }
 end
