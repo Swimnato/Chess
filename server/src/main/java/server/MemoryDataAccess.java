@@ -12,9 +12,9 @@ import java.util.List;
 import dataaccess.DataAccessException;
 
 public class MemoryDataAccess implements DataStorage {
-    HashMap<String, UserData> userLookup;
-    HashMap<Integer, String> authTokenLookup;
-    HashMap<Integer, GameData> gameDataLookup;
+    private HashMap<String, UserData> userLookup;
+    private HashMap<Integer, String> authTokenLookup;
+    private HashMap<Integer, GameData> gameDataLookup;
 
     public MemoryDataAccess(){
         userLookup = new HashMap<>();
@@ -38,7 +38,7 @@ public class MemoryDataAccess implements DataStorage {
     @Override
     public UserData getUser(String _username) throws DataAccessException {
         if(!userLookup.containsKey(_username)){
-            throw new DataAccessException("User Does Not Exist");
+            throw new DataAccessException("{ \"message\": \"Error: bad request\" }");
         }
         return userLookup.get(_username);
     }
@@ -71,7 +71,7 @@ public class MemoryDataAccess implements DataStorage {
     @Override
     public void updateGame(GameData _gd) throws DataAccessException {
         if(!gameDataLookup.containsKey(_gd.getID())){
-            throw new DataAccessException("Game Does Not Exist!");
+            throw new DataAccessException("{ \"message\": \"Error: bad request\" }");
         }
         gameDataLookup.remove(_gd.getID());
         gameDataLookup.put(_gd.getID(), _gd);
@@ -85,7 +85,7 @@ public class MemoryDataAccess implements DataStorage {
     @Override
     public String getAuth(int authCode) throws DataAccessException {
         if(!authTokenLookup.containsKey(authCode)){
-            throw new DataAccessException("Invalid Auth Code!");
+            throw new DataAccessException("{ \"message\": \"Error: bad request\" }");
         }
         return authTokenLookup.get(authCode);
     }
@@ -93,7 +93,7 @@ public class MemoryDataAccess implements DataStorage {
     @Override
     public void deleteAuth(int authCode) throws DataAccessException {
         if(!authTokenLookup.containsKey(authCode)){
-            throw new DataAccessException("Invalid Auth Code!");
+            throw new DataAccessException("{ \"message\": \"Error: bad request\" }");
         }
         authTokenLookup.remove(authCode);
     }

@@ -1,9 +1,11 @@
 package chess.dataStructures;
 
+import java.util.Objects;
+
 public class UserData {
-    String username;
-    String password;
-    String email;
+    private String username;
+    private String password;
+    private String email;
 
     public UserData(String _un, String _pwd, String _eml){
         username = _un;
@@ -35,4 +37,16 @@ public class UserData {
         return password;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserData userData = (UserData) o;
+        return Objects.equals(getUsername(), userData.getUsername()) && Objects.equals(getPassword(), userData.getPassword()) && Objects.equals(getEmail(), userData.getEmail());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUsername(), getPassword(), getEmail());
+    }
 }
