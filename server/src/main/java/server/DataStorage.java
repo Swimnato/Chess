@@ -15,6 +15,7 @@ public interface DataStorage {
     public Collection<GameData> listGames();
     public Collection<GameData> listGames(String _username);
     public void updateGame(GameData _gd) throws DataAccessException ;
+    public int hasAuth(String username);
     public void createAuth(int authCode, String username);
     public String getAuth(int authCode) throws DataAccessException ;
     public void deleteAuth(int authCode) throws DataAccessException ;

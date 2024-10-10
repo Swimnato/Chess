@@ -14,12 +14,14 @@ import dataaccess.DataAccessException;
 public class MemoryDataAccess implements DataStorage {
     private HashMap<String, UserData> userLookup;
     private HashMap<Integer, String> authTokenLookup;
+    private HashMap<String, Integer> authTokenReverseLookup;
     private HashMap<Integer, GameData> gameDataLookup;
 
     public MemoryDataAccess(){
         userLookup = new HashMap<>();
         authTokenLookup = new HashMap<>();
         gameDataLookup = new HashMap<>();
+        authTokenReverseLookup = new HashMap<>();
     }
 
     @Override
@@ -27,6 +29,7 @@ public class MemoryDataAccess implements DataStorage {
         userLookup.clear();
         authTokenLookup.clear();
         gameDataLookup.clear();
+        authTokenReverseLookup.clear();
     }
 
     @Override
@@ -77,9 +80,19 @@ public class MemoryDataAccess implements DataStorage {
         gameDataLookup.put(_gd.getID(), _gd);
     }
 
+    public int hasAuth(String username){
+        if(authTokenReverseLookup.containsKey(username)){
+            return authTokenReverseLookup.get(username);
+        }
+        else{
+            return 0;
+        }
+    }
+
     @Override
     public void createAuth(int authCode, String username) {
         authTokenLookup.put(authCode, username);
+        authTokenReverseLookup.put(username, authCode);
     }
 
     @Override
@@ -95,6 +108,7 @@ public class MemoryDataAccess implements DataStorage {
         if(!authTokenLookup.containsKey(authCode)){
             throw new DataAccessException("Auth Does Not Exist!");
         }
+        authTokenReverseLookup.remove(authTokenLookup.get(authCode));
         authTokenLookup.remove(authCode);
     }
 }

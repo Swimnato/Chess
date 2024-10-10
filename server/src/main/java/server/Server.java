@@ -61,7 +61,7 @@ public class Server {
     }
 
     private Object register(Request req, Response res) throws DataAccessException {
-        registerInfo inputs
+        registerInfo inputs;
         try {
             inputs = new Gson().fromJson(req.body(), registerInfo.class);
         }
@@ -80,7 +80,21 @@ public class Server {
     }
 
     private Object login(Request req, Response res) throws DataAccessException {
-        throw new DataAccessException("Not Implemmented!");
+        LoginInfo inputs;
+        try {
+            inputs = new Gson().fromJson(req.body(), LoginInfo.class);
+        }
+        catch (Exception e){
+            res.status(400);
+            return "{ \"message\": \"Error: bad request\" }";
+        }
+        String username = inputs.getUsername();
+        String password = inputs.getPassword();
+        String output = service.login(username, password);
+        if(output.equals("{ \"message\": \"Error: unauthorized\" }")){
+            res.status(403);
+        }
+        return output;
     }
 
     private Object logout(Request req, Response res) throws DataAccessException {

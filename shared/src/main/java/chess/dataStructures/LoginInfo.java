@@ -1,17 +1,11 @@
 package chess.dataStructures;
 
-public class registerInfo {
+public class LoginInfo {
     private String username;
     private String password;
-    private String email;
-    public registerInfo(String _username, String _password, String _email){
+    public LoginInfo(String _username, String _password){
         username = _username;
         password = _password;
-        email = _email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public void setPassword(String password) {
@@ -28,9 +22,5 @@ public class registerInfo {
 
     public String getPassword() {
         return password;
-    }
-
-    public String getEmail() {
-        return email;
     }
 }

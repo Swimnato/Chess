@@ -43,7 +43,11 @@ public class Services {
     public String login(String _un, String _pwd) throws DataAccessException {
         UserData user = dataAccess.getUser(_un);
         if(user != null && user.getPassword().equals(_pwd)){
-            int authToken = createAuth(_un);
+            int authToken = dataAccess.hasAuth(_un);
+            if(authToken != 0) {
+                dataAccess.deleteAuth(authToken);
+            }
+            authToken = createAuth(_un);
             dataAccess.createAuth(authToken, _un);
             return new Gson().toJson(new usernameAuthTokenPair(authToken, _un), usernameAuthTokenPair.class);
         }
@@ -57,7 +61,8 @@ public class Services {
     }
 
     private int createAuth(String _Username){
-        return (int)((_Username.hashCode() * System.currentTimeMillis() * 1000003) % (2147483647)); // take the username hash code, multiply it by the current time and a large prime number, then mod that so that it is in integer bounds.
+        int auth = (int)((_Username.hashCode() * System.currentTimeMillis() * 1000003) % (2147483647)); // take the username hash code, multiply it by the current time and a large prime number, then mod that so that it is in integer bounds.
+        return (auth == 0 ? 1 : auth); //0 is an error value so we can't have that as a valid auth value;
     }
 
 }
