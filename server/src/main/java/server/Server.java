@@ -2,6 +2,9 @@ package server;
 
 import spark.*;
 import dataaccess.DataAccessException;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
 
 public class Server {
 
@@ -39,7 +42,7 @@ public class Server {
     }
 
     private Object listGames(Request req, Response res) throws DataAccessException {
-        throw new DataAccessException("Not Implemmented!");
+        return service.listGames();
     }
 
     private Object createGame(Request req, Response res) throws DataAccessException {
@@ -51,11 +54,24 @@ public class Server {
     }
 
     private Object clearApplication(Request req, Response res) throws DataAccessException {
-        throw new DataAccessException("Not Implemmented!");
+        service.clearApplication();
+        return "{}";
     }
 
     private Object register(Request req, Response res) throws DataAccessException {
-        throw new DataAccessException("Not Implemmented!");
+        var inputs = new Gson().fromJson(req.body(), ArrayList.class);
+        if(inputs.size() != 3){
+            res.status(400);
+            return "{ \"message\": \"Error: bad request\" }";
+        }
+        String username = (String) inputs.get(0);
+        String password = (String) inputs.get(1);
+        String email = (String) inputs.get(2);
+        String output = service.register(username, password, email);
+        if(output.equals("{ \"message\": \"Error: already taken\" }")){
+            res.status(403);
+        }
+        return output;
     }
 
     private Object login(Request req, Response res) throws DataAccessException {
