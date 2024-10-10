@@ -1,7 +1,7 @@
 package server;
 
 import chess.dataStructures.UserData;
-import chess.dataStructures.usernameAuthTokenPair;
+import chess.dataStructures.UsernameAuthTokenPair;
 import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import com.google.gson.Gson;
@@ -49,7 +49,7 @@ public class Services {
             }
             authToken = createAuth(_un);
             dataAccess.createAuth(authToken, _un);
-            return new Gson().toJson(new usernameAuthTokenPair(authToken, _un), usernameAuthTokenPair.class);
+            return new Gson().toJson(new UsernameAuthTokenPair(authToken, _un), UsernameAuthTokenPair.class);
         }
         else{
             return "{ \"message\": \"Error: unauthorized\" }";

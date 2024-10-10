@@ -1,10 +1,10 @@
 package chess.dataStructures;
 
-public class registerInfo {
+public class RegisterInfo {
     private String username;
     private String password;
     private String email;
-    public registerInfo(String _username, String _password, String _email){
+    public RegisterInfo(String _username, String _password, String _email){
         username = _username;
         password = _password;
         email = _email;

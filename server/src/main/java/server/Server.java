@@ -1,6 +1,5 @@
 package server;
 
-import chess.dataStructures.registerInfo;
 import spark.*;
 import dataaccess.DataAccessException;
 import com.google.gson.Gson;
@@ -61,9 +60,9 @@ public class Server {
     }
 
     private Object register(Request req, Response res) throws DataAccessException {
-        registerInfo inputs;
+        RegisterInfo inputs;
         try {
-            inputs = new Gson().fromJson(req.body(), registerInfo.class);
+            inputs = new Gson().fromJson(req.body(), RegisterInfo.class);
         }
         catch (Exception e){
             res.status(400);
