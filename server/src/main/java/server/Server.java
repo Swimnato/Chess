@@ -1,8 +1,10 @@
 package server;
 
+import chess.dataStructures.registerInfo;
 import spark.*;
 import dataaccess.DataAccessException;
 import com.google.gson.Gson;
+import chess.dataStructures.*;
 
 import java.util.ArrayList;
 
@@ -37,8 +39,8 @@ public class Server {
 
     private void exceptionHandler(DataAccessException ex, Request req, Response res) {
         System.out.println(ex.getMessage());
-        res.status(400);
-        res.body(ex.getMessage());
+        res.status(500);
+        res.body("{ \"message\": \"Error: " + ex.getMessage() + " \"}");
     }
 
     private Object listGames(Request req, Response res) throws DataAccessException {
@@ -59,14 +61,17 @@ public class Server {
     }
 
     private Object register(Request req, Response res) throws DataAccessException {
-        var inputs = new Gson().fromJson(req.body(), ArrayList.class);
-        if(inputs.size() != 3){
+        registerInfo inputs
+        try {
+            inputs = new Gson().fromJson(req.body(), registerInfo.class);
+        }
+        catch (Exception e){
             res.status(400);
             return "{ \"message\": \"Error: bad request\" }";
         }
-        String username = (String) inputs.get(0);
-        String password = (String) inputs.get(1);
-        String email = (String) inputs.get(2);
+        String username = inputs.getUsername();
+        String password = inputs.getPassword();
+        String email = inputs.getEmail();
         String output = service.register(username, password, email);
         if(output.equals("{ \"message\": \"Error: already taken\" }")){
             res.status(403);

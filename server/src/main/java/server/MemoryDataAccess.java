@@ -36,9 +36,9 @@ public class MemoryDataAccess implements DataStorage {
     }
 
     @Override
-    public UserData getUser(String _username) throws DataAccessException {
+    public UserData getUser(String _username){
         if(!userLookup.containsKey(_username)){
-            throw new DataAccessException("{ \"message\": \"Error: bad request\" }");
+            return null;
         }
         return userLookup.get(_username);
     }
@@ -71,7 +71,7 @@ public class MemoryDataAccess implements DataStorage {
     @Override
     public void updateGame(GameData _gd) throws DataAccessException {
         if(!gameDataLookup.containsKey(_gd.getID())){
-            throw new DataAccessException("{ \"message\": \"Error: bad request\" }");
+            throw new DataAccessException("Game Does Not Exist!");
         }
         gameDataLookup.remove(_gd.getID());
         gameDataLookup.put(_gd.getID(), _gd);
@@ -85,7 +85,7 @@ public class MemoryDataAccess implements DataStorage {
     @Override
     public String getAuth(int authCode) throws DataAccessException {
         if(!authTokenLookup.containsKey(authCode)){
-            throw new DataAccessException("{ \"message\": \"Error: bad request\" }");
+            throw new DataAccessException("Auth Does Not Exist!");
         }
         return authTokenLookup.get(authCode);
     }
@@ -93,7 +93,7 @@ public class MemoryDataAccess implements DataStorage {
     @Override
     public void deleteAuth(int authCode) throws DataAccessException {
         if(!authTokenLookup.containsKey(authCode)){
-            throw new DataAccessException("{ \"message\": \"Error: bad request\" }");
+            throw new DataAccessException("Auth Does Not Exist!");
         }
         authTokenLookup.remove(authCode);
     }

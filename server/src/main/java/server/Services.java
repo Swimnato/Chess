@@ -1,6 +1,7 @@
 package server;
 
 import chess.dataStructures.UserData;
+import chess.dataStructures.usernameAuthTokenPair;
 import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import com.google.gson.Gson;
@@ -31,24 +32,23 @@ public class Services {
     }
 
     public String register(String _un, String _pwd, String _eml) throws DataAccessException {
-        try{
-            UserData _test = dataAccess.getUser(_un);
-        } catch (DataAccessException e) {
-            if(!e.getMessage().equals("{ \"message\": \"Error: bad request\" }"))
-                throw new RuntimeException(e);
+        UserData _test = dataAccess.getUser(_un);
+        if(_test == null) {
             dataAccess.createUser(_un, _pwd, _eml);
             return login(_un, _pwd);
-        };
+        }
         return "{ \"message\": \"Error: already taken\" }";
     }
 
     public String login(String _un, String _pwd) throws DataAccessException {
         UserData user = dataAccess.getUser(_un);
-        if(user.getPassword().equals(_pwd)){
-
+        if(user != null && user.getPassword().equals(_pwd)){
+            int authToken = createAuth(_un);
+            dataAccess.createAuth(authToken, _un);
+            return new Gson().toJson(new usernameAuthTokenPair(authToken, _un), usernameAuthTokenPair.class);
         }
         else{
-            return
+            return "{ \"message\": \"Error: unauthorized\" }";
         }
     }
 

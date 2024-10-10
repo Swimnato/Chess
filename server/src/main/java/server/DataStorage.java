@@ -9,7 +9,7 @@ import java.util.Collection;
 public interface DataStorage {
     public void clear();
     public void createUser(String username, String password, String email);
-    public UserData getUser(String username) throws DataAccessException ;
+    public UserData getUser(String username);
     public UserData getUser(int authCode) throws DataAccessException ;
     public void createGame(GameData _gd);
     public Collection<GameData> listGames();
