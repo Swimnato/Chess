@@ -97,10 +97,28 @@ public class Server {
     }
 
     private Object logout(Request req, Response res) throws DataAccessException {
-        throw new DataAccessException("Not Implemmented!");
+        String returnVal;
+        try {
+            String request = req.headers("Authorization");
+            returnVal  = service.logout(Integer.parseInt(request));
+        }
+        catch (DataAccessException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            System.out.println(1);
+            res.status(401);
+            return "{ \"message\": \"Error: unauthorized\" }";
+        }
+        if(returnVal.equals("Auth Does Not Exist!")){
+            res.status(401);
+            return "{ \"message\": \"Error: unauthorized\" }";
+        }
+        return returnVal;
     }
 
     public void stop() {
+        service.clearApplication();
         Spark.stop();
         Spark.awaitStop();
     }

@@ -27,7 +27,7 @@ public class Services {
         throw new DataAccessException("Not Implemmented!");
     }
 
-    public void clearApplication() throws DataAccessException {
+    public void clearApplication(){
         dataAccess.clear();
     }
 
@@ -56,8 +56,14 @@ public class Services {
         }
     }
 
-    public String logout() throws DataAccessException {
-        throw new DataAccessException("Not Implemmented!");
+    public String logout(int AuthToken) throws DataAccessException {
+        try {
+            dataAccess.deleteAuth(AuthToken);
+        }
+        catch(DataAccessException e){
+            return "Auth Does Not Exist!";
+        }
+        return "{}";
     }
 
     private int createAuth(String _Username){
