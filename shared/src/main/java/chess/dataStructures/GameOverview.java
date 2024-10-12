@@ -7,8 +7,8 @@ public class GameOverview {
     private String gameName;
     public GameOverview(GameData input){
         gameID = input.getID();
-        whiteUsername = input.getPlayer1() == null? "" : input.getPlayer1();
-        blackUsername = input.getPlayer2() == null? "" : input.getPlayer2();
+        whiteUsername = input.getPlayer1();
+        blackUsername = input.getPlayer2();
         gameName = input.getName();
     }
     public GameOverview(int ID, String White, String Black, String Name){

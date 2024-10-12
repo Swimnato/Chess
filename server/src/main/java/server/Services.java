@@ -23,7 +23,7 @@ public class Services {
         for(var game : games){
             output.add(new GameOverview(game));
         }
-        return "{ \"Games\": " + new Gson().toJson(output) + "}";
+        return "{ \"games\": " + new Gson().toJson(output) + "}";
     }
 
     public String createGame(int AuthToken, String GameName) throws DataAccessException {
