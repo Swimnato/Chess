@@ -2,10 +2,10 @@ package chess.dataStructures;
 import chess.ChessGame;
 
 public class JoinGameInfo {
-    private ChessGame.TeamColor desiredColor;
+    private String playerColor;
     private int gameID;
-    JoinGameInfo(ChessGame.TeamColor color, int ID){
-        desiredColor = color;
+    JoinGameInfo(String color, int ID){
+        playerColor = color;
         gameID = ID;
     }
 
@@ -13,15 +13,15 @@ public class JoinGameInfo {
         this.gameID = gameID;
     }
 
-    public void setDesiredColor(ChessGame.TeamColor desiredColor) {
-        this.desiredColor = desiredColor;
+    public void setplayerColor(String desiredColor) {
+        this.playerColor = desiredColor;
     }
 
     public int getGameID() {
         return gameID;
     }
 
-    public ChessGame.TeamColor getDesiredColor() {
-        return desiredColor;
+    public String getplayerColor() {
+        return playerColor;
     }
 }

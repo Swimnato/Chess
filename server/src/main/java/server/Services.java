@@ -17,7 +17,11 @@ public class Services {
         dataAccess = _d;
     }
 
-    public String listGames() throws DataAccessException {
+    public String listGames(int authToken) throws DataAccessException {
+        var user = dataAccess.getUser(authToken);
+        if(user == null){
+            return "{ \"message\": \"Error: unauthorized\" }";
+        }
         var games = dataAccess.listGames();
         ArrayList<GameOverview> output = new ArrayList<>();
         for(var game : games){
@@ -41,7 +45,7 @@ public class Services {
         return new Gson().toJson(new GameID(gameID));
     }
 
-    public String joinGame(int gameID, ChessGame.TeamColor Color, int AuthToken) throws DataAccessException {
+    public String joinGame(int gameID, String Color, int AuthToken) throws DataAccessException {
         var user = dataAccess.getUser(AuthToken);
         if(user == null){
             return "{ \"message\": \"Error: unauthorized\" }";
@@ -51,18 +55,19 @@ public class Services {
         if(desiredGame == null){
             return "{ \"message\": \"Error: bad request\" }";
         }
-        if(Color == ChessGame.TeamColor.BLACK){
-            if(desiredGame.getPlayer2() != null){
-                return "{ \"message\": \"Error: already taken\" }";
-            }
-            desiredGame.setPlayer2(user.getUsername());
-        }
-        else{
+        if(Color.equals("WHITE")){
             if(desiredGame.getPlayer1() != null){
                 return "{ \"message\": \"Error: already taken\" }";
             }
             desiredGame.setPlayer1(user.getUsername());
         }
+        else{
+            if(desiredGame.getPlayer2() != null){
+                return "{ \"message\": \"Error: already taken\" }";
+            }
+            desiredGame.setPlayer2(user.getUsername());
+        }
+
         dataAccess.updateGame(desiredGame);
 
         return new Gson().toJson(new GameID(gameID));

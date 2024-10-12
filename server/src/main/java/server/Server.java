@@ -43,7 +43,20 @@ public class Server {
     }
 
     private Object listGames(Request req, Response res) throws DataAccessException {
-        return service.listGames();
+        int AuthToken = 0;
+        try{
+            String auth = req.headers("Authorization");
+            AuthToken = Integer.parseInt(auth);
+        }
+        catch(Exception e){
+            res.status(400);
+            return "{ \"message\": \"Error: bad request\" }";
+        }
+        String result = service.listGames(AuthToken);
+        if(result == "{ \"message\": \"Error: unauthorized\" }"){
+            res.status(401);
+        }
+        return result;
     }
 
     private Object createGame(Request req, Response res) throws DataAccessException {
@@ -83,7 +96,12 @@ public class Server {
             res.status(401);
             return "{ \"message\": \"Error: unauthorized\" }";
         }
-        String result = service.joinGame(inputs.getGameID(), inputs.getDesiredColor(), AuthToken);
+        System.out.println(inputs.getplayerColor());
+        if(inputs.getplayerColor() == null || (!inputs.getplayerColor().equals("WHITE") && !inputs.getplayerColor().equals("BLACK"))){
+            res.status(400);
+            return "{ \"message\": \"Error: bad request\" }";
+        }
+        String result = service.joinGame(inputs.getGameID(), inputs.getplayerColor(), AuthToken);
         if(result.equals("{ \"message\": \"Error: bad request\" }")){
             res.status(400);
         }
