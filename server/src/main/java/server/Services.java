@@ -23,13 +23,17 @@ public class Services {
     }
 
     public String createGame(int AuthToken, String GameName) throws DataAccessException {
-        int gameID = createAuth(GameName);
         var user = dataAccess.getUser(AuthToken);
         if(user == null){
             return "{ \"message\": \"Error: unauthorized\" }";
         }
-        GameData game = new GameData(new ChessGame(), GameName, gameID, user.getUsername());
-        dataAccess.createGame(game);
+        boolean result = false;
+        int gameID = 0;
+        while(!result) {
+            gameID = createAuth(GameName);
+            GameData game = new GameData(new ChessGame(), GameName, gameID, user.getUsername());
+            result = dataAccess.createGame(game);
+        }
         return new Gson().toJson(new GameID(gameID));
     }
 

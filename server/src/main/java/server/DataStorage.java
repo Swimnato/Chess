@@ -11,7 +11,7 @@ public interface DataStorage {
     public void createUser(String username, String password, String email);
     public UserData getUser(String username);
     public UserData getUser(int authCode) throws DataAccessException ;
-    public void createGame(GameData _gd);
+    public boolean createGame(GameData _gd);
     public Collection<GameData> listGames();
     public Collection<GameData> listGames(String _username);
     public void updateGame(GameData _gd) throws DataAccessException ;

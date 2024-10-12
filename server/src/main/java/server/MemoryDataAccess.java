@@ -16,12 +16,14 @@ public class MemoryDataAccess implements DataStorage {
     private HashMap<Integer, String> authTokenLookup;
     private HashMap<String, Integer> authTokenReverseLookup;
     private HashMap<Integer, GameData> gameDataLookup;
+    private HashMap<String, ArrayList<Integer>> gameUserLookup;
 
     public MemoryDataAccess(){
         userLookup = new HashMap<>();
         authTokenLookup = new HashMap<>();
         gameDataLookup = new HashMap<>();
         authTokenReverseLookup = new HashMap<>();
+        gameUserLookup = new HashMap<>();
     }
 
     @Override
@@ -30,6 +32,7 @@ public class MemoryDataAccess implements DataStorage {
         authTokenLookup.clear();
         gameDataLookup.clear();
         authTokenReverseLookup.clear();
+        gameUserLookup.clear();
     }
 
     @Override
@@ -57,8 +60,20 @@ public class MemoryDataAccess implements DataStorage {
     }
 
     @Override
-    public void createGame(GameData _gd) {
+    public boolean createGame(GameData _gd){
+        if(gameDataLookup.containsKey(_gd.getID())){
+            return false;
+        }
         gameDataLookup.put(_gd.getID(), _gd);
+        if(gameUserLookup.containsKey(_gd.getPlayer1())) {
+            gameUserLookup.get(_gd.getPlayer1()).add(_gd.getID());
+        }
+        else{
+            var IDList = new ArrayList<Integer>();
+            IDList.add(_gd.getID());
+            gameUserLookup.put(_gd.getPlayer1(), IDList);
+        }
+        return true;
     }
 
     @Override
