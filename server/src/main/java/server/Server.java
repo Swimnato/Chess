@@ -51,8 +51,8 @@ public class Server {
         int AuthToken = 0;
         try{
             info = new Gson().fromJson(req.body(), CreateGameInfo.class);
-            String request = req.headers("Authorization");
-            AuthToken = Integer.parseInt(request);
+            String auth = req.headers("Authorization");
+            AuthToken = Integer.parseInt(auth);
         }
         catch(Exception e){
             res.status(400);
@@ -66,7 +66,29 @@ public class Server {
     }
 
     private Object joinGame(Request req, Response res) throws DataAccessException {
-        throw new DataAccessException("Not Implemmented!");
+        JoinGameInfo inputs;
+        int AuthToken = 0;
+        try {
+            inputs = new Gson().fromJson(req.body(), JoinGameInfo.class);
+            String auth = req.headers("Authorization");
+            AuthToken = Integer.parseInt(auth);
+        }
+        catch (Exception e){
+            res.status(400);
+            return "{ \"message\": \"Error: bad request\" }";
+        }
+        String result = service.joinGame(inputs.getGameID(), inputs.getDesiredColor(), AuthToken);
+        if(result.equals("{ \"message\": \"Error: bad request\" }")){
+            res.status(400);
+        }
+        if(result.equals("{ \"message\": \"Error: unauthorized\" }")){
+            res.status(401);
+        }
+        if(result.equals("{ \"message\": \"Error: already taken\" }")){
+            res.status(403);
+        }
+
+        return result;
     }
 
     private Object clearApplication(Request req, Response res) throws DataAccessException {

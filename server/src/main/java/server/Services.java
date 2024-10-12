@@ -37,8 +37,29 @@ public class Services {
         return new Gson().toJson(new GameID(gameID));
     }
 
-    public String joinGame() throws DataAccessException {
-        throw new DataAccessException("Not Implemmented!");
+    public String joinGame(int gameID, ChessGame.TeamColor Color, int AuthToken) throws DataAccessException {
+        var user = dataAccess.getUser(AuthToken);
+        if(user == null){
+            return "{ \"message\": \"Error: unauthorized\" }";
+        }
+
+        GameData desiredGame = dataAccess.getGame(gameID);
+        if(desiredGame == null){
+            return "{ \"message\": \"Error: bad request\" }";
+        }
+        if(desiredGame.getPlayer2() != null){
+            return "{ \"message\": \"Error: already taken\" }";
+        }
+        if(Color == ChessGame.TeamColor.BLACK){
+            desiredGame.setPlayer2(user.getUsername());
+        }
+        else{
+            desiredGame.setPlayer2(desiredGame.getPlayer1());
+            desiredGame.setPlayer1(user.getUsername());
+        }
+        dataAccess.updateGame(desiredGame);
+
+        return new Gson().toJson(new GameID(gameID));
     }
 
     public void clearApplication(){

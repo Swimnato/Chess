@@ -16,14 +16,12 @@ public class MemoryDataAccess implements DataStorage {
     private HashMap<Integer, String> authTokenLookup;
     private HashMap<String, Integer> authTokenReverseLookup;
     private HashMap<Integer, GameData> gameDataLookup;
-    private HashMap<String, ArrayList<Integer>> gameUserLookup;
 
     public MemoryDataAccess(){
         userLookup = new HashMap<>();
         authTokenLookup = new HashMap<>();
         gameDataLookup = new HashMap<>();
         authTokenReverseLookup = new HashMap<>();
-        gameUserLookup = new HashMap<>();
     }
 
     @Override
@@ -32,7 +30,6 @@ public class MemoryDataAccess implements DataStorage {
         authTokenLookup.clear();
         gameDataLookup.clear();
         authTokenReverseLookup.clear();
-        gameUserLookup.clear();
     }
 
     @Override
@@ -60,20 +57,19 @@ public class MemoryDataAccess implements DataStorage {
     }
 
     @Override
-    public boolean createGame(GameData _gd){
-        if(gameDataLookup.containsKey(_gd.getID())){
+    public boolean createGame(GameData gameData){
+        if(gameDataLookup.containsKey(gameData.getID())){
             return false;
         }
-        gameDataLookup.put(_gd.getID(), _gd);
-        if(gameUserLookup.containsKey(_gd.getPlayer1())) {
-            gameUserLookup.get(_gd.getPlayer1()).add(_gd.getID());
-        }
-        else{
-            var IDList = new ArrayList<Integer>();
-            IDList.add(_gd.getID());
-            gameUserLookup.put(_gd.getPlayer1(), IDList);
-        }
+        gameDataLookup.put(gameData.getID(), gameData);
         return true;
+    }
+
+    public GameData getGame(int gameID){
+        if(gameDataLookup.containsKey(gameID)){
+            return gameDataLookup.get(gameID);
+        }
+        return null;
     }
 
     @Override
@@ -93,12 +89,12 @@ public class MemoryDataAccess implements DataStorage {
     }
 
     @Override
-    public void updateGame(GameData _gd) throws DataAccessException {
-        if(!gameDataLookup.containsKey(_gd.getID())){
+    public void updateGame(GameData gameData) throws DataAccessException {
+        if(!gameDataLookup.containsKey(gameData.getID())){
             throw new DataAccessException("Game Does Not Exist!");
         }
-        gameDataLookup.remove(_gd.getID());
-        gameDataLookup.put(_gd.getID(), _gd);
+        gameDataLookup.remove(gameData.getID());
+        gameDataLookup.put(gameData.getID(), gameData);
     }
 
     public int hasAuth(String username){

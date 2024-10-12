@@ -75,6 +75,8 @@ public class ServicesTest {
     @DisplayName("Login Test")
     public void loginTest() {
         String[] response = {"",""};
+        register();
+        registerTwice();
         try{
             response[0] = service.login("User", "Securepswd");
             response[1] = service.login("User2","EvenMoreSecurepswd");
@@ -90,6 +92,20 @@ public class ServicesTest {
 
     @Test
     @Order(4)
+    @DisplayName("Login Bad Credentials Test")
+    public void loginBadTest(){
+        try{
+            String response = service.login("FakeUser", "Nopswd");
+            Assertions.assertEquals("{ \"message\": \"Error: unauthorized\" }", response,
+                    "User wasn't created successfully! Got Response: " + response);
+        } catch (DataAccessException e) {
+            System.err.println("Exception Thrown: " + e.getMessage());
+            return;
+        }
+    }
+
+    @Test
+    @Order(5)
     @DisplayName("Logout User")
     public void logoutUser(){
         String response = "";
@@ -110,7 +126,7 @@ public class ServicesTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     @DisplayName("Clear users test")
     public void clearUsersTest() {
         String[] response = {"",""};
@@ -129,5 +145,23 @@ public class ServicesTest {
         Assertions.assertEquals("{ \"message\": \"Error: unauthorized\" }", response[1],
                 "User wasn't created successfully! Got Response: " + response[1]);
     }
+
+    @Test
+    @Order(7)
+    @DisplayName("Create Game Test")
+    public void createGame(){
+        try{
+            String response = service.register("ToBeDeleted","notImportant", "nada@gddm.com");
+            var info = new Gson().fromJson(response, UsernameAuthTokenPair.class);
+            response = service.createGame(info.getAuthToken(), "Big Cheeses' giant house");
+            Assertions.assertNotEquals("{ \"message\": \"Error: unauthorized\" }", response,
+                    "Game wasn't created successfully! Got Response: " + response);
+        } catch (DataAccessException e) {
+            System.err.println("Exception Thrown: " + e.getMessage());
+            return;
+        }
+    }
+
+
 
 }
