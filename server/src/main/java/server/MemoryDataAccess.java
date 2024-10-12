@@ -47,7 +47,13 @@ public class MemoryDataAccess implements DataStorage {
     }
 
     public UserData getUser(int authCode) throws DataAccessException {
-        return getUser(getAuth(authCode));
+        String username;
+        try{
+            username = getAuth(authCode);
+        } catch (DataAccessException e) {
+            return null;
+        }
+        return getUser(username);
     }
 
     @Override

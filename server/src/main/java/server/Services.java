@@ -1,5 +1,8 @@
 package server;
 
+import chess.ChessGame;
+import chess.dataStructures.GameData;
+import chess.dataStructures.GameID;
 import chess.dataStructures.UserData;
 import chess.dataStructures.UsernameAuthTokenPair;
 import com.google.gson.GsonBuilder;
@@ -19,8 +22,15 @@ public class Services {
         return new Gson().toJson(games);
     }
 
-    public String createGame() throws DataAccessException {
-        throw new DataAccessException("Not Implemmented!");
+    public String createGame(int AuthToken, String GameName) throws DataAccessException {
+        int gameID = createAuth(GameName);
+        var user = dataAccess.getUser(AuthToken);
+        if(user == null){
+            return "{ \"message\": \"Error: unauthorized\" }";
+        }
+        GameData game = new GameData(new ChessGame(), GameName, gameID, user.getUsername());
+        dataAccess.createGame(game);
+        return new Gson().toJson(new GameID(gameID));
     }
 
     public String joinGame() throws DataAccessException {
@@ -66,8 +76,8 @@ public class Services {
         return "{}";
     }
 
-    private int createAuth(String _Username){
-        int auth = (int)((_Username.hashCode() * System.currentTimeMillis() * 1000003) % (2147483647)); // take the username hash code, multiply it by the current time and a large prime number, then mod that so that it is in integer bounds.
+    private int createAuth(String input){
+        int auth = (int)((input.hashCode() * System.currentTimeMillis() * 1000003) % (2147483647)); // take the username hash code, multiply it by the current time and a large prime number, then mod that so that it is in integer bounds.
         return (auth == 0 ? 1 : auth); //0 is an error value so we can't have that as a valid auth value;
     }
 

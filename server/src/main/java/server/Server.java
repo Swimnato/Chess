@@ -47,7 +47,22 @@ public class Server {
     }
 
     private Object createGame(Request req, Response res) throws DataAccessException {
-        throw new DataAccessException("Not Implemmented!");
+        CreateGameInfo info;
+        int AuthToken = 0;
+        try{
+            info = new Gson().fromJson(req.body(), CreateGameInfo.class);
+            String request = req.headers("Authorization");
+            AuthToken = Integer.parseInt(request);
+        }
+        catch(Exception e){
+            res.status(400);
+            return "{ \"message\": \"Error: bad request\" }";
+        }
+        String response = service.createGame(AuthToken, info.getGameName());
+        if(response.equals("{ \"message\": \"Error: unauthorized\" }")){
+            res.status(401);
+        }
+        return response;
     }
 
     private Object joinGame(Request req, Response res) throws DataAccessException {

@@ -7,32 +7,41 @@ import java.util.Objects;
 
 public class GameData {
     private ChessGame game;
+    private String name;
     private String player1;
     private String player2;
     private final int ID;
-    public GameData(ChessGame _gme, int _ID){
+    public GameData(ChessGame _gme, String name, int _ID){
         game = _gme;
+        this.name = name;
         player1 = null;
         player2 = null;
         ID = _ID;
     }
-    public GameData(ChessGame _gme, int _ID , String _p1){
+    public GameData(ChessGame _gme, String name, int _ID , String _p1){
         game = _gme;
+        this.name = name;
         player1 = _p1;
         player2 = null;
         ID = _ID;
     }
-    public GameData(ChessGame _gme, int _ID , String _p1, String _p2){
+    public GameData(ChessGame _gme, String name, int _ID , String _p1, String _p2){
         game = _gme;
+        this.name = name;
         player1 = _p1;
         player2 = _p2;
         ID = _ID;
     }
-    public GameData(GameData _game){
-        game = _game.getGame();
-        player1 = _game.getPlayer1();
-        player2 = _game.getPlayer2();
-        ID = _game.getID();
+    public GameData(GameData gameToCopy){
+        game = gameToCopy.getGame();
+        this.name = gameToCopy.getName();
+        player1 = gameToCopy.getPlayer1();
+        player2 = gameToCopy.getPlayer2();
+        ID = gameToCopy.getID();
+    }
+
+    public String getName() {
+        return name;
     }
 
     public boolean hasPlayer(String _username){

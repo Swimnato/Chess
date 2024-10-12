@@ -111,8 +111,8 @@ public class ServicesTest {
 
     @Test
     @Order(5)
-    @DisplayName("Clear database test")
-    public void clearTest() {
+    @DisplayName("Clear users test")
+    public void clearUsersTest() {
         String[] response = {"",""};
         try{
             service.register("User3", "Securepswd", "Your@facebook.com");
