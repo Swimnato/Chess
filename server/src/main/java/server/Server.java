@@ -70,12 +70,18 @@ public class Server {
         int AuthToken = 0;
         try {
             inputs = new Gson().fromJson(req.body(), JoinGameInfo.class);
-            String auth = req.headers("Authorization");
-            AuthToken = Integer.parseInt(auth);
         }
         catch (Exception e){
             res.status(400);
             return "{ \"message\": \"Error: bad request\" }";
+        }
+        try {
+            String auth = req.headers("Authorization");
+            AuthToken = Integer.parseInt(auth);
+        }
+        catch (Exception e){
+            res.status(401);
+            return "{ \"message\": \"Error: unauthorized\" }";
         }
         String result = service.joinGame(inputs.getGameID(), inputs.getDesiredColor(), AuthToken);
         if(result.equals("{ \"message\": \"Error: bad request\" }")){
@@ -108,6 +114,10 @@ public class Server {
         String username = inputs.getUsername();
         String password = inputs.getPassword();
         String email = inputs.getEmail();
+        if(username == null || password == null || email == null){
+            res.status(400);
+            return "{ \"message\": \"Error: bad request\" }";
+        }
         String output = service.register(username, password, email);
         if(output.equals("{ \"message\": \"Error: already taken\" }")){
             res.status(403);
@@ -128,7 +138,7 @@ public class Server {
         String password = inputs.getPassword();
         String output = service.login(username, password);
         if(output.equals("{ \"message\": \"Error: unauthorized\" }")){
-            res.status(403);
+            res.status(401);
         }
         return output;
     }

@@ -1,14 +1,14 @@
 package server;
 
 import chess.ChessGame;
-import chess.dataStructures.GameData;
-import chess.dataStructures.GameID;
-import chess.dataStructures.UserData;
-import chess.dataStructures.UsernameAuthTokenPair;
+import chess.dataStructures.*;
 import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import com.google.gson.Gson;
 import org.eclipse.jetty.server.Authentication;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class Services {
     private DataStorage dataAccess;
@@ -19,7 +19,11 @@ public class Services {
 
     public String listGames() throws DataAccessException {
         var games = dataAccess.listGames();
-        return new Gson().toJson(games);
+        ArrayList<GameOverview> output = new ArrayList<>();
+        for(var game : games){
+            output.add(new GameOverview(game));
+        }
+        return "{ \"Games\": " + new Gson().toJson(output) + "}";
     }
 
     public String createGame(int AuthToken, String GameName) throws DataAccessException {
@@ -30,8 +34,8 @@ public class Services {
         boolean result = false;
         int gameID = 0;
         while(!result) {
-            gameID = createAuth(GameName);
-            GameData game = new GameData(new ChessGame(), GameName, gameID, user.getUsername());
+            gameID = createGameID(GameName);
+            GameData game = new GameData(new ChessGame(), GameName, gameID);
             result = dataAccess.createGame(game);
         }
         return new Gson().toJson(new GameID(gameID));
@@ -47,14 +51,16 @@ public class Services {
         if(desiredGame == null){
             return "{ \"message\": \"Error: bad request\" }";
         }
-        if(desiredGame.getPlayer2() != null){
-            return "{ \"message\": \"Error: already taken\" }";
-        }
         if(Color == ChessGame.TeamColor.BLACK){
+            if(desiredGame.getPlayer2() != null){
+                return "{ \"message\": \"Error: already taken\" }";
+            }
             desiredGame.setPlayer2(user.getUsername());
         }
         else{
-            desiredGame.setPlayer2(desiredGame.getPlayer1());
+            if(desiredGame.getPlayer1() != null){
+                return "{ \"message\": \"Error: already taken\" }";
+            }
             desiredGame.setPlayer1(user.getUsername());
         }
         dataAccess.updateGame(desiredGame);
@@ -79,9 +85,9 @@ public class Services {
         UserData user = dataAccess.getUser(_un);
         if(user != null && user.getPassword().equals(_pwd)){
             int authToken = dataAccess.hasAuth(_un);
-            if(authToken != 0) {
+            /*if(authToken != 0) {
                 dataAccess.deleteAuth(authToken);
-            }
+            }*/
             authToken = createAuth(_un);
             dataAccess.createAuth(authToken, _un);
             return new Gson().toJson(new UsernameAuthTokenPair(authToken, _un), UsernameAuthTokenPair.class);
@@ -104,6 +110,11 @@ public class Services {
     private int createAuth(String input){
         int auth = (int)((input.hashCode() * System.currentTimeMillis() * 1000003) % (2147483647)); // take the username hash code, multiply it by the current time and a large prime number, then mod that so that it is in integer bounds.
         return (auth == 0 ? 1 : auth); //0 is an error value so we can't have that as a valid auth value;
+    }
+
+    private int createGameID(String input){
+        int auth = (int)((input.hashCode() * System.currentTimeMillis() * 1000003) % (2147483647)); // take the username hash code, multiply it by the current time and a large prime number, then mod that so that it is in integer bounds.
+        return (auth == 0 ? 1 : auth) < 0 ? -auth: auth; // <= 0 is an error value so we can't have that as a valid auth value;
     }
 
 }
