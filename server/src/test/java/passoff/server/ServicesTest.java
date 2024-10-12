@@ -162,6 +162,20 @@ public class ServicesTest {
         }
     }
 
+    @Test
+    @Order(8)
+    @DisplayName("Create Game Test Unauthorized")
+    public void createGameNoAuth(){
+        try{
+            String response = service.createGame(127001, "Big Cheeses' giant house");
+            Assertions.assertEquals("{ \"message\": \"Error: unauthorized\" }", response,
+                    "Game wasn't created successfully! Got Response: " + response);
+        } catch (DataAccessException e) {
+            System.err.println("Exception Thrown: " + e.getMessage());
+            return;
+        }
+    }
+
 
 
 }
