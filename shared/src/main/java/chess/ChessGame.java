@@ -304,7 +304,7 @@ public class ChessGame {
         }
         ChessPosition kingPos = kingPosition(teamColor);
         if (!kingPos.isValid(mainBoard)) {
-            return false;
+            return false; // again, the tests necesitate this.
         }
         var moves = getAllTeamMoves(teamColor);
         return moves.isEmpty();

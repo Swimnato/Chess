@@ -77,6 +77,8 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
+
+    //I know this name goes against java naming conventions, but I am not allowed to change this :(
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Rules ruleset = switch (myType) {
             case BISHOP -> new BishopRules();

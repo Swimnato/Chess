@@ -38,7 +38,7 @@ public class ChessPosition {
     }
 
     public boolean isValid(ChessBoard board) {
-        if (row > 0 && col > 0 && row <= board.getRows() && col <= board.getCols()) {
+        if (row > 0 && col > 0 && row <= board.getRows() && col <= board.getCols()) { // is in board bounds
             return true;
         }
         return false;

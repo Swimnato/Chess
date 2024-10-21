@@ -82,10 +82,10 @@ public class ChessBoard {
 
     public int movePiece(ChessMove move) {
         if (!(move.getEndPosition().isValid(this)) && !(move.getStartPosition().isValid(this))) {
-            return 1;
+            return 1; // error code invalid position.
         }
         if (getPiece(move.getStartPosition()) == null) {
-            return 2;
+            return 2; // error code no start position
         }
         if (getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN && move.getStartPosition().getColumn() != move.getEndPosition().getColumn() && getPiece(move.getEndPosition()) == null) {
             addPiece(new ChessPosition(move.getStartPosition().getRow(), move.getEndPosition().getColumn()), null);
