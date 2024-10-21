@@ -19,11 +19,12 @@ public class Rules {
 
     public Collection<ChessMove> generateMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> output = new HashSet<ChessMove>();
+        //make a move for each position in the moveset
         for (var move : moveset) {
             int row = myPosition.getRow() + move[0];
             int col = myPosition.getColumn() + move[1];
             ChessPiece myself = board.getPiece(myPosition);
-            while (true) {
+            while (true) { // repeat the move until the edge
                 ChessPosition newPos = new ChessPosition(row, col);
                 if (newPos.isValid(board)) {
                     ChessPiece pieceAtPos = board.getPiece(newPos);
@@ -40,7 +41,7 @@ public class Rules {
                 } else { // is not a valid position
                     break;
                 }
-                if (!repeats) { // if we aren't supposed to repeat this move
+                if (!repeats) { // if we aren't supposed to repeat this move break out of loop
                     break;
                 }
             }

@@ -59,18 +59,19 @@ public class ChessGame {
         if (currentPiece == null) {
             return null;
         }
+
         ChessPiece.PieceType currentType = currentPiece.getPieceType();
         TeamColor currentColor = currentPiece.getTeamColor();
         ArrayList<ChessMove> output = new ArrayList<>();
         ArrayList<ChessMove> pieceMoves = switch (currentType) {
             case KING -> new ArrayList<>(validKingMoves(currentPiece, startPosition));
-            case PAWN -> new ArrayList<>(validPawnMoves(currentPiece, startPosition));
+            case PAWN -> new ArrayList<>(validPawnMoves(currentPiece, startPosition)); // needed for enpassant
             default -> new ArrayList<>(currentPiece.pieceMoves(mainBoard, startPosition));
         };
         for (var move : pieceMoves) {
             ChessBoard boardBackup = new ChessBoard(mainBoard);
             mainBoard.movePiece(move);
-            if (!isInCheck(currentColor)) {
+            if (!isInCheck(currentColor)) { // make sure this move won't expose the king
                 output.add(move);
             }
             mainBoard = new ChessBoard(boardBackup);
@@ -226,6 +227,7 @@ public class ChessGame {
                 }
             }
         }
+
         return allPossibleMovesForOtherPieces.contains(kingPos);
     }
 
@@ -235,13 +237,15 @@ public class ChessGame {
         ChessPosition kingPos = null;
         byte x = 1;
         byte y = 1;
+
         while (currentKing == null || currentKing.getTeamColor() != teamColor || currentKing.getPieceType() != ChessPiece.PieceType.KING) {
             kingPos = new ChessPosition(x, y);
             if (!kingPos.isValid(mainBoard)) {
                 return new ChessPosition(0, 0);
                 /*   Originally I made this code to throw an exception, because there should never be
                 a chess game with no king, but several of the test cases have no kings, so to make
-                the tests run I had to get rid of this :(                  */
+                the tests run I had to get rid of this and add a default value :(              */
+
                 //throw new RuntimeException("No " + teamColor + " King Exists!");
             }
             currentKing = mainBoard.getPiece(kingPos);
@@ -251,6 +255,7 @@ public class ChessGame {
                 y++;
             }
         }
+
         return kingPos;
     }
 
@@ -266,6 +271,7 @@ public class ChessGame {
                 }
             }
         }
+
         return moves;
     }
 
@@ -278,7 +284,7 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         ChessPosition kingPos = kingPosition(teamColor);
         if (!kingPos.isValid(mainBoard)) {
-            return false;
+            return false; // if the king doesn't exist, we need to return that he isn't in checkmate, it sounds stupid, and it is, but the tests require this not to throw an error, since no piece can move if it exposes the king to checkmate and this would make some tests impossible.
         }
         var moves = getAllTeamMoves(teamColor);
 

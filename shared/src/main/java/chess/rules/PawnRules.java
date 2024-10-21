@@ -14,14 +14,17 @@ public class PawnRules extends Rules {
 
     @Override
     public Collection<ChessMove> generateMoves(ChessBoard board, ChessPosition myPosition) {
+
         ChessPiece myself = board.getPiece(myPosition);
         HashSet<ChessMove> output = new HashSet<ChessMove>();
         ChessGame.TeamColor myColor = myself.getTeamColor();
         int direction = myColor == ChessGame.TeamColor.WHITE ? 1 : -1;
+
+        //test in front of pawn for a move
         int row = myPosition.getRow() + direction;
         int col = myPosition.getColumn();
         ChessPosition newPos = new ChessPosition(row, col);
-        if (!newPos.isValid(board)) {
+        if (!newPos.isValid(board)) { // if pawn is at edge of board, shouldn't ever happen, but some test cases are weird and I was required to add this
             return output;
         }
         ChessPiece pieceAtPos = board.getPiece(newPos);
@@ -33,9 +36,9 @@ public class PawnRules extends Rules {
                 output.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.KNIGHT));
                 output.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.QUEEN));
                 output.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.BISHOP));
-            } else {
+            } else { // isn't at end of board
                 output.add(new ChessMove(myPosition, newPos, null));
-                if (row - direction == ((myColor == ChessGame.TeamColor.WHITE) ? 2 : (board.getRows() - 1))) {
+                if (row - direction == ((myColor == ChessGame.TeamColor.WHITE) ? 2 : (board.getRows() - 1))) { // if it is in the starting position, check for a two space move.
                     row += direction;
                     newPos = new ChessPosition(row, col);
                     pieceAtPos = board.getPiece(newPos);
