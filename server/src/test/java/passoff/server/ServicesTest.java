@@ -51,7 +51,7 @@ public class ServicesTest {
     ;
 
     @BeforeAll
-    public static void init() {
+    public static void init() throws DataAccessException {
         service = new Services(new MemoryDataAccess());
     }
 

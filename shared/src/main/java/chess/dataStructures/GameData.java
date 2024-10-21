@@ -11,28 +11,32 @@ public class GameData {
     private String player1;
     private String player2;
     private final int ID;
-    public GameData(ChessGame _gme, String name, int _ID){
+
+    public GameData(ChessGame _gme, String name, int _ID) {
         game = _gme;
         this.name = name;
         player1 = null;
         player2 = null;
         ID = _ID;
     }
-    public GameData(ChessGame _gme, String name, int _ID , String _p1){
+
+    public GameData(ChessGame _gme, String name, int _ID, String _p1) {
         game = _gme;
         this.name = name;
         player1 = _p1;
         player2 = null;
         ID = _ID;
     }
-    public GameData(ChessGame _gme, String name, int _ID , String _p1, String _p2){
+
+    public GameData(ChessGame _gme, String name, int _ID, String _p1, String _p2) {
         game = _gme;
         this.name = name;
         player1 = _p1;
         player2 = _p2;
         ID = _ID;
     }
-    public GameData(GameData gameToCopy){
+
+    public GameData(GameData gameToCopy) {
         game = gameToCopy.getGame();
         this.name = gameToCopy.getName();
         player1 = gameToCopy.getPlayer1();
@@ -44,23 +48,25 @@ public class GameData {
         return name;
     }
 
-    public boolean hasPlayer(String _username){
-        return (player1.equals(_username)) || (player2.equals(_username));
+    public boolean hasPlayer(String _username) {
+        boolean isPlayer1 = (player1 != null && player1.equals(_username));
+        boolean isPlayer2 = (player2 != null && player2.equals(_username));
+        return isPlayer1 || isPlayer2;
     }
 
     public int getID() {
         return ID;
     }
 
-    public void updateBoard(ChessGame _gme){
+    public void updateBoard(ChessGame _gme) {
         game = _gme;
     }
 
-    public void setPlayer1(String _p1){
+    public void setPlayer1(String _p1) {
         player1 = _p1;
     }
 
-    public void setPlayer2(String _p2){
+    public void setPlayer2(String _p2) {
         player2 = _p2;
     }
 
@@ -78,10 +84,10 @@ public class GameData {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj){
+        if (this == obj) {
             return true;
         }
-        if(obj == null || obj.getClass() != this.getClass()){
+        if (obj == null || obj.getClass() != this.getClass()) {
             return false;
         }
         return ((GameData) obj).getGame().equals(game) && ((GameData) obj).getID() == ID && ((GameData) obj).getPlayer2().equals(player2) && ((GameData) obj).getPlayer1().equals(player1);

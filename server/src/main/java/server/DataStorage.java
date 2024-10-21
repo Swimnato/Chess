@@ -9,25 +9,25 @@ import java.util.Collection;
 public interface DataStorage {
     public void clear();
 
-    public void createUser(String username, String password, String email);
+    public void createUser(String username, String password, String email) throws DataAccessException;
 
-    public UserData getUser(String username);
+    public UserData getUser(String username) throws DataAccessException;
 
     public UserData getUser(int authCode) throws DataAccessException;
 
-    public boolean createGame(GameData gameData);
+    public boolean createGame(GameData gameData) throws DataAccessException;
 
-    public GameData getGame(int gameID);
+    public GameData getGame(int gameID) throws DataAccessException;
 
-    public Collection<GameData> listGames();
+    public Collection<GameData> listGames() throws DataAccessException;
 
-    public Collection<GameData> listGames(String _username);
+    public Collection<GameData> listGames(String _username) throws DataAccessException;
 
     public void updateGame(GameData gameData) throws DataAccessException;
 
-    public int hasAuth(String username);
+    public int hasAuth(String username) throws DataAccessException;
 
-    public void createAuth(int authCode, String username);
+    public void createAuth(int authCode, String username) throws DataAccessException;
 
     public String getAuth(int authCode) throws DataAccessException;
 

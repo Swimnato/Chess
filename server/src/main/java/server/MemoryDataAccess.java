@@ -17,7 +17,7 @@ public class MemoryDataAccess implements DataStorage {
     private HashMap<String, Integer> authTokenReverseLookup;
     private HashMap<Integer, GameData> gameDataLookup;
 
-    public MemoryDataAccess(){
+    public MemoryDataAccess() {
         userLookup = new HashMap<>();
         authTokenLookup = new HashMap<>();
         gameDataLookup = new HashMap<>();
@@ -39,16 +39,17 @@ public class MemoryDataAccess implements DataStorage {
     }
 
     @Override
-    public UserData getUser(String _username){
-        if(!userLookup.containsKey(_username)){
+    public UserData getUser(String _username) {
+        if (!userLookup.containsKey(_username)) {
             return null;
         }
         return userLookup.get(_username);
     }
 
+    @Override
     public UserData getUser(int authCode) throws DataAccessException {
         String username;
-        try{
+        try {
             username = getAuth(authCode);
         } catch (DataAccessException e) {
             return null;
@@ -57,16 +58,17 @@ public class MemoryDataAccess implements DataStorage {
     }
 
     @Override
-    public boolean createGame(GameData gameData){
-        if(gameDataLookup.containsKey(gameData.getID())){
+    public boolean createGame(GameData gameData) {
+        if (gameDataLookup.containsKey(gameData.getID())) {
             return false;
         }
         gameDataLookup.put(gameData.getID(), gameData);
         return true;
     }
 
-    public GameData getGame(int gameID){
-        if(gameDataLookup.containsKey(gameID)){
+    @Override
+    public GameData getGame(int gameID) {
+        if (gameDataLookup.containsKey(gameID)) {
             return gameDataLookup.get(gameID);
         }
         return null;
@@ -77,11 +79,12 @@ public class MemoryDataAccess implements DataStorage {
         return gameDataLookup.values();
     }
 
-    public Collection<GameData> listGames(String _username){
+    @Override
+    public Collection<GameData> listGames(String _username) {
         ArrayList<GameData> games = new ArrayList<>(gameDataLookup.values());
         var output = new ArrayList<GameData>();
-        for(var game : games){
-            if(game.hasPlayer(_username)){
+        for (var game : games) {
+            if (game.hasPlayer(_username)) {
                 output.add(new GameData(game));
             }
         }
@@ -90,18 +93,18 @@ public class MemoryDataAccess implements DataStorage {
 
     @Override
     public void updateGame(GameData gameData) throws DataAccessException {
-        if(!gameDataLookup.containsKey(gameData.getID())){
+        if (!gameDataLookup.containsKey(gameData.getID())) {
             throw new DataAccessException("Game Does Not Exist!");
         }
         gameDataLookup.remove(gameData.getID());
         gameDataLookup.put(gameData.getID(), gameData);
     }
 
-    public int hasAuth(String username){
-        if(authTokenReverseLookup.containsKey(username)){
+    @Override
+    public int hasAuth(String username) {
+        if (authTokenReverseLookup.containsKey(username)) {
             return authTokenReverseLookup.get(username);
-        }
-        else{
+        } else {
             return 0;
         }
     }
@@ -114,7 +117,7 @@ public class MemoryDataAccess implements DataStorage {
 
     @Override
     public String getAuth(int authCode) throws DataAccessException {
-        if(!authTokenLookup.containsKey(authCode)){
+        if (!authTokenLookup.containsKey(authCode)) {
             throw new DataAccessException("Auth Does Not Exist!");
         }
         return authTokenLookup.get(authCode);
@@ -122,7 +125,7 @@ public class MemoryDataAccess implements DataStorage {
 
     @Override
     public void deleteAuth(int authCode) throws DataAccessException {
-        if(!authTokenLookup.containsKey(authCode)){
+        if (!authTokenLookup.containsKey(authCode)) {
             throw new DataAccessException("Auth Does Not Exist!");
         }
         authTokenReverseLookup.remove(authTokenLookup.get(authCode));

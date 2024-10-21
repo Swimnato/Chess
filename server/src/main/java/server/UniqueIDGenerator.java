@@ -4,7 +4,8 @@ import java.util.UUID;
 
 public class UniqueIDGenerator {
     public int createAuth() {
-        return UUID.randomUUID().hashCode();
+        int value = UUID.randomUUID().hashCode();
+        return value == 0 ? 1 : value;
     }
 
     public int createGameID(String input) {
