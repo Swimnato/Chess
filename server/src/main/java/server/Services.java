@@ -12,19 +12,20 @@ import java.util.ArrayList;
 
 public class Services {
     private DataStorage dataAccess;
+    private static final UniqueIDGenerator IDGenerator = new UniqueIDGenerator();
 
-    public Services(DataStorage _d){
+    public Services(DataStorage _d) {
         dataAccess = _d;
     }
 
     public String listGames(int authToken) throws DataAccessException {
         var user = dataAccess.getUser(authToken);
-        if(user == null){
+        if (user == null) {
             return "{ \"message\": \"Error: unauthorized\" }";
         }
         var games = dataAccess.listGames();
         ArrayList<GameOverview> output = new ArrayList<>();
-        for(var game : games){
+        for (var game : games) {
             output.add(new GameOverview(game));
         }
         return "{ \"games\": " + new Gson().toJson(output) + "}";
@@ -32,37 +33,36 @@ public class Services {
 
     public String createGame(int AuthToken, String GameName) throws DataAccessException {
         var user = dataAccess.getUser(AuthToken);
-        if(user == null){
+        if (user == null) {
             return "{ \"message\": \"Error: unauthorized\" }";
         }
         boolean result = false;
         int gameID = 0;
-        while(!result) {
-            gameID = createGameID(GameName);
+        while (!result) {
+            gameID = IDGenerator.createGameID(GameName);
             GameData game = new GameData(new ChessGame(), GameName, gameID);
             result = dataAccess.createGame(game);
         }
         return new Gson().toJson(new GameID(gameID));
     }
 
-    public String joinGame(int gameID, String Color, int AuthToken) throws DataAccessException {
+    public String joinGame(Integer gameID, String Color, int AuthToken) throws DataAccessException {
         var user = dataAccess.getUser(AuthToken);
-        if(user == null){
+        if (user == null) {
             return "{ \"message\": \"Error: unauthorized\" }";
         }
 
         GameData desiredGame = dataAccess.getGame(gameID);
-        if(desiredGame == null){
+        if (desiredGame == null) {
             return "{ \"message\": \"Error: bad request\" }";
         }
-        if(Color.equals("WHITE")){
-            if(desiredGame.getPlayer1() != null){
+        if (Color.equals("WHITE")) {
+            if (desiredGame.getPlayer1() != null) {
                 return "{ \"message\": \"Error: already taken\" }";
             }
             desiredGame.setPlayer1(user.getUsername());
-        }
-        else{
-            if(desiredGame.getPlayer2() != null){
+        } else {
+            if (desiredGame.getPlayer2() != null) {
                 return "{ \"message\": \"Error: already taken\" }";
             }
             desiredGame.setPlayer2(user.getUsername());
@@ -73,13 +73,13 @@ public class Services {
         return new Gson().toJson(new GameID(gameID));
     }
 
-    public void clearApplication(){
+    public void clearApplication() {
         dataAccess.clear();
     }
 
     public String register(String _un, String _pwd, String _eml) throws DataAccessException {
         UserData _test = dataAccess.getUser(_un);
-        if(_test == null) {
+        if (_test == null) {
             dataAccess.createUser(_un, _pwd, _eml);
             return login(_un, _pwd);
         }
@@ -88,16 +88,15 @@ public class Services {
 
     public String login(String _un, String _pwd) throws DataAccessException {
         UserData user = dataAccess.getUser(_un);
-        if(user != null && user.getPassword().equals(_pwd)){
+        if (user != null && user.getPassword().equals(_pwd)) {
             int authToken = dataAccess.hasAuth(_un);
             /*if(authToken != 0) {
                 dataAccess.deleteAuth(authToken);
             }*/
-            authToken = createAuth(_un);
+            authToken = IDGenerator.createAuth();
             dataAccess.createAuth(authToken, _un);
             return new Gson().toJson(new UsernameAuthTokenPair(authToken, _un), UsernameAuthTokenPair.class);
-        }
-        else{
+        } else {
             return "{ \"message\": \"Error: unauthorized\" }";
         }
     }
@@ -105,21 +104,10 @@ public class Services {
     public String logout(int AuthToken) throws DataAccessException {
         try {
             dataAccess.deleteAuth(AuthToken);
-        }
-        catch(DataAccessException e){
+        } catch (DataAccessException e) {
             return "Auth Does Not Exist!";
         }
         return "{}";
-    }
-
-    private int createAuth(String input){
-        int auth = (int)((input.hashCode() * System.currentTimeMillis() * 1000003) % (2147483647)); // take the username hash code, multiply it by the current time and a large prime number, then mod that so that it is in integer bounds.
-        return (auth == 0 ? 1 : auth); //0 is an error value so we can't have that as a valid auth value;
-    }
-
-    private int createGameID(String input){
-        int auth = (int)((input.hashCode() * System.currentTimeMillis() * 1000003) % (2147483647)); // take the username hash code, multiply it by the current time and a large prime number, then mod that so that it is in integer bounds.
-        return (auth == 0 ? 1 : auth) < 0 ? -auth: auth; // <= 0 is an error value so we can't have that as a valid auth value;
     }
 
 }
