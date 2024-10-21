@@ -14,20 +14,23 @@ public class Services {
     private DataStorage dataAccess;
     private static final UniqueIDGenerator IDGenerator = new UniqueIDGenerator();
 
-    public Services(DataStorage _d) {
-        dataAccess = _d;
+    public Services(DataStorage desiredPersistance) {
+        dataAccess = desiredPersistance;
     }
 
     public String listGames(int authToken) throws DataAccessException {
+
         var user = dataAccess.getUser(authToken);
         if (user == null) {
             return "{ \"message\": \"Error: unauthorized\" }";
         }
+
         var games = dataAccess.listGames();
         ArrayList<GameOverview> output = new ArrayList<>();
         for (var game : games) {
             output.add(new GameOverview(game));
         }
+
         return "{ \"games\": " + new Gson().toJson(output) + "}";
     }
 
@@ -36,13 +39,15 @@ public class Services {
         if (user == null) {
             return "{ \"message\": \"Error: unauthorized\" }";
         }
+
         boolean result = false;
         int gameID = 0;
-        while (!result) {
+        while (!result) { // this makes sure that should our game ID number repeat, that it will generate a new one
             gameID = IDGenerator.createGameID(GameName);
             GameData game = new GameData(new ChessGame(), GameName, gameID);
             result = dataAccess.createGame(game);
         }
+
         return new Gson().toJson(new GameID(gameID));
     }
 
@@ -57,12 +62,12 @@ public class Services {
             return "{ \"message\": \"Error: bad request\" }";
         }
         if (Color.equals("WHITE")) {
-            if (desiredGame.getPlayer1() != null) {
+            if (desiredGame.getPlayer1() != null) { //make sure white is free
                 return "{ \"message\": \"Error: already taken\" }";
             }
             desiredGame.setPlayer1(user.getUsername());
         } else {
-            if (desiredGame.getPlayer2() != null) {
+            if (desiredGame.getPlayer2() != null) { //make sure black is free
                 return "{ \"message\": \"Error: already taken\" }";
             }
             desiredGame.setPlayer2(user.getUsername());
@@ -77,25 +82,34 @@ public class Services {
         dataAccess.clear();
     }
 
-    public String register(String _un, String _pwd, String _eml) throws DataAccessException {
-        UserData _test = dataAccess.getUser(_un);
-        if (_test == null) {
-            dataAccess.createUser(_un, _pwd, _eml);
-            return login(_un, _pwd);
+    public String register(String username, String password, String email) throws DataAccessException {
+        UserData test = dataAccess.getUser(username);
+
+        if (test == null) {
+            dataAccess.createUser(username, password, email);
+            return login(username, password);
         }
+
         return "{ \"message\": \"Error: already taken\" }";
     }
 
-    public String login(String _un, String _pwd) throws DataAccessException {
-        UserData user = dataAccess.getUser(_un);
-        if (user != null && user.getPassword().equals(_pwd)) {
-            int authToken = dataAccess.hasAuth(_un);
+    public String login(String username, String password) throws DataAccessException {
+        UserData user = dataAccess.getUser(username);
+        if (user != null && user.getPassword().equals(password)) {
+            int authToken = dataAccess.hasAuth(username);
+
+            /* These next 3 lines are to assure that you never get more than one auth token for each user
+            the TA tests require the use of outdated tokens though sadly so I had to remove this to pass
+            the passoff. */
+
             /*if(authToken != 0) {
                 dataAccess.deleteAuth(authToken);
             }*/
+
             authToken = IDGenerator.createAuth();
-            dataAccess.createAuth(authToken, _un);
-            return new Gson().toJson(new UsernameAuthTokenPair(authToken, _un), UsernameAuthTokenPair.class);
+            dataAccess.createAuth(authToken, username);
+
+            return new Gson().toJson(new UsernameAuthTokenPair(authToken, username), UsernameAuthTokenPair.class);
         } else {
             return "{ \"message\": \"Error: unauthorized\" }";
         }

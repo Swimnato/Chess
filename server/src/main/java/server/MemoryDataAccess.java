@@ -39,11 +39,11 @@ public class MemoryDataAccess implements DataStorage {
     }
 
     @Override
-    public UserData getUser(String _username) {
-        if (!userLookup.containsKey(_username)) {
+    public UserData getUser(String username) {
+        if (!userLookup.containsKey(username)) {
             return null;
         }
-        return userLookup.get(_username);
+        return userLookup.get(username);
     }
 
     @Override
@@ -80,11 +80,11 @@ public class MemoryDataAccess implements DataStorage {
     }
 
     @Override
-    public Collection<GameData> listGames(String _username) {
+    public Collection<GameData> listGames(String username) {
         ArrayList<GameData> games = new ArrayList<>(gameDataLookup.values());
         var output = new ArrayList<GameData>();
         for (var game : games) {
-            if (game.hasPlayer(_username)) {
+            if (game.hasPlayer(username)) {
                 output.add(new GameData(game));
             }
         }

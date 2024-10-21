@@ -21,7 +21,7 @@ public interface DataStorage {
 
     public Collection<GameData> listGames() throws DataAccessException;
 
-    public Collection<GameData> listGames(String _username) throws DataAccessException;
+    public Collection<GameData> listGames(String username) throws DataAccessException;
 
     public void updateGame(GameData gameData) throws DataAccessException;
 
