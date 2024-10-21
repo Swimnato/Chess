@@ -2,6 +2,15 @@ package server;
 
 import chess.ChessGame;
 import chess.dataStructures.*;
+import chess.dataStructures.CreateGameInfo;
+import chess.dataStructures.GameData;
+import chess.dataStructures.GameID;
+import chess.dataStructures.GameOverview;
+import chess.dataStructures.JoinGameInfo;
+import chess.dataStructures.LoginInfo;
+import chess.dataStructures.RegisterInfo;
+import chess.dataStructures.UserData;
+import chess.dataStructures.UsernameAuthTokenPair;
 import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import com.google.gson.Gson;
