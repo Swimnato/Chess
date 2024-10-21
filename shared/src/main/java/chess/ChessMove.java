@@ -20,7 +20,6 @@ public class ChessMove {
     }
 
 
-
     /**
      * @return ChessPosition of starting location
      */
@@ -55,13 +54,13 @@ public class ChessMove {
         int hash1 = 0;
         int hash2 = 0;
         int hash3 = 0;
-        if(startPosition != null){
+        if (startPosition != null) {
             hash1 = startPosition.hashCode();
         }
-        if(endPosition != null){
+        if (endPosition != null) {
             hash2 = endPosition.hashCode();
         }
-        if(promotionPiece != null){
+        if (promotionPiece != null) {
             hash3 = promotionPiece.hashCode();
         }
         return hash1 * 71 + hash2 * 73 + hash3 * 5;
@@ -69,16 +68,13 @@ public class ChessMove {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj == this){
+        if (obj == this) {
             return true;
-        }
-        else if (obj == null || obj.getClass() != this.getClass()){
+        } else if (obj == null || obj.getClass() != this.getClass()) {
             return false;
-        }
-        else if (obj.toString().equals(this.toString())){
+        } else if (obj.toString().equals(this.toString())) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }

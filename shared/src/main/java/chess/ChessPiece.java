@@ -28,19 +28,19 @@ public class ChessPiece {
         this.firstMove = firstMove;
     }
 
-    public boolean isFirstMove(){
+    public boolean isFirstMove() {
         return firstMove;
     }
 
-    public ChessPiece(ChessPiece _toCopy){
-        myColor = _toCopy.getTeamColor();
-        myType = _toCopy.getPieceType();
-        firstMove = _toCopy.isFirstMove();
+    public ChessPiece(ChessPiece toCopy) {
+        myColor = toCopy.getTeamColor();
+        myType = toCopy.getPieceType();
+        firstMove = toCopy.isFirstMove();
     }
 
-    public ChessPiece(ChessPiece _toCopy, boolean firstMove){
-        myColor = _toCopy.getTeamColor();
-        myType = _toCopy.getPieceType();
+    public ChessPiece(ChessPiece toCopy, boolean firstMove) {
+        myColor = toCopy.getTeamColor();
+        myType = toCopy.getPieceType();
         this.firstMove = firstMove;
     }
 
@@ -78,7 +78,7 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Rules ruleset =  switch(myType){
+        Rules ruleset = switch (myType) {
             case BISHOP -> new BishopRules();
             case ROOK -> new RookRules();
             case QUEEN -> new QueenRules();
@@ -91,8 +91,8 @@ public class ChessPiece {
 
     @Override
     public String toString() {
-        if(myColor == ChessGame.TeamColor.WHITE){
-            return switch(myType){
+        if (myColor == ChessGame.TeamColor.WHITE) {
+            return switch (myType) {
                 case PAWN -> "P";
                 case ROOK -> "R";
                 case KING -> "K";
@@ -100,9 +100,8 @@ public class ChessPiece {
                 case BISHOP -> "B";
                 case QUEEN -> "Q";
             };
-        }
-        else{
-            return switch(myType){
+        } else {
+            return switch (myType) {
                 case PAWN -> "p";
                 case ROOK -> "r";
                 case KING -> "k";
@@ -120,16 +119,13 @@ public class ChessPiece {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj == this){
+        if (obj == this) {
             return true;
-        }
-        else if(obj == null || obj.getClass() != this.getClass()){
+        } else if (obj == null || obj.getClass() != this.getClass()) {
             return false;
-        }
-        else if(this.myColor == ((ChessPiece) obj).myColor && this.myType == ((ChessPiece) obj).myType && this.isFirstMove() == ((ChessPiece) obj).isFirstMove()){
+        } else if (this.myColor == ((ChessPiece) obj).myColor && this.myType == ((ChessPiece) obj).myType && this.isFirstMove() == ((ChessPiece) obj).isFirstMove()) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }

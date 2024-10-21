@@ -2,7 +2,8 @@ package chess.dataStructures;
 
 public class CreateGameInfo {
     String gameName;
-    CreateGameInfo(String gameName){
+
+    CreateGameInfo(String gameName) {
         this.gameName = gameName;
     }
 

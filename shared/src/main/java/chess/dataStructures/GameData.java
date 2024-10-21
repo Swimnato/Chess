@@ -12,28 +12,28 @@ public class GameData {
     private String player2;
     private final int ID;
 
-    public GameData(ChessGame _gme, String name, int _ID) {
-        game = _gme;
+    public GameData(ChessGame game, String name, int ID) {
+        this.game = game;
         this.name = name;
         player1 = null;
         player2 = null;
-        ID = _ID;
+        this.ID = ID;
     }
 
-    public GameData(ChessGame _gme, String name, int _ID, String _p1) {
-        game = _gme;
+    public GameData(ChessGame game, String name, int ID, String player1) {
+        this.game = game;
         this.name = name;
-        player1 = _p1;
-        player2 = null;
-        ID = _ID;
+        this.player1 = player1;
+        this.player2 = null;
+        this.ID = ID;
     }
 
-    public GameData(ChessGame _gme, String name, int _ID, String _p1, String _p2) {
-        game = _gme;
+    public GameData(ChessGame game, String name, int ID, String player1, String player2) {
+        this.game = game;
         this.name = name;
-        player1 = _p1;
-        player2 = _p2;
-        ID = _ID;
+        this.player1 = player1;
+        this.player2 = player2;
+        this.ID = ID;
     }
 
     public GameData(GameData gameToCopy) {
@@ -48,9 +48,9 @@ public class GameData {
         return name;
     }
 
-    public boolean hasPlayer(String _username) {
-        boolean isPlayer1 = (player1 != null && player1.equals(_username));
-        boolean isPlayer2 = (player2 != null && player2.equals(_username));
+    public boolean hasPlayer(String username) {
+        boolean isPlayer1 = (player1 != null && player1.equals(username));
+        boolean isPlayer2 = (player2 != null && player2.equals(username));
         return isPlayer1 || isPlayer2;
     }
 
@@ -58,16 +58,16 @@ public class GameData {
         return ID;
     }
 
-    public void updateBoard(ChessGame _gme) {
-        game = _gme;
+    public void updateBoard(ChessGame gme) {
+        game = gme;
     }
 
-    public void setPlayer1(String _p1) {
-        player1 = _p1;
+    public void setPlayer1(String p1) {
+        player1 = p1;
     }
 
-    public void setPlayer2(String _p2) {
-        player2 = _p2;
+    public void setPlayer2(String p2) {
+        player2 = p2;
     }
 
     public String getPlayer1() {

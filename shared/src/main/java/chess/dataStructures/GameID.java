@@ -2,7 +2,8 @@ package chess.dataStructures;
 
 public class GameID {
     int gameID;
-    public GameID(int idNum){
+
+    public GameID(int idNum) {
         gameID = idNum;
     }
 

@@ -5,13 +5,15 @@ public class GameOverview {
     private String whiteUsername;
     private String blackUsername;
     private String gameName;
-    public GameOverview(GameData input){
+
+    public GameOverview(GameData input) {
         gameID = input.getID();
         whiteUsername = input.getPlayer1();
         blackUsername = input.getPlayer2();
         gameName = input.getName();
     }
-    public GameOverview(int ID, String White, String Black, String Name){
+
+    public GameOverview(int ID, String White, String Black, String Name) {
         gameID = ID;
         whiteUsername = White;
         blackUsername = Black;

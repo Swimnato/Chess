@@ -16,9 +16,9 @@ public class ChessPosition {
         this.col = col;
     }
 
-    public ChessPosition(ChessPosition _toCopy) {
-        this.row = _toCopy.getRow();
-        this.col = _toCopy.getColumn();
+    public ChessPosition(ChessPosition toCopy) {
+        this.row = toCopy.getRow();
+        this.col = toCopy.getColumn();
     }
 
     /**
@@ -37,8 +37,8 @@ public class ChessPosition {
         return col;
     }
 
-    public boolean isValid(ChessBoard board){
-        if(row > 0 && col > 0 && row <= board.getRows() && col <= board.getCols()){
+    public boolean isValid(ChessBoard board) {
+        if (row > 0 && col > 0 && row <= board.getRows() && col <= board.getCols()) {
             return true;
         }
         return false;
@@ -51,16 +51,15 @@ public class ChessPosition {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj){
+        if (this == obj) {
             return true;
         }
-        if (obj == null || obj.getClass() != this.getClass()){
+        if (obj == null || obj.getClass() != this.getClass()) {
             return false;
         }
-        if( col == ((ChessPosition) obj).getColumn() &&  row == ((ChessPosition) obj).getRow()){
+        if (col == ((ChessPosition) obj).getColumn() && row == ((ChessPosition) obj).getRow()) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }

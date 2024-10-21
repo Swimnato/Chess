@@ -3,9 +3,10 @@ package chess.dataStructures;
 public class LoginInfo {
     private String username;
     private String password;
-    public LoginInfo(String _username, String _password){
-        username = _username;
-        password = _password;
+
+    public LoginInfo(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
     public void setPassword(String password) {

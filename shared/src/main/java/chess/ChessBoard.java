@@ -24,12 +24,12 @@ public class ChessBoard {
         board = new ChessPiece[rows][cols];
     }
 
-    public ChessBoard(ChessBoard _toClone) {
+    public ChessBoard(ChessBoard toClone) {
         board = new ChessPiece[rows][cols];
         for (int i = 1; i <= rows; i++) {
             for (int j = 1; j <= cols; j++) {
                 ChessPosition currPos = new ChessPosition(i, j);
-                ChessPiece currPiece = _toClone.getPiece(currPos);
+                ChessPiece currPiece = toClone.getPiece(currPos);
                 if (currPiece != null) {
                     this.setPiece(currPos, new ChessPiece(currPiece));
                 }
@@ -136,9 +136,9 @@ public class ChessBoard {
         for (int row = rows - 1; row >= 0; row--) {
             output = output + "|";
             for (int col = 0; col < cols; col++) {
-                ChessPiece _curr = board[row][col];
-                if (_curr != null) {
-                    output = output + _curr + '|';
+                ChessPiece curr = board[row][col];
+                if (curr != null) {
+                    output = output + curr + '|';
                 } else {
                     output = output + " |";
                 }

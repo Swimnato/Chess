@@ -7,33 +7,33 @@ public class UserData {
     private String password;
     private String email;
 
-    public UserData(String _un, String _pwd, String _eml){
-        username = _un;
-        password = _pwd;
-        email = _eml;
+    public UserData(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
     }
 
-    public void setPassword(String _pwd){
-        password = _pwd;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public void setUsername(String _un){
-        username = _un;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public void setEmail(String _eml){
-        email = _eml;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getUsername(){
+    public String getUsername() {
         return username;
     }
 
-    public String getPassword(){
+    public String getPassword() {
         return password;
     }
 
-    public String getEmail(){
+    public String getEmail() {
         return password;
     }
 

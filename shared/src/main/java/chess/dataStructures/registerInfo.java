@@ -4,10 +4,11 @@ public class RegisterInfo {
     private String username;
     private String password;
     private String email;
-    public RegisterInfo(String _username, String _password, String _email){
-        username = _username;
-        password = _password;
-        email = _email;
+
+    public RegisterInfo(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
     }
 
     public void setEmail(String email) {
