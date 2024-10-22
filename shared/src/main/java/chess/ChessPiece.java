@@ -94,8 +94,9 @@ public class ChessPiece {
 
     @Override
     public String toString() {
+        var output = "";
         if (myColor == ChessGame.TeamColor.WHITE) {
-            return switch (myType) {
+            output = switch (myType) {
                 case PAWN -> "P";
                 case ROOK -> "R";
                 case KING -> "K";
@@ -104,7 +105,7 @@ public class ChessPiece {
                 case QUEEN -> "Q";
             };
         } else {
-            return switch (myType) {
+            output = switch (myType) {
                 case PAWN -> "p";
                 case ROOK -> "r";
                 case KING -> "k";
@@ -113,6 +114,7 @@ public class ChessPiece {
                 case QUEEN -> "q";
             };
         }
+        return output;
     }
 
     @Override

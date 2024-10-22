@@ -132,7 +132,7 @@ public class ChessBoard {
                     int currCol = col;
                     ChessPiece.PieceType currPiece = row == 0 ? FIRSTROW[col] : ChessPiece.PieceType.PAWN;
                     ChessGame.TeamColor currColor = color == 0 ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
-                    board[currRow][currCol] = new ChessPiece(currColor, currPiece, false);
+                    board[currRow][currCol] = new ChessPiece(currColor, currPiece, true);
                 }
             }
         }

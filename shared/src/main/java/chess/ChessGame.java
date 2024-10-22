@@ -57,7 +57,8 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece currentPiece = mainBoard.getPiece(startPosition);
         if (currentPiece == null) {
-            return null;
+            return new HashSet<>() {
+            };
         }
 
         ChessPiece.PieceType currentType = currentPiece.getPieceType();
@@ -82,7 +83,7 @@ public class ChessGame {
 
     private Collection<ChessMove> validKingMoves(ChessPiece currentPiece, ChessPosition startPosition) {
         ArrayList<ChessMove> moves = new ArrayList<>(currentPiece.pieceMoves(mainBoard, startPosition));
-        ArrayList<ChessMove> output = new ArrayList<>();
+        HashSet<ChessMove> output = new HashSet<>();
         for (var move : moves) {
             ChessBoard backupBoard = new ChessBoard(mainBoard);
             mainBoard.movePiece(move);
@@ -94,7 +95,11 @@ public class ChessGame {
 
         //check for castling
         if (currentPiece.isFirstMove() && !isInCheck(currentPiece.getTeamColor())) {
-            for (short direction = -1; direction < 2; direction += 2) {
+            var toAdd = checkSidesForCastling(startPosition, currentPiece);
+            if (toAdd != null) {
+                output.addAll(toAdd);
+            }
+            /*for (short direction = -1; direction < 2; direction += 2) {
                 int row = startPosition.getRow();
                 int col = startPosition.getColumn();
                 ChessPosition checkedPosition = (new ChessPosition(row, col));
@@ -126,16 +131,68 @@ public class ChessGame {
                         }
                     }
                 }
+            }*/
+        }
+
+        return output;
+    }
+
+    private Collection<ChessMove> checkSidesForCastling(ChessPosition startPosition, ChessPiece currentKing) {
+        var output = new HashSet<ChessMove>();
+
+        for (short side = -1; side < 2; side += 2) {
+            int row = startPosition.getRow();
+            int col = startPosition.getColumn() + side;
+            boolean invalid = false;
+            ChessPosition positionToCheck = (new ChessPosition(row, col));
+            while (positionToCheck.isValid(mainBoard)) {
+                var pieceAtPositionToCheck = mainBoard.getPiece(positionToCheck);
+                if (pieceAtPositionToCheck != null && (pieceAtPositionToCheck.getPieceType() != ChessPiece.PieceType.KING &&
+                        pieceAtPositionToCheck.getPieceType() != ChessPiece.PieceType.ROOK)) {
+                    invalid = true;
+                    break;
+                }
+
+                col += side;
+                positionToCheck = (new ChessPosition(row, col));
+            }
+            if (!invalid) {
+                var moveResult = runSimulationOfBoard(startPosition, side);
+                if (moveResult != null) {
+                    output.add(moveResult);
+                }
             }
         }
 
         return output;
     }
 
-    private Collection<ChessMove> checkSideForEnPassant(ChessPosition checkedPosition, ChessPosition startPosition,
-                                                        ChessPiece currentPiece, short direction, int row) {
-        var output = new HashSet<ChessMove>();
-
+    private ChessMove runSimulationOfBoard(ChessPosition startPosition, short side) {
+        ChessMove output = null;
+        TeamColor myColor = mainBoard.getPiece(startPosition).getTeamColor();
+        ChessPosition rookPosition = new ChessPosition(startPosition.getRow(), side < 0 ? 1 : mainBoard.getCols());
+        if (mainBoard.getPiece(rookPosition) == null || !mainBoard.getPiece(rookPosition).isFirstMove()) {
+            return null;
+        }
+        for (int col = startPosition.getColumn(); col != startPosition.getColumn() + side * 3 && col > 0; col += side) {
+            ChessPosition nextPosition = new ChessPosition(startPosition.getRow(), col);
+            if (!nextPosition.isValid(mainBoard)) {
+                break;
+            }
+            ChessBoard backupBoard = new ChessBoard(mainBoard);
+            ChessMove currentMove = new ChessMove(startPosition, nextPosition, null);
+            mainBoard.movePiece(currentMove);
+            if (isInCheck(myColor)) {
+                return null;
+            } else if (col == startPosition.getColumn() + side * 2) {
+                mainBoard.movePiece(new ChessMove(rookPosition, new ChessPosition(startPosition.getRow(),
+                        startPosition.getColumn() + side), null));
+                if (!isInCheck(myColor)) {
+                    output = currentMove;
+                }
+            }
+            mainBoard = new ChessBoard(backupBoard);
+        }
         return output;
     }
 
