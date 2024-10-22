@@ -1,4 +1,4 @@
-package passoff.datastorage;
+package datastorage;
 
 import chess.ChessGame;
 import chess.datastructures.GameData;
