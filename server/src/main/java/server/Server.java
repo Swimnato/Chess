@@ -43,15 +43,15 @@ public class Server {
     }
 
     private Object listGames(Request req, Response res) throws DataAccessException {
-        int AuthToken = 0;
+        int authToken = 0;
         try {
             String auth = req.headers("Authorization");
-            AuthToken = Integer.parseInt(auth);
+            authToken = Integer.parseInt(auth);
         } catch (Exception e) {
             res.status(400);
             return "{ \"message\": \"Error: bad request\" }";
         }
-        String result = service.listGames(AuthToken);
+        String result = service.listGames(authToken);
         if (result == "{ \"message\": \"Error: unauthorized\" }") {
             res.status(401);
         }
@@ -60,16 +60,16 @@ public class Server {
 
     private Object createGame(Request req, Response res) throws DataAccessException {
         CreateGameInfo info;
-        int AuthToken = 0;
+        int authToken = 0;
         try {
             info = new Gson().fromJson(req.body(), CreateGameInfo.class);
             String auth = req.headers("Authorization");
-            AuthToken = Integer.parseInt(auth);
+            authToken = Integer.parseInt(auth);
         } catch (Exception e) {
             res.status(400);
             return "{ \"message\": \"Error: bad request\" }";
         }
-        String response = service.createGame(AuthToken, info.getGameName());
+        String response = service.createGame(authToken, info.getGameName());
         if (response.equals("{ \"message\": \"Error: unauthorized\" }")) {
             res.status(401);
         }
@@ -78,7 +78,7 @@ public class Server {
 
     private Object joinGame(Request req, Response res) throws DataAccessException {
         JoinGameInfo inputs;
-        int AuthToken = 0;
+        int authToken = 0;
         try {
             inputs = new Gson().fromJson(req.body(), JoinGameInfo.class);
         } catch (Exception e) {
@@ -87,7 +87,7 @@ public class Server {
         }
         try {
             String auth = req.headers("Authorization");
-            AuthToken = Integer.parseInt(auth);
+            authToken = Integer.parseInt(auth);
         } catch (Exception e) {
             res.status(401);
             return "{ \"message\": \"Error: unauthorized\" }";
@@ -97,7 +97,7 @@ public class Server {
             res.status(400);
             return "{ \"message\": \"Error: bad request\" }";
         }
-        String result = service.joinGame(inputs.getGameID(), inputs.getplayerColor(), AuthToken);
+        String result = service.joinGame(inputs.getGameID(), inputs.getplayerColor(), authToken);
         if (result.equals("{ \"message\": \"Error: bad request\" }")) {
             res.status(400);
         }
