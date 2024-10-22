@@ -1,4 +1,4 @@
-package chess.dataStructures;
+package chess.datastructures;
 
 import chess.ChessGame;
 
@@ -6,9 +6,9 @@ public class JoinGameInfo {
     private String playerColor;
     private int gameID;
 
-    JoinGameInfo(String color, int ID) {
+    JoinGameInfo(String color, int Id) {
         playerColor = color;
-        gameID = ID;
+        gameID = Id;
     }
 
     public void setGameID(int gameID) {

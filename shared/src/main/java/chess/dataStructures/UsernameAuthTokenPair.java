@@ -1,5 +1,5 @@
-package chess.dataStructures;
- 
+package chess.datastructures;
+
 public class UsernameAuthTokenPair {
     private final int authToken;
     private final String username;

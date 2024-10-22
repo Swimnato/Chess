@@ -1,4 +1,4 @@
-package chess.dataStructures;
+package chess.datastructures;
 
 import java.util.Objects;
 

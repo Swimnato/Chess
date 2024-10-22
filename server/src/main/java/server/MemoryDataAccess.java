@@ -1,7 +1,6 @@
 package server;
 
-import chess.dataStructures.GameData;
-import chess.dataStructures.UserData;
+import chess.datastructures.*;
 import org.eclipse.jetty.server.Authentication;
 
 import java.util.ArrayList;

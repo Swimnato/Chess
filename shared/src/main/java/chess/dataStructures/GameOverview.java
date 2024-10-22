@@ -1,4 +1,4 @@
-package chess.dataStructures;
+package chess.datastructures;
 
 public class GameOverview {
     private int gameID;
@@ -13,8 +13,8 @@ public class GameOverview {
         gameName = input.getName();
     }
 
-    public GameOverview(int ID, String White, String Black, String Name) {
-        gameID = ID;
+    public GameOverview(int Id, String White, String Black, String Name) {
+        gameID = Id;
         whiteUsername = White;
         blackUsername = Black;
         gameName = Name;

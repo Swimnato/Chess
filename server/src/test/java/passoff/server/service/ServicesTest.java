@@ -1,9 +1,9 @@
 package passoff.server;
 
-import chess.dataStructures.GameID;
-import chess.dataStructures.GameOverview;
-import chess.dataStructures.RegisterInfo;
-import chess.dataStructures.UsernameAuthTokenPair;
+import chess.datastructures.GameID;
+import chess.datastructures.GameOverview;
+import chess.datastructures.RegisterInfo;
+import chess.datastructures.UsernameAuthTokenPair;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import org.junit.jupiter.api.*;

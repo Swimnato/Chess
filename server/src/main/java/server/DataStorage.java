@@ -1,6 +1,6 @@
 package server;
 
-import chess.dataStructures.*;
+import chess.datastructures.*;
 import dataaccess.DataAccessException;
 import org.eclipse.jetty.server.Authentication;
 

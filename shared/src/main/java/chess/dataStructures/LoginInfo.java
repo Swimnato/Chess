@@ -1,4 +1,4 @@
-package chess.dataStructures;
+package chess.datastructures;
 
 public class LoginInfo {
     private String username;

@@ -6,10 +6,10 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public class PawnRules extends Rules {
-    private static final int[][] fakeMoveset = {{1}};
+    private static final int[][] FAKEMOVESET = {{1}};
 
     public PawnRules() {
-        super(fakeMoveset, false); // some random values, we are overriding everything anyways;
+        super(FAKEMOVESET, false); // some random values, we are overriding everything anyways;
     }
 
     @Override

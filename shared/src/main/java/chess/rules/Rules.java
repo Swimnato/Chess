@@ -9,18 +9,18 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public class Rules {
-    private int[][] moveset;
-    private boolean repeats;
+    private final int[][] MOVESET;
+    private final boolean REPEATS;
 
     public Rules(int[][] Moves, boolean Repeats) {
-        moveset = Moves.clone();
-        repeats = Repeats;
+        MOVESET = Moves.clone();
+        REPEATS = Repeats;
     }
 
     public Collection<ChessMove> generateMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> output = new HashSet<ChessMove>();
         //make a move for each position in the moveset
-        for (var move : moveset) {
+        for (var move : MOVESET) {
             int row = myPosition.getRow() + move[0];
             int col = myPosition.getColumn() + move[1];
             ChessPiece myself = board.getPiece(myPosition);
@@ -41,7 +41,7 @@ public class Rules {
                 } else { // is not a valid position
                     break;
                 }
-                if (!repeats) { // if we aren't supposed to repeat this move break out of loop
+                if (!REPEATS) { // if we aren't supposed to repeat this move break out of loop
                     break;
                 }
             }

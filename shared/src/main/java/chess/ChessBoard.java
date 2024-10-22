@@ -11,7 +11,7 @@ public class ChessBoard {
     private final int cols = 8;
     private ChessPiece[][] board;
 
-    private static final ChessPiece.PieceType[] firstRow = {ChessPiece.PieceType.ROOK,
+    private static final ChessPiece.PieceType[] FIRSTROW = {ChessPiece.PieceType.ROOK,
             ChessPiece.PieceType.KNIGHT,
             ChessPiece.PieceType.BISHOP,
             ChessPiece.PieceType.QUEEN,
@@ -122,7 +122,7 @@ public class ChessBoard {
                 for (byte col = 0; col < cols; col++) {
                     int currRow = (color == 0 ? row : (rows - 1 + (row == 0 ? 0 : -1)));
                     int currCol = col;
-                    ChessPiece.PieceType currPiece = row == 0 ? firstRow[col] : ChessPiece.PieceType.PAWN;
+                    ChessPiece.PieceType currPiece = row == 0 ? FIRSTROW[col] : ChessPiece.PieceType.PAWN;
                     ChessGame.TeamColor currColor = color == 0 ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
                     board[currRow][currCol] = new ChessPiece(currColor, currPiece);
                 }

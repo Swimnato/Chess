@@ -3,15 +3,7 @@ package server;
 import spark.*;
 import dataaccess.DataAccessException;
 import com.google.gson.Gson;
-import chess.dataStructures.*;
-import chess.dataStructures.GameData;
-import chess.dataStructures.GameID;
-import chess.dataStructures.GameOverview;
-import chess.dataStructures.JoinGameInfo;
-import chess.dataStructures.LoginInfo;
-import chess.dataStructures.RegisterInfo;
-import chess.dataStructures.UserData;
-import chess.dataStructures.UsernameAuthTokenPair;
+import chess.datastructures.*;
 
 import java.util.ArrayList;
 

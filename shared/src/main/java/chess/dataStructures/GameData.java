@@ -1,4 +1,4 @@
-package chess.dataStructures;
+package chess.datastructures;
 
 import chess.ChessGame;
 import chess.ChessGame.*;
@@ -12,28 +12,28 @@ public class GameData {
     private String player2;
     private final int ID;
 
-    public GameData(ChessGame game, String name, int ID) {
+    public GameData(ChessGame game, String name, int Id) {
         this.game = game;
         this.name = name;
         player1 = null;
         player2 = null;
-        this.ID = ID;
+        this.ID = Id;
     }
 
-    public GameData(ChessGame game, String name, int ID, String player1) {
+    public GameData(ChessGame game, String name, int Id, String player1) {
         this.game = game;
         this.name = name;
         this.player1 = player1;
         this.player2 = null;
-        this.ID = ID;
+        this.ID = Id;
     }
 
-    public GameData(ChessGame game, String name, int ID, String player1, String player2) {
+    public GameData(ChessGame game, String name, int Id, String player1, String player2) {
         this.game = game;
         this.name = name;
         this.player1 = player1;
         this.player2 = player2;
-        this.ID = ID;
+        this.ID = Id;
     }
 
     public GameData(GameData gameToCopy) {

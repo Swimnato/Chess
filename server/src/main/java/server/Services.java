@@ -1,16 +1,8 @@
 package server;
 
 import chess.ChessGame;
-import chess.dataStructures.*;
-import chess.dataStructures.CreateGameInfo;
-import chess.dataStructures.GameData;
-import chess.dataStructures.GameID;
-import chess.dataStructures.GameOverview;
-import chess.dataStructures.JoinGameInfo;
-import chess.dataStructures.LoginInfo;
-import chess.dataStructures.RegisterInfo;
-import chess.dataStructures.UserData;
-import chess.dataStructures.UsernameAuthTokenPair;
+import chess.datastructures.*;
+import chess.datastructures.GameData;
 import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import com.google.gson.Gson;
@@ -21,7 +13,7 @@ import java.util.ArrayList;
 
 public class Services {
     private DataStorage dataAccess;
-    private static final UniqueIDGenerator IDGenerator = new UniqueIDGenerator();
+    private static final UniqueIDGenerator IDGENERATOR = new UniqueIDGenerator();
 
     public Services(DataStorage desiredPersistance) {
         dataAccess = desiredPersistance;
@@ -52,7 +44,7 @@ public class Services {
         boolean result = false;
         int gameID = 0;
         while (!result) { // this makes sure that should our game ID number repeat, that it will generate a new one
-            gameID = IDGenerator.createGameID(GameName);
+            gameID = IDGENERATOR.createGameID(GameName);
             GameData game = new GameData(new ChessGame(), GameName, gameID);
             result = dataAccess.createGame(game);
         }
@@ -115,7 +107,7 @@ public class Services {
                 dataAccess.deleteAuth(authToken);
             }*/
 
-            authToken = IDGenerator.createAuth();
+            authToken = IDGENERATOR.createAuth();
             dataAccess.createAuth(authToken, username);
 
             return new Gson().toJson(new UsernameAuthTokenPair(authToken, username), UsernameAuthTokenPair.class);
