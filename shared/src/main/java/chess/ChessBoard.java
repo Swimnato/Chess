@@ -110,7 +110,7 @@ public class ChessBoard {
             }
         } else {
             board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] =
-                    new ChessPiece(getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece());
+                    new ChessPiece(getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece(), false);
         }
 
 
@@ -132,7 +132,7 @@ public class ChessBoard {
                     int currCol = col;
                     ChessPiece.PieceType currPiece = row == 0 ? FIRSTROW[col] : ChessPiece.PieceType.PAWN;
                     ChessGame.TeamColor currColor = color == 0 ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
-                    board[currRow][currCol] = new ChessPiece(currColor, currPiece);
+                    board[currRow][currCol] = new ChessPiece(currColor, currPiece, false);
                 }
             }
         }

@@ -12,15 +12,10 @@ import java.util.Collection;
  */
 public class ChessPiece {
 
-    ChessGame.TeamColor myColor;
-    PieceType myType;
-    boolean firstMove;
+    private ChessGame.TeamColor myColor;
+    private PieceType myType;
+    private boolean firstMove;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-        myColor = pieceColor;
-        myType = type;
-        firstMove = false;
-    }
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type, boolean firstMove) {
         myColor = pieceColor;
@@ -28,8 +23,10 @@ public class ChessPiece {
         this.firstMove = firstMove;
     }
 
-    public boolean isFirstMove() {
-        return firstMove;
+    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        myColor = pieceColor;
+        myType = type;
+        firstMove = false;
     }
 
     public ChessPiece(ChessPiece toCopy) {
@@ -42,6 +39,10 @@ public class ChessPiece {
         myColor = toCopy.getTeamColor();
         myType = toCopy.getPieceType();
         this.firstMove = firstMove;
+    }
+
+    public boolean isFirstMove() {
+        return firstMove;
     }
 
     /**
@@ -116,7 +117,7 @@ public class ChessPiece {
 
     @Override
     public int hashCode() {
-        return myType.hashCode() * 11 + myColor.hashCode() * 13;
+        return myType.hashCode() * 11 + myColor.hashCode() * 13 + (firstMove ? 3 : 17);
     }
 
     @Override

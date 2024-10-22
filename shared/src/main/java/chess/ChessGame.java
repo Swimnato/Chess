@@ -132,6 +132,13 @@ public class ChessGame {
         return output;
     }
 
+    private Collection<ChessMove> checkSideForEnPassant(ChessPosition checkedPosition, ChessPosition startPosition,
+                                                        ChessPiece currentPiece, short direction, int row) {
+        var output = new HashSet<ChessMove>();
+
+        return output;
+    }
+
     private Collection<ChessMove> validPawnMoves(ChessPiece currentPiece, ChessPosition startPosition) {
         var currentMoveset = new ArrayList<>(currentPiece.pieceMoves(mainBoard, startPosition));
         var row = startPosition.getRow();
@@ -149,24 +156,35 @@ public class ChessGame {
                     ChessPiece previousPieceToSide = previousBoard.getPiece(pieceToSidePos);
                     if (previousPieceToSide == null) {
                         ChessPosition spaceToSideBackAStepPos = new ChessPosition(row + (direction * 2), col + side);
-                        if (spaceToSideBackAStepPos.isValid(mainBoard)) {
-                            ChessPiece spaceToSideBackAStep = previousBoard.getPiece(spaceToSideBackAStepPos);
-                            if (spaceToSideBackAStep != null && spaceToSideBackAStep.getTeamColor() != currentPiece.getTeamColor() &&
-                                    spaceToSideBackAStep.getPieceType() == ChessPiece.PieceType.PAWN) {
-                                // to see if the pawn was back two spaces before
-                                ChessBoard backupPrevious = new ChessBoard(previousBoard);
-                                backupPrevious.movePiece(new ChessMove(spaceToSideBackAStepPos, pieceToSidePos, null));
-                                if (backupPrevious.equals(mainBoard)) { // to make sure this was the previous move
-                                    currentMoveset.add(new ChessMove(startPosition, new ChessPosition(row + direction, col + side), null));
-                                }
-                            }
-                        }
+                        currentMoveset.addAll(addEnPassant(spaceToSideBackAStepPos, currentPiece, pieceToSidePos, startPosition,
+                                row, col, side, direction));
                     }
                 }
             }
         }
 
         return currentMoveset;
+    }
+
+    private Collection<ChessMove> addEnPassant(ChessPosition spaceToSideBackAStepPos, ChessPiece currentPiece,
+                                               ChessPosition pieceToSidePos, ChessPosition startPosition, int row, int col,
+                                               int side, int direction) {
+        var output = new HashSet<ChessMove>();
+
+        if (spaceToSideBackAStepPos.isValid(mainBoard)) {
+            ChessPiece spaceToSideBackAStep = previousBoard.getPiece(spaceToSideBackAStepPos);
+            if (spaceToSideBackAStep != null && spaceToSideBackAStep.getTeamColor() != currentPiece.getTeamColor() &&
+                    spaceToSideBackAStep.getPieceType() == ChessPiece.PieceType.PAWN) {
+                // to see if the pawn was back two spaces before
+                ChessBoard backupPrevious = new ChessBoard(previousBoard);
+                backupPrevious.movePiece(new ChessMove(spaceToSideBackAStepPos, pieceToSidePos, null));
+                if (backupPrevious.equals(mainBoard)) { // to make sure this was the previous move
+                    output.add(new ChessMove(startPosition, new ChessPosition(row + direction, col + side), null));
+                }
+            }
+        }
+
+        return output;
     }
 
     /**
@@ -217,27 +235,36 @@ public class ChessGame {
         for (int row = 1; row < 9; row++) { // Check for all the other piece's moves;
             for (int col = 1; col < 9; col++) {
                 var curPiece = mainBoard.getPiece(new ChessPosition(row, col));
+                ChessPosition l = null; //Pawn capture L move
+                ChessPosition r = null; //Pawn capture R move
                 if (curPiece != null && curPiece.getTeamColor() != teamColor) {
                     if (curPiece.getPieceType() != ChessPiece.PieceType.PAWN) {
                         var enemyMoves = curPiece.pieceMoves(mainBoard, new ChessPosition(row, col));
-                        for (var move : enemyMoves) {
-                            allPossibleMovesForOtherPieces.add(move.getEndPosition());
-                        }
-                    } else {
-                        ChessPosition l = new ChessPosition(row + (teamColor == TeamColor.WHITE ? -1 : 1), col + 1);
-                        ChessPosition r = new ChessPosition(row + (teamColor == TeamColor.WHITE ? -1 : 1), col - 1);
-                        if (l.isValid(mainBoard)) {
-                            allPossibleMovesForOtherPieces.add(l);
-                        }
-                        if (r.isValid(mainBoard)) {
-                            allPossibleMovesForOtherPieces.add(r);
-                        }
+                        allPossibleMovesForOtherPieces.addAll(getEndPositions(enemyMoves));
+                    } else { // It is a pawn, therefore add its left and right moves
+                        l = new ChessPosition(row + (teamColor == TeamColor.WHITE ? -1 : 1), col + 1);
+                        r = new ChessPosition(row + (teamColor == TeamColor.WHITE ? -1 : 1), col - 1);
                     }
+                }
+                //if pawn moves aren't null, add them
+                if (l != null && l.isValid(mainBoard)) {
+                    allPossibleMovesForOtherPieces.add(l);
+                }
+                if (r != null && r.isValid(mainBoard)) {
+                    allPossibleMovesForOtherPieces.add(r);
                 }
             }
         }
 
         return allPossibleMovesForOtherPieces.contains(kingPos);
+    }
+
+    private Collection<ChessPosition> getEndPositions(Collection<ChessMove> movesToAdd) {
+        var output = new HashSet<ChessPosition>();
+        for (var move : movesToAdd) {
+            output.add(move.getEndPosition());
+        }
+        return output;
     }
 
 
