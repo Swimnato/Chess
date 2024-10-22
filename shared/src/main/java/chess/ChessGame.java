@@ -102,10 +102,13 @@ public class ChessGame {
                     checkedPosition = (new ChessPosition(row, col));
                     if (checkedPosition.isValid(mainBoard)) {
                         if (mainBoard.getPiece(checkedPosition) != null) {
-                            if ((mainBoard.getPiece(checkedPosition).getPieceType() != ChessPiece.PieceType.ROOK && mainBoard.getPiece(checkedPosition).getPieceType() != ChessPiece.PieceType.KING) || !mainBoard.getPiece(checkedPosition).isFirstMove()) {
+                            if ((mainBoard.getPiece(checkedPosition).getPieceType() != ChessPiece.PieceType.ROOK &&
+                                    mainBoard.getPiece(checkedPosition).getPieceType() != ChessPiece.PieceType.KING) ||
+                                    !mainBoard.getPiece(checkedPosition).isFirstMove()) {
                                 break;
                             } else {
-                                if (mainBoard.getPiece(checkedPosition).getPieceType() == ChessPiece.PieceType.ROOK && mainBoard.getPiece(checkedPosition).isFirstMove()) {
+                                ChessPiece.PieceType pieceAtPosType = mainBoard.getPiece(checkedPosition).getPieceType();
+                                if (pieceAtPosType == ChessPiece.PieceType.ROOK && mainBoard.getPiece(checkedPosition).isFirstMove()) {
                                     ChessBoard backupBoard = new ChessBoard(mainBoard);
 
                                     ChessPosition firstMove = new ChessPosition(row, startPosition.getColumn() + direction);
@@ -140,13 +143,17 @@ public class ChessGame {
             ChessPosition pieceToSidePos = new ChessPosition(row, col + side);
             if (pieceToSidePos.isValid(mainBoard)) {
                 ChessPiece pieceToSide = mainBoard.getPiece(pieceToSidePos);
-                if (pieceToSide != null && pieceToSide.getPieceType() == ChessPiece.PieceType.PAWN && pieceToSide.getTeamColor() != currentPiece.getTeamColor()) { // if there is an enemy pawn to our side
+                if (pieceToSide != null && pieceToSide.getPieceType() == ChessPiece.PieceType.PAWN &&
+                        pieceToSide.getTeamColor() != currentPiece.getTeamColor()) {
+                    // if there is an enemy pawn to our side
                     ChessPiece previousPieceToSide = previousBoard.getPiece(pieceToSidePos);
                     if (previousPieceToSide == null) {
                         ChessPosition spaceToSideBackAStepPos = new ChessPosition(row + (direction * 2), col + side);
                         if (spaceToSideBackAStepPos.isValid(mainBoard)) {
                             ChessPiece spaceToSideBackAStep = previousBoard.getPiece(spaceToSideBackAStepPos);
-                            if (spaceToSideBackAStep != null && spaceToSideBackAStep.getTeamColor() != currentPiece.getTeamColor() && spaceToSideBackAStep.getPieceType() == ChessPiece.PieceType.PAWN) { // to see if the pawn was back two spaces before
+                            if (spaceToSideBackAStep != null && spaceToSideBackAStep.getTeamColor() != currentPiece.getTeamColor() &&
+                                    spaceToSideBackAStep.getPieceType() == ChessPiece.PieceType.PAWN) {
+                                // to see if the pawn was back two spaces before
                                 ChessBoard backupPrevious = new ChessBoard(previousBoard);
                                 backupPrevious.movePiece(new ChessMove(spaceToSideBackAStepPos, pieceToSidePos, null));
                                 if (backupPrevious.equals(mainBoard)) { // to make sure this was the previous move
@@ -286,7 +293,9 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         ChessPosition kingPos = kingPosition(teamColor);
         if (!kingPos.isValid(mainBoard)) {
-            return false; // if the king doesn't exist, we need to return that he isn't in checkmate, it sounds stupid, and it is, but the tests require this not to throw an error, since no piece can move if it exposes the king to checkmate and this would make some tests impossible.
+            return false; // if the king doesn't exist, we need to return that he isn't in checkmate,
+            // it sounds stupid, and it is, but the tests require this not to throw an error, since no
+            // piece can move if it exposes the king to checkmate and this would make some tests impossible.
         }
         var moves = getAllTeamMoves(teamColor);
 

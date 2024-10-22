@@ -33,6 +33,11 @@ public class Server {
         service = new Services(new MemoryDataAccess());
 
         Spark.awaitInitialization();
+        try {
+            Thread.sleep(5000); // for some reason this is needed
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         return Spark.port();
     }
 

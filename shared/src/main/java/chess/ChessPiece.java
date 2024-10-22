@@ -125,7 +125,8 @@ public class ChessPiece {
             return true;
         } else if (obj == null || obj.getClass() != this.getClass()) {
             return false;
-        } else if (this.myColor == ((ChessPiece) obj).myColor && this.myType == ((ChessPiece) obj).myType && this.isFirstMove() == ((ChessPiece) obj).isFirstMove()) {
+        } else if (this.myColor == ((ChessPiece) obj).myColor && this.myType == ((ChessPiece) obj).myType &&
+                this.isFirstMove() == ((ChessPiece) obj).isFirstMove()) {
             return true;
         } else {
             return false;

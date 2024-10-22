@@ -85,7 +85,8 @@ public class GameData {
         if (obj == null || obj.getClass() != this.getClass()) {
             return false;
         }
-        return ((GameData) obj).getGame().equals(game) && ((GameData) obj).getId() == id && ((GameData) obj).getPlayer2().equals(player2) && ((GameData) obj).getPlayer1().equals(player1);
+        return ((GameData) obj).getGame().equals(game) && ((GameData) obj).getId() == id &&
+                ((GameData) obj).getPlayer2().equals(player2) && ((GameData) obj).getPlayer1().equals(player1);
     }
 
     @Override

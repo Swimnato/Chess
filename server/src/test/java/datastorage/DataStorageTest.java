@@ -119,7 +119,8 @@ public class DataStorageTest {
         result = storage.hasAuth("User4");
         Assertions.assertEquals(0, result, "User4 returned an auth code");
 
-        Assertions.assertThrows(DataAccessException.class, () -> storage.deleteAuth(55555), "Failed to thow exception for invalid authCode to be deleted");
+        Assertions.assertThrows(DataAccessException.class, () -> storage.deleteAuth(55555),
+                "Failed to thow exception for invalid authCode to be deleted");
     }
 
     @Test
@@ -188,7 +189,8 @@ public class DataStorageTest {
             Assertions.assertTrue(result, "Game with one user failed to create");
             result = storage.createGame(new GameData(new ChessGame(), "Happy Dayz", 584, "User2", "User"));
             Assertions.assertTrue(result, "Game with two users failed to create");
-            result = storage.createGame(new GameData(new ChessGame(), "Joe's House", 39485, "User3", "User2")); // game with same name, but different ID
+            result = storage.createGame(new GameData(new ChessGame(), "Joe's House", 39485,
+                    "User3", "User2")); // game with same name, but different ID
             Assertions.assertTrue(result, "Game with two users failed to create");
         }
 

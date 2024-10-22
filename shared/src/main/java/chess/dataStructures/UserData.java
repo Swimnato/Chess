@@ -46,7 +46,9 @@ public class UserData {
             return false;
         }
         UserData userData = (UserData) o;
-        return Objects.equals(getUsername(), userData.getUsername()) && Objects.equals(getPassword(), userData.getPassword()) && Objects.equals(getEmail(), userData.getEmail());
+        return Objects.equals(getUsername(), userData.getUsername()) &&
+                Objects.equals(getPassword(), userData.getPassword()) &&
+                Objects.equals(getEmail(), userData.getEmail());
     }
 
     @Override

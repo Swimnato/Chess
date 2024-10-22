@@ -89,23 +89,28 @@ public class ChessBoard {
         if (getPiece(move.getStartPosition()) == null) {
             return 2; // error code no start position
         }
-        if (getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN && move.getStartPosition().getColumn() != move.getEndPosition().getColumn() && getPiece(move.getEndPosition()) == null) {
+        if (getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN &&
+                move.getStartPosition().getColumn() != move.getEndPosition().getColumn() &&
+                getPiece(move.getEndPosition()) == null) {
             addPiece(new ChessPosition(move.getStartPosition().getRow(), move.getEndPosition().getColumn()), null);
         }
         int diffInCols = move.getEndPosition().getColumn() - move.getStartPosition().getColumn();
         if (getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.KING && (diffInCols > 1 || diffInCols < -1)) {
             board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = getPiece(move.getStartPosition());
             ChessPosition desiredRook = new ChessPosition(move.getStartPosition().getRow(), (diffInCols == -2 ? 1 : 8));
-            movePiece(new ChessMove(desiredRook, new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn() + diffInCols / 2), null));
+            movePiece(new ChessMove(desiredRook, new ChessPosition(move.getStartPosition().getRow(),
+                    move.getStartPosition().getColumn() + diffInCols / 2), null));
         }
         if (move.getPromotionPiece() == null) {
             if (getPiece(move.getStartPosition()).isFirstMove()) {
-                board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = new ChessPiece(getPiece(move.getStartPosition()), false);
+                board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] =
+                        new ChessPiece(getPiece(move.getStartPosition()), false);
             } else {
                 board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = getPiece(move.getStartPosition());
             }
         } else {
-            board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = new ChessPiece(getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece());
+            board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] =
+                    new ChessPiece(getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece());
         }
 
 
