@@ -99,39 +99,6 @@ public class ChessGame {
             if (toAdd != null) {
                 output.addAll(toAdd);
             }
-            /*for (short direction = -1; direction < 2; direction += 2) {
-                int row = startPosition.getRow();
-                int col = startPosition.getColumn();
-                ChessPosition checkedPosition = (new ChessPosition(row, col));
-                for (col = startPosition.getColumn(); checkedPosition.isValid(mainBoard); col += direction) {
-                    checkedPosition = (new ChessPosition(row, col));
-                    if (checkedPosition.isValid(mainBoard)) {
-                        if (mainBoard.getPiece(checkedPosition) != null) {
-                            if ((mainBoard.getPiece(checkedPosition).getPieceType() != ChessPiece.PieceType.ROOK &&
-                                    mainBoard.getPiece(checkedPosition).getPieceType() != ChessPiece.PieceType.KING) ||
-                                    !mainBoard.getPiece(checkedPosition).isFirstMove()) {
-                                break;
-                            } else {
-                                ChessPiece.PieceType pieceAtPosType = mainBoard.getPiece(checkedPosition).getPieceType();
-                                if (pieceAtPosType == ChessPiece.PieceType.ROOK && mainBoard.getPiece(checkedPosition).isFirstMove()) {
-                                    ChessBoard backupBoard = new ChessBoard(mainBoard);
-
-                                    ChessPosition firstMove = new ChessPosition(row, startPosition.getColumn() + direction);
-                                    mainBoard.movePiece(new ChessMove(startPosition, firstMove, null));
-                                    if (!isInCheck(currentPiece.getTeamColor())) {
-                                        ChessPosition secondMove = new ChessPosition(row, startPosition.getColumn() + direction * 2);
-                                        mainBoard.movePiece(new ChessMove(startPosition, secondMove, null));
-                                        if (!isInCheck(currentPiece.getTeamColor())) {
-                                            output.add(new ChessMove(startPosition, secondMove, null));
-                                        }
-                                    }
-                                    mainBoard = new ChessBoard(backupBoard);
-                                }
-                            }
-                        }
-                    }
-                }
-            }*/
         }
 
         return output;
