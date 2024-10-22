@@ -1,4 +1,4 @@
-package passoff.server.dataStorage;
+package passoff.datastorage;
 
 import chess.ChessGame;
 import chess.datastructures.GameData;
@@ -6,7 +6,6 @@ import dataaccess.DataAccessException;
 import org.junit.jupiter.api.*;
 import server.DataStorage;
 import server.MemoryDataAccess;
-import spark.utils.Assert;
 
 import java.util.ArrayList;
 
@@ -201,7 +200,7 @@ public class DataStorageTest {
 
         result = storage.listGames("User3");
         Assertions.assertEquals(1, result.size(), "User3 was listed in the incorrect number of games!");
-        Assertions.assertEquals(39485, (new ArrayList<GameData>(result)).get(0).getID(), "Returned Wrong Game");
+        Assertions.assertEquals(39485, (new ArrayList<GameData>(result)).get(0).getId(), "Returned Wrong Game");
 
         result = storage.listGames("User4");
         Assertions.assertEquals(0, result.size(), "User4 was listed in a game!");

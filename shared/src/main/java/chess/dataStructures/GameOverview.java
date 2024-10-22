@@ -7,17 +7,17 @@ public class GameOverview {
     private String gameName;
 
     public GameOverview(GameData input) {
-        gameID = input.getID();
+        gameID = input.getId();
         whiteUsername = input.getPlayer1();
         blackUsername = input.getPlayer2();
         gameName = input.getName();
     }
 
-    public GameOverview(int Id, String white, String black, String Name) {
-        gameID = Id;
+    public GameOverview(int id, String white, String black, String name) {
+        gameID = id;
         whiteUsername = white;
         blackUsername = black;
-        gameName = Name;
+        gameName = name;
     }
 
     public void setGameID(int gameID) {

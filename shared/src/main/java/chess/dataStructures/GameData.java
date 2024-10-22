@@ -1,7 +1,6 @@
 package chess.datastructures;
 
 import chess.ChessGame;
-import chess.ChessGame.*;
 
 import java.util.Objects;
 
@@ -10,30 +9,30 @@ public class GameData {
     private String name;
     private String player1;
     private String player2;
-    private final int ID;
+    private final int id;
 
-    public GameData(ChessGame game, String name, int Id) {
+    public GameData(ChessGame game, String name, int id) {
         this.game = game;
         this.name = name;
         player1 = null;
         player2 = null;
-        this.ID = Id;
+        this.id = id;
     }
 
-    public GameData(ChessGame game, String name, int Id, String player1) {
+    public GameData(ChessGame game, String name, int id, String player1) {
         this.game = game;
         this.name = name;
         this.player1 = player1;
         this.player2 = null;
-        this.ID = Id;
+        this.id = id;
     }
 
-    public GameData(ChessGame game, String name, int Id, String player1, String player2) {
+    public GameData(ChessGame game, String name, int id, String player1, String player2) {
         this.game = game;
         this.name = name;
         this.player1 = player1;
         this.player2 = player2;
-        this.ID = Id;
+        this.id = id;
     }
 
     public GameData(GameData gameToCopy) {
@@ -41,7 +40,7 @@ public class GameData {
         this.name = gameToCopy.getName();
         player1 = gameToCopy.getPlayer1();
         player2 = gameToCopy.getPlayer2();
-        ID = gameToCopy.getID();
+        id = gameToCopy.getId();
     }
 
     public String getName() {
@@ -54,8 +53,8 @@ public class GameData {
         return isPlayer1 || isPlayer2;
     }
 
-    public int getID() {
-        return ID;
+    public int getId() {
+        return id;
     }
 
     public void setPlayer1(String p1) {
@@ -86,16 +85,16 @@ public class GameData {
         if (obj == null || obj.getClass() != this.getClass()) {
             return false;
         }
-        return ((GameData) obj).getGame().equals(game) && ((GameData) obj).getID() == ID && ((GameData) obj).getPlayer2().equals(player2) && ((GameData) obj).getPlayer1().equals(player1);
+        return ((GameData) obj).getGame().equals(game) && ((GameData) obj).getId() == id && ((GameData) obj).getPlayer2().equals(player2) && ((GameData) obj).getPlayer1().equals(player1);
     }
 
     @Override
     public String toString() {
-        return game.toString() + ' ' + player1 + ' ' + player2 + ' ' + ID;
+        return game.toString() + ' ' + player1 + ' ' + player2 + ' ' + id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getGame(), getPlayer1(), getPlayer2(), getID());
+        return Objects.hash(getGame(), getPlayer1(), getPlayer2(), getId());
     }
 }

@@ -1,12 +1,10 @@
 package server;
 
 import chess.datastructures.*;
-import org.eclipse.jetty.server.Authentication;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 import dataaccess.DataAccessException;
 
@@ -58,10 +56,10 @@ public class MemoryDataAccess implements DataStorage {
 
     @Override
     public boolean createGame(GameData gameData) {
-        if (gameDataLookup.containsKey(gameData.getID())) {
+        if (gameDataLookup.containsKey(gameData.getId())) {
             return false;
         }
-        gameDataLookup.put(gameData.getID(), gameData);
+        gameDataLookup.put(gameData.getId(), gameData);
         return true;
     }
 
@@ -92,11 +90,11 @@ public class MemoryDataAccess implements DataStorage {
 
     @Override
     public void updateGame(GameData gameData) throws DataAccessException {
-        if (!gameDataLookup.containsKey(gameData.getID())) {
+        if (!gameDataLookup.containsKey(gameData.getId())) {
             throw new DataAccessException("Game Does Not Exist!");
         }
-        gameDataLookup.remove(gameData.getID());
-        gameDataLookup.put(gameData.getID(), gameData);
+        gameDataLookup.remove(gameData.getId());
+        gameDataLookup.put(gameData.getId(), gameData);
     }
 
     @Override

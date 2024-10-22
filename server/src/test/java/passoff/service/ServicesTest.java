@@ -182,21 +182,21 @@ public class ServicesTest {
     @Test
     @DisplayName("Join Game")
     public void joinGameTest() throws DataAccessException {
-        int AuthTokens[] = {0, 0};
+        int authTokens[] = {0, 0};
         String response = service.register("User1", "1", "y@w.io");
         var info = new Gson().fromJson(response, UsernameAuthTokenPair.class);
-        AuthTokens[0] = info.getAuthToken();
+        authTokens[0] = info.getAuthToken();
         response = service.register("User2", "2", "y@w.io");
         info = new Gson().fromJson(response, UsernameAuthTokenPair.class);
-        AuthTokens[1] = info.getAuthToken();
+        authTokens[1] = info.getAuthToken();
 
-        response = service.createGame(AuthTokens[0], "Game1");
+        response = service.createGame(authTokens[0], "Game1");
         var gameInfo = new Gson().fromJson(response, GameID.class);
 
-        service.joinGame(gameInfo.getGameID(), "WHITE", AuthTokens[0]);
-        service.joinGame(gameInfo.getGameID(), "BLACK", AuthTokens[1]);
+        service.joinGame(gameInfo.getGameID(), "WHITE", authTokens[0]);
+        service.joinGame(gameInfo.getGameID(), "BLACK", authTokens[1]);
 
-        response = service.listGames(AuthTokens[0]);
+        response = service.listGames(authTokens[0]);
         var games = new Gson().fromJson(response, Games.class);
         var game = games.games.get(0);
 
@@ -208,19 +208,19 @@ public class ServicesTest {
     @Test
     @DisplayName("Join Game Same Color")
     public void joinGameSameColor() throws DataAccessException {
-        int AuthTokens[] = {0, 0};
+        int authTokens[] = {0, 0};
         String response = service.register("User1", "1", "y@w.io");
         var info = new Gson().fromJson(response, UsernameAuthTokenPair.class);
-        AuthTokens[0] = info.getAuthToken();
+        authTokens[0] = info.getAuthToken();
         response = service.register("User2", "2", "y@w.io");
         info = new Gson().fromJson(response, UsernameAuthTokenPair.class);
-        AuthTokens[1] = info.getAuthToken();
+        authTokens[1] = info.getAuthToken();
 
-        response = service.createGame(AuthTokens[0], "Game1");
+        response = service.createGame(authTokens[0], "Game1");
         var gameInfo = new Gson().fromJson(response, GameID.class);
 
-        service.joinGame(gameInfo.getGameID(), "WHITE", AuthTokens[0]);
-        response = service.joinGame(gameInfo.getGameID(), "WHITE", AuthTokens[1]);
+        service.joinGame(gameInfo.getGameID(), "WHITE", authTokens[0]);
+        response = service.joinGame(gameInfo.getGameID(), "WHITE", authTokens[1]);
 
         Assertions.assertEquals("{ \"message\": \"Error: already taken\" }", response, "Error not thrown!");
 
@@ -230,19 +230,19 @@ public class ServicesTest {
     @Test
     @DisplayName("Join Game Same Color as P2")
     public void joinGameSameColorP2() throws DataAccessException {
-        int AuthTokens[] = {0, 0};
+        int authTokens[] = {0, 0};
         String response = service.register("User1", "1", "y@w.io");
         var info = new Gson().fromJson(response, UsernameAuthTokenPair.class);
-        AuthTokens[0] = info.getAuthToken();
+        authTokens[0] = info.getAuthToken();
         response = service.register("User2", "2", "y@w.io");
         info = new Gson().fromJson(response, UsernameAuthTokenPair.class);
-        AuthTokens[1] = info.getAuthToken();
+        authTokens[1] = info.getAuthToken();
 
-        response = service.createGame(AuthTokens[0], "Game1");
+        response = service.createGame(authTokens[0], "Game1");
         var gameInfo = new Gson().fromJson(response, GameID.class);
 
-        service.joinGame(gameInfo.getGameID(), "BLACK", AuthTokens[0]);
-        response = service.joinGame(gameInfo.getGameID(), "BLACK", AuthTokens[1]);
+        service.joinGame(gameInfo.getGameID(), "BLACK", authTokens[0]);
+        response = service.joinGame(gameInfo.getGameID(), "BLACK", authTokens[1]);
 
         Assertions.assertEquals("{ \"message\": \"Error: already taken\" }", response, "Error not thrown!");
 
@@ -251,24 +251,19 @@ public class ServicesTest {
     @Test
     @DisplayName("Join W/O auth")
     public void joinGameWOAuth() throws DataAccessException {
-        int[] AuthTokens = {0, 0};
+        int[] authTokens = {0, 0};
         String response = service.register("User1", "1", "y@w.io");
         var info = new Gson().fromJson(response, UsernameAuthTokenPair.class);
-        AuthTokens[0] = info.getAuthToken();
+        authTokens[0] = info.getAuthToken();
 
-        response = service.createGame(AuthTokens[0], "Game1");
+        response = service.createGame(authTokens[0], "Game1");
         var gameInfo = new Gson().fromJson(response, GameID.class);
 
-        service.joinGame(gameInfo.getGameID(), "WHITE", AuthTokens[0]);
-        response = service.joinGame(gameInfo.getGameID(), "Black", AuthTokens[0] + 1);
+        service.joinGame(gameInfo.getGameID(), "WHITE", authTokens[0]);
+        response = service.joinGame(gameInfo.getGameID(), "Black", authTokens[0] + 1);
 
         Assertions.assertEquals("{ \"message\": \"Error: unauthorized\" }", response, "Error not thrown!");
     }
-
-    private record intValue(int value) {
-    }
-
-    ;
 
     @Test
     @DisplayName("Join game with null ID")
