@@ -54,15 +54,17 @@ public class ChessBoard {
     private void setPiece(ChessPosition position, ChessPiece piece) {
         if (piece != null) {
             board[position.getRow() - 1][position.getColumn() - 1] = new ChessPiece(piece);
-        } else
+        } else {
             board[position.getRow() - 1][position.getColumn() - 1] = null;
+        }
     }
 
     public void addPiece(ChessPosition position, ChessPiece piece) {
         if (piece != null) {
             board[position.getRow() - 1][position.getColumn() - 1] = new ChessPiece(piece, true);
-        } else
+        } else {
             board[position.getRow() - 1][position.getColumn() - 1] = null;
+        }
     }
 
     /**
@@ -97,10 +99,11 @@ public class ChessBoard {
             movePiece(new ChessMove(desiredRook, new ChessPosition(move.getStartPosition().getRow(), move.getStartPosition().getColumn() + diffInCols / 2), null));
         }
         if (move.getPromotionPiece() == null) {
-            if (getPiece(move.getStartPosition()).isFirstMove())
+            if (getPiece(move.getStartPosition()).isFirstMove()) {
                 board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = new ChessPiece(getPiece(move.getStartPosition()), false);
-            else
+            } else {
                 board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = getPiece(move.getStartPosition());
+            }
         } else {
             board[move.getEndPosition().getRow() - 1][move.getEndPosition().getColumn() - 1] = new ChessPiece(getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece());
         }

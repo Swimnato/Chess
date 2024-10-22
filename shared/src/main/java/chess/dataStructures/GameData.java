@@ -58,10 +58,6 @@ public class GameData {
         return ID;
     }
 
-    public void updateBoard(ChessGame gme) {
-        game = gme;
-    }
-
     public void setPlayer1(String p1) {
         player1 = p1;
     }

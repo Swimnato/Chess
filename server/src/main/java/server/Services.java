@@ -35,8 +35,8 @@ public class Services {
         return "{ \"games\": " + new Gson().toJson(output) + "}";
     }
 
-    public String createGame(int AuthToken, String GameName) throws DataAccessException {
-        var user = dataAccess.getUser(AuthToken);
+    public String createGame(int authToken, String gameName) throws DataAccessException {
+        var user = dataAccess.getUser(authToken);
         if (user == null) {
             return "{ \"message\": \"Error: unauthorized\" }";
         }
@@ -44,16 +44,16 @@ public class Services {
         boolean result = false;
         int gameID = 0;
         while (!result) { // this makes sure that should our game ID number repeat, that it will generate a new one
-            gameID = IDGENERATOR.createGameID(GameName);
-            GameData game = new GameData(new ChessGame(), GameName, gameID);
+            gameID = IDGENERATOR.createGameID(gameName);
+            GameData game = new GameData(new ChessGame(), gameName, gameID);
             result = dataAccess.createGame(game);
         }
 
         return new Gson().toJson(new GameID(gameID));
     }
 
-    public String joinGame(Integer gameID, String Color, int AuthToken) throws DataAccessException {
-        var user = dataAccess.getUser(AuthToken);
+    public String joinGame(Integer gameID, String color, int authToken) throws DataAccessException {
+        var user = dataAccess.getUser(authToken);
         if (user == null) {
             return "{ \"message\": \"Error: unauthorized\" }";
         }
@@ -62,7 +62,7 @@ public class Services {
         if (desiredGame == null) {
             return "{ \"message\": \"Error: bad request\" }";
         }
-        if (Color.equals("WHITE")) {
+        if (color.equals("WHITE")) {
             if (desiredGame.getPlayer1() != null) { //make sure white is free
                 return "{ \"message\": \"Error: already taken\" }";
             }
@@ -116,9 +116,9 @@ public class Services {
         }
     }
 
-    public String logout(int AuthToken) throws DataAccessException {
+    public String logout(int authToken) throws DataAccessException {
         try {
-            dataAccess.deleteAuth(AuthToken);
+            dataAccess.deleteAuth(authToken);
         } catch (DataAccessException e) {
             return "Auth Does Not Exist!";
         }

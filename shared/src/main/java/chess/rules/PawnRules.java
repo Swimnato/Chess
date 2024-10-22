@@ -32,10 +32,7 @@ public class PawnRules extends Rules {
         //Check for forward movement(s)
         if (newPos.isValid(board) && pieceAtPos == null) {
             if (isAPromotion) {
-                output.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.ROOK));
-                output.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.KNIGHT));
-                output.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.QUEEN));
-                output.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.BISHOP));
+                output.addAll(createPromotion(myPosition, newPos));
             } else { // isn't at end of board
                 output.add(new ChessMove(myPosition, newPos, null));
                 if (row - direction == ((myColor == ChessGame.TeamColor.WHITE) ? 2 : (board.getRows() - 1))) { // if it is in the starting position, check for a two space move.
@@ -59,10 +56,7 @@ public class PawnRules extends Rules {
                 isAPromotion = (myColor == ChessGame.TeamColor.WHITE ? row == board.getRows() : row == 1);
                 if (pieceAtPos != null && pieceAtPos.getTeamColor() != myColor) {
                     if (isAPromotion) {
-                        output.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.ROOK));
-                        output.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.KNIGHT));
-                        output.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.QUEEN));
-                        output.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.BISHOP));
+                        output.addAll(createPromotion(myPosition, newPos));
                     } else {
                         output.add(new ChessMove(myPosition, newPos, null));
                     }
@@ -70,6 +64,15 @@ public class PawnRules extends Rules {
             }
         }
 
+        return output;
+    }
+
+    private Collection<ChessMove> createPromotion(ChessPosition startingPosition, ChessPosition endPosition) {
+        var output = new HashSet<ChessMove>();
+        output.add(new ChessMove(startingPosition, endPosition, ChessPiece.PieceType.ROOK));
+        output.add(new ChessMove(startingPosition, endPosition, ChessPiece.PieceType.KNIGHT));
+        output.add(new ChessMove(startingPosition, endPosition, ChessPiece.PieceType.QUEEN));
+        output.add(new ChessMove(startingPosition, endPosition, ChessPiece.PieceType.BISHOP));
         return output;
     }
 }

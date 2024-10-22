@@ -12,9 +12,9 @@ public class Rules {
     private final int[][] MOVESET;
     private final boolean REPEATS;
 
-    public Rules(int[][] Moves, boolean Repeats) {
-        MOVESET = Moves.clone();
-        REPEATS = Repeats;
+    public Rules(int[][] moves, boolean repeats) {
+        MOVESET = moves.clone();
+        REPEATS = repeats;
     }
 
     public Collection<ChessMove> generateMoves(ChessBoard board, ChessPosition myPosition) {

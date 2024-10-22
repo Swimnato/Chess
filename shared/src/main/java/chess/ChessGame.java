@@ -187,7 +187,7 @@ public class ChessGame {
         if (returnCode != 0) {
             throw new InvalidMoveException("Move is not possible on board! Error Code: " + returnCode);
         }
-        turn = turn == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE;
+        changeTurn();
         previousBoard = new ChessBoard(soonToBePreviousBoard);
     }
 
@@ -219,10 +219,12 @@ public class ChessGame {
                     } else {
                         ChessPosition l = new ChessPosition(row + (teamColor == TeamColor.WHITE ? -1 : 1), col + 1);
                         ChessPosition r = new ChessPosition(row + (teamColor == TeamColor.WHITE ? -1 : 1), col - 1);
-                        if (l.isValid(mainBoard))
+                        if (l.isValid(mainBoard)) {
                             allPossibleMovesForOtherPieces.add(l);
-                        if (r.isValid(mainBoard))
+                        }
+                        if (r.isValid(mainBoard)) {
                             allPossibleMovesForOtherPieces.add(r);
+                        }
                     }
                 }
             }
@@ -334,8 +336,12 @@ public class ChessGame {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessGame chessGame = (ChessGame) o;
         return turn == chessGame.turn && Objects.equals(mainBoard, chessGame.mainBoard);
     }

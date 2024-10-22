@@ -13,10 +13,10 @@ public class GameOverview {
         gameName = input.getName();
     }
 
-    public GameOverview(int Id, String White, String Black, String Name) {
+    public GameOverview(int Id, String white, String black, String Name) {
         gameID = Id;
-        whiteUsername = White;
-        blackUsername = Black;
+        whiteUsername = white;
+        blackUsername = black;
         gameName = Name;
     }
 
