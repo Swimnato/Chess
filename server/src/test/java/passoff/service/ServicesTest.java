@@ -1,4 +1,4 @@
-package passoff.server.service;
+package passoff.service;
 
 import chess.datastructures.GameID;
 import chess.datastructures.GameOverview;
