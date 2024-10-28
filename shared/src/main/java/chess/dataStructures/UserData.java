@@ -34,7 +34,7 @@ public class UserData {
     }
 
     public String getEmail() {
-        return password;
+        return email;
     }
 
     @Override

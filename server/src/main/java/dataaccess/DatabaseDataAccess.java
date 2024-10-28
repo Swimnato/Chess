@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.datastructures.GameData;
 import chess.datastructures.UserData;
+import org.eclipse.jetty.server.Authentication;
 import org.mindrot.jbcrypt.BCrypt;
 import server.DataStorage;
 
@@ -12,20 +13,38 @@ import java.util.List;
 
 public class DatabaseDataAccess implements DataStorage {
     private static final String[] CREATEDBCOMMANDS = {
-            "CREATE TABLE IF NOT EXISTS userLookup (username VARCHAR(255) NOT NULL, hashedpassword TEXT NOT NULL, email TEXT NOT NULL, PRIMARY KEY(username));",
+            "CREATE TABLE IF NOT EXISTS userLookup (username VARCHAR(255) NOT NULL, hashedPassword TEXT NOT NULL, email TEXT NOT NULL, PRIMARY KEY(username));",
             "CREATE TABLE IF NOT EXISTS authTokenLookup (token INT NOT NULL, username VARCHAR(255) NOT NULL, PRIMARY KEY(token), INDEX(username));",
-            "CREATE TABLE IF NOT EXISTS gameDataLookup (id INT NOT NULL, gamejson TEXT NOT NULL, whiteplayer VARCHAR(255), blackplayer VARCHAR(255), PRIMARY KEY(id), INDEX(whiteplayer), INDEX(blackplayer));"
+            "CREATE TABLE IF NOT EXISTS gameDataLookup (id INT NOT NULL, gameJSON TEXT NOT NULL, whitePlayer VARCHAR(255), blackPlayer VARCHAR(255), PRIMARY KEY(id), INDEX(whitePlayer), INDEX(blackPlayer));"
     };
     private static final String[] CLEARDBCOMMANDS = {
             "TRUNCATE TABLE userLookup;",
             "TRUNCATE TABLE authTokenLookup;",
             "TRUNCATE TABLE gameDataLookup;"
     };
-    private static final String CREATEUSERCOMMAND = "INSERT INTO userLookup (username, hashedpassword, email) VALUES (?,?,?)";
-    private static final String CREATEAUTHCOMMAND = "INSERT INTO authTokenLookup (token, username) VALUES (?,?)";
+    private static final String CREATEUSERCOMMAND = "INSERT INTO userLookup (username, hashedPassword, email) VALUES (?,?,?);";
+    private static final String GETUSERBYUSERNAME = "SELECT hashedPassword, email FROM userLookup WHERE username = ?;";
+    private static final String CREATEAUTHCOMMAND = "INSERT INTO authTokenLookup (token, username) VALUES (?,?);";
 
+    public static void main(String[] args) throws DataAccessException {
+        DatabaseDataAccess main = new DatabaseDataAccess();
+        main.clear();
+        main.createUser("admin", "321", "test");
+        main.createUser("ad", "32441", "test");
+        main.createUser("min", "lolz", "test");
+        main.createUser("reerere", "reererere", "test");
 
-    private Connection conn;
+        var gotUser = main.getUser("admin");
+        System.out.println("Got User == Null? " + (gotUser == null));
+        if (gotUser != null) {
+            System.out.print(gotUser.getUsername() + " , ");
+            System.out.print(gotUser.getPassword() + " , ");
+            System.out.println(gotUser.getEmail());
+        }
+        gotUser = main.getUser("noexist");
+        System.out.println("Got User == Null? " + (gotUser == null));
+
+    }
 
     public DatabaseDataAccess() throws DataAccessException {
         DatabaseManager.createDatabase();
@@ -43,8 +62,10 @@ public class DatabaseDataAccess implements DataStorage {
     @Override
     public void clear() throws DataAccessException {
         for (var statement : CLEARDBCOMMANDS) {
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.executeUpdate();
+            try (var conn = DatabaseManager.getConnection()) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
             } catch (SQLException e) {
                 throw new DataAccessException(e.getMessage());
             }
@@ -53,11 +74,13 @@ public class DatabaseDataAccess implements DataStorage {
 
     @Override
     public void createUser(String username, String password, String email) throws DataAccessException {
-        try (var preparedStatement = conn.prepareStatement(CREATEUSERCOMMAND)) {
-            preparedStatement.setString(0, username);
-            preparedStatement.setString(1, generateHash(password));
-            preparedStatement.setString(2, email);
-            preparedStatement.executeUpdate();
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(CREATEUSERCOMMAND)) {
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2, password);
+                preparedStatement.setString(3, email);
+                preparedStatement.executeUpdate();
+            }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
@@ -65,7 +88,27 @@ public class DatabaseDataAccess implements DataStorage {
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
-        return null;
+        UserData toReturn;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(GETUSERBYUSERNAME)) {
+                preparedStatement.setString(1, username);
+                try (var rs = preparedStatement.executeQuery()) {
+                    rs.next();
+                    String password = rs.getNString("hashedPassword");
+                    String email = rs.getNString("email");
+                    if (password != null && email != null) {
+                        toReturn = new UserData(username, password, email);
+                    } else {
+                        toReturn = null;
+                    }
+                } catch (SQLException e) {
+                    toReturn = null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        return toReturn;
     }
 
     @Override
@@ -105,10 +148,12 @@ public class DatabaseDataAccess implements DataStorage {
 
     @Override
     public void createAuth(int authCode, String username) throws DataAccessException {
-        try (var preparedStatement = conn.prepareStatement(CREATEAUTHCOMMAND)) {
-            preparedStatement.setInt(0, authCode);
-            preparedStatement.setString(1, username);
-            preparedStatement.executeUpdate();
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(CREATEAUTHCOMMAND)) {
+                preparedStatement.setInt(1, authCode);
+                preparedStatement.setString(2, username);
+                preparedStatement.executeUpdate();
+            }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
@@ -122,13 +167,5 @@ public class DatabaseDataAccess implements DataStorage {
     @Override
     public void deleteAuth(int authCode) throws DataAccessException {
 
-    }
-
-    private String generateHash(String password) {
-        return BCrypt.hashpw(password, BCrypt.gensalt());
-    }
-
-    private boolean checkHash(String password, String hash) {
-        return BCrypt.checkpw(password, hash);
     }
 }

@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 import dataaccess.DataAccessException;
 import com.google.gson.Gson;
 import org.eclipse.jetty.server.Authentication;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -83,7 +84,8 @@ public class Services {
         UserData test = dataAccess.getUser(username);
 
         if (test == null) {
-            dataAccess.createUser(username, password, email);
+            String hashedPassword = generateHash(password);
+            dataAccess.createUser(username, hashedPassword, email);
             return login(username, password);
         }
 
@@ -92,7 +94,7 @@ public class Services {
 
     public String login(String username, String password) throws DataAccessException {
         UserData user = dataAccess.getUser(username);
-        if (user != null && user.getPassword().equals(password)) {
+        if (user != null && checkHash(password, user.getPassword())) {
             int authToken = dataAccess.hasAuth(username);
 
             /* These next 3 lines are to assure that you never get more than one auth token for each user
@@ -121,4 +123,11 @@ public class Services {
         return "{}";
     }
 
+    private String generateHash(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+    private boolean checkHash(String password, String hash) {
+        return BCrypt.checkpw(password, hash);
+    }
 }
