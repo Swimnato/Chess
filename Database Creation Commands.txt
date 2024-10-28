@@ -1,0 +1,12 @@
+Creation Commands:
+
+CREATE TABLE IF NOT EXISTS userLookup (username VARCHAR(255) NOT NULL, hashedpassword TEXT NOT NULL, email TEXT NOT NULL, PRIMARY KEY(username));
+CREATE TABLE IF NOT EXISTS authTokenLookup (token INT NOT NULL, username VARCHAR(255) NOT NULL, PRIMARY KEY(token), INDEX(username));
+CREATE TABLE IF NOT EXISTS gameDataLookup (id INT NOT NULL, gamejson TEXT NOT NULL, whiteplayer VARCHAR(255), blackplayer VARCHAR(255), PRIMARY KEY(id), INDEX(whiteplayer), INDEX(blackplayer));
+
+
+Clear Tables Commands: 
+
+TRUNCATE TABLE userLookup;
+TRUNCATE TABLE authTokenLookup;
+TRUNCATE TABLE gameDataLookup;

@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import chess.datastructures.*;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ public class MemoryDataAccess implements DataStorage {
     private HashMap<Integer, String> authTokenLookup;
     private HashMap<String, Integer> authTokenReverseLookup;
     private HashMap<Integer, GameData> gameDataLookup;
+    private static final UniqueIDGenerator IDGENERATOR = new UniqueIDGenerator();
 
     public MemoryDataAccess() {
         userLookup = new HashMap<>();
@@ -22,7 +24,7 @@ public class MemoryDataAccess implements DataStorage {
     }
 
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException {
         userLookup.clear();
         authTokenLookup.clear();
         gameDataLookup.clear();
@@ -55,12 +57,20 @@ public class MemoryDataAccess implements DataStorage {
     }
 
     @Override
-    public boolean createGame(GameData gameData) {
-        if (gameDataLookup.containsKey(gameData.getId())) {
-            return false;
+    public int createGame(GameData gameData) {
+        GameData game;
+        int gameID = gameData.getId();
+        boolean containsKey = gameDataLookup.containsKey(gameID);
+        if (gameID != 0 && containsKey) {
+            return 0;
         }
-        gameDataLookup.put(gameData.getId(), gameData);
-        return true;
+        while (containsKey || gameID == 0) { // this makes sure that should our game ID number repeat, that it will generate a new one it uses the time as a seed so it should change every time it is called
+            gameID = IDGENERATOR.createGameID(gameData.getName());
+            containsKey = gameDataLookup.containsKey(gameID);
+        }
+        game = new GameData(gameData.getGame(), gameData.getName(), gameID, gameData.getPlayer1(), gameData.getPlayer2());
+        gameDataLookup.put(game.getId(), game);
+        return game.getId();
     }
 
     @Override

@@ -7,7 +7,7 @@ import org.eclipse.jetty.server.Authentication;
 import java.util.Collection;
 
 public interface DataStorage {
-    public void clear();
+    public void clear() throws DataAccessException;
 
     public void createUser(String username, String password, String email) throws DataAccessException;
 
@@ -15,7 +15,7 @@ public interface DataStorage {
 
     public UserData getUser(int authCode) throws DataAccessException;
 
-    public boolean createGame(GameData gameData) throws DataAccessException;
+    public int createGame(GameData gameData) throws DataAccessException;
 
     public GameData getGame(int gameID) throws DataAccessException;
 

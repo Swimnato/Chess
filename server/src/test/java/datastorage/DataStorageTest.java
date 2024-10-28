@@ -18,12 +18,12 @@ public class DataStorageTest {
     }
 
     @AfterAll
-    public static void closeAll() {
+    public static void closeAll() throws DataAccessException {
         storage.clear();
     }
 
     @BeforeEach
-    public void clearTheSlate() {
+    public void clearTheSlate() throws DataAccessException {
         storage.clear();
     }
 
@@ -127,20 +127,20 @@ public class DataStorageTest {
     @DisplayName("Create Game")
     public void createGame() throws DataAccessException {
         var result = storage.createGame(new GameData(new ChessGame(), "Joe's House", 65));
-        Assertions.assertTrue(result);
+        Assertions.assertNotEquals(0, result);
     }
 
     @Test
     @DisplayName("Create Games")
     public void createGames() throws DataAccessException {
         var result = storage.createGame(new GameData(new ChessGame(), "Joe's House", 65));
-        Assertions.assertTrue(result, "Failed to create a game");
+        Assertions.assertNotEquals(0, result, "Failed to create a game");
         result = storage.createGame(new GameData(new ChessGame(), "Happy Dayz", 584));
-        Assertions.assertTrue(result, "Failed to create a second game");
+        Assertions.assertNotEquals(0, result, "Failed to create a second game");
         result = storage.createGame(new GameData(new ChessGame(), "Joe's House", 39485)); // game with same name, but different ID
-        Assertions.assertTrue(result, "Failed to create a game that has a distinct ID, but same name as other game");
+        Assertions.assertNotEquals(0, result, "Failed to create a game that has a distinct ID, but same name as other game");
         result = storage.createGame(new GameData(new ChessGame(), "Duplicate ID", 65));
-        Assertions.assertFalse(result, "Created a game with a duplicate ID!");
+        Assertions.assertEquals(0, result, "Created a game with a duplicate ID!");
     }
 
     @Test
@@ -186,13 +186,15 @@ public class DataStorageTest {
 
         {
             var result = storage.createGame(new GameData(new ChessGame(), "Joe's House", 65, "User"));
-            Assertions.assertTrue(result, "Game with one user failed to create");
+            Assertions.assertNotEquals(0, result, "Game with one user failed to create");
             result = storage.createGame(new GameData(new ChessGame(), "Happy Dayz", 584, "User2", "User"));
-            Assertions.assertTrue(result, "Game with two users failed to create");
+            Assertions.assertNotEquals(0, result, "Game with two users failed to create");
             result = storage.createGame(new GameData(new ChessGame(), "Joe's House", 39485,
                     "User3", "User2")); // game with same name, but different ID
-            Assertions.assertTrue(result, "Game with two users failed to create");
+            Assertions.assertNotEquals(0, result, "Game with two users failed to create");
         }
+
+        System.out.println(storage.listGames());
 
         var result = storage.listGames("User");
         Assertions.assertEquals(2, result.size(), "User was listed in the incorrect number of games!");

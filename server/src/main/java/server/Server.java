@@ -180,7 +180,6 @@ public class Server {
     }
 
     public void stop() {
-        service.clearApplication();
         Spark.stop();
         Spark.awaitStop();
     }

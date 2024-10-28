@@ -39,12 +39,12 @@ public class ServicesTest {
     }
 
     @AfterAll
-    static void stopServer() {
+    static void stopServer() throws DataAccessException {
         service.clearApplication();
     }
 
     @BeforeEach
-    public void clearServer() {
+    public void clearServer() throws DataAccessException {
         service.clearApplication();
     }
 

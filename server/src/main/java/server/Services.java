@@ -41,13 +41,9 @@ public class Services {
             return "{ \"message\": \"Error: unauthorized\" }";
         }
 
-        boolean result = false;
         int gameID = 0;
-        while (!result) { // this makes sure that should our game ID number repeat, that it will generate a new one
-            gameID = IDGENERATOR.createGameID(gameName);
-            GameData game = new GameData(new ChessGame(), gameName, gameID);
-            result = dataAccess.createGame(game);
-        }
+        GameData game = new GameData(new ChessGame(), gameName, gameID);
+        gameID = dataAccess.createGame(game);
 
         return new Gson().toJson(new GameID(gameID));
     }
@@ -79,7 +75,7 @@ public class Services {
         return new Gson().toJson(new GameID(gameID));
     }
 
-    public void clearApplication() {
+    public void clearApplication() throws DataAccessException {
         dataAccess.clear();
     }
 
