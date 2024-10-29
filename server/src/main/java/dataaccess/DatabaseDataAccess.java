@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.datastructures.GameData;
 import chess.datastructures.UserData;
+import com.google.gson.Gson;
 import org.eclipse.jetty.server.Authentication;
 import org.mindrot.jbcrypt.BCrypt;
 import server.DataStorage;
@@ -15,7 +16,7 @@ public class DatabaseDataAccess implements DataStorage {
     private static final String[] CREATEDBCOMMANDS = {
             "CREATE TABLE IF NOT EXISTS userLookup (username VARCHAR(255) NOT NULL, hashedPassword TEXT NOT NULL, email TEXT NOT NULL, PRIMARY KEY(username));",
             "CREATE TABLE IF NOT EXISTS authTokenLookup (token INT NOT NULL, username VARCHAR(255) NOT NULL, PRIMARY KEY(token), INDEX(username));",
-            "CREATE TABLE IF NOT EXISTS gameDataLookup (id INT NOT NULL, gameJSON TEXT NOT NULL, whitePlayer VARCHAR(255), blackPlayer VARCHAR(255), PRIMARY KEY(id), INDEX(whitePlayer), INDEX(blackPlayer));"
+            "CREATE TABLE IF NOT EXISTS gameDataLookup (id INT NOT NULL AUTO_INCREMENT, gameJSON TEXT NOT NULL, whitePlayer VARCHAR(255), blackPlayer VARCHAR(255), PRIMARY KEY(id), INDEX(whitePlayer), INDEX(blackPlayer));"
     };
     private static final String[] CLEARDBCOMMANDS = {
             "TRUNCATE TABLE userLookup;",
@@ -24,7 +25,11 @@ public class DatabaseDataAccess implements DataStorage {
     };
     private static final String CREATEUSERCOMMAND = "INSERT INTO userLookup (username, hashedPassword, email) VALUES (?,?,?);";
     private static final String GETUSERBYUSERNAME = "SELECT hashedPassword, email FROM userLookup WHERE username = ?;";
+    private static final String GETUSERBYAUTHCODE = "SELECT userLookup.username, userLookup.hashedPassword, userLookup.email FROM authTokenLookup JOIN userLookup ON authTokenLookup.username = userLookup.username FROM token = ?;";
+    private static final String MAKENEWCHESSBOARD = "INSERT INTO gameDataLookup (gameJSON, whitePlayer, blackPlayer) VALUES (?,?,?);";
+    private static final String MAKECHESSBOARDALT = "INSERT INTO gameDataLookup (gameJSON, whitePlayer, blackPlayer, id) VALUES (?,?,?,?);";
     private static final String CREATEAUTHCOMMAND = "INSERT INTO authTokenLookup (token, username) VALUES (?,?);";
+    private static final String DELETEAUTHCOMMAND = "DELETE FROM authTokenLookup WHERE token = ?;";
 
     public static void main(String[] args) throws DataAccessException {
         DatabaseDataAccess main = new DatabaseDataAccess();
@@ -113,12 +118,50 @@ public class DatabaseDataAccess implements DataStorage {
 
     @Override
     public UserData getUser(int authCode) throws DataAccessException {
-        return null;
+        UserData toReturn;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(GETUSERBYAUTHCODE)) {
+                preparedStatement.setInt(1, authCode);
+                try (var rs = preparedStatement.executeQuery()) {
+                    rs.next();
+                    String username = rs.getNString("username");
+                    String password = rs.getNString("hashedPassword");
+                    String email = rs.getNString("email");
+                    if (password != null && email != null && username != null) {
+                        toReturn = new UserData(username, password, email);
+                    } else {
+                        toReturn = null;
+                    }
+                } catch (SQLException e) {
+                    toReturn = null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        return toReturn;
     }
 
     @Override
     public int createGame(GameData gameData) throws DataAccessException {
-        return 0;
+        try (var conn = DatabaseManager.getConnection()) {
+            boolean idGiven = gameData.getId() == 0;
+            String statement = (idGiven ? MAKENEWCHESSBOARD : MAKECHESSBOARDALT);
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, new Gson().toJson(gameData.getGame()));
+                preparedStatement.setString(2, gameData.getPlayer1());
+                preparedStatement.setString(3, gameData.getPlayer2());
+                if (idGiven) {
+                    preparedStatement.setInt(4, gameData.getId());
+                }
+                preparedStatement.executeUpdate();
+            } catch (SQLException e) {
+                return 0;
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        return -4; // I need to add code to get the ID back
     }
 
     @Override
@@ -166,6 +209,13 @@ public class DatabaseDataAccess implements DataStorage {
 
     @Override
     public void deleteAuth(int authCode) throws DataAccessException {
-
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(DELETEAUTHCOMMAND)) {
+                preparedStatement.setInt(1, authCode);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 }
