@@ -2,7 +2,7 @@ Creation Commands:
 
 CREATE TABLE IF NOT EXISTS userLookup (username VARCHAR(255) NOT NULL, hashedPassword TEXT NOT NULL, email TEXT NOT NULL, PRIMARY KEY(username));
 CREATE TABLE IF NOT EXISTS authTokenLookup (token INT NOT NULL, username VARCHAR(255) NOT NULL, PRIMARY KEY(token), INDEX(username));
-CREATE TABLE IF NOT EXISTS gameDataLookup (id INT NOT NULL AUTO_INCREMENT, gameJSON TEXT NOT NULL, whitePlayer VARCHAR(255), blackPlayer VARCHAR(255), PRIMARY KEY(id), INDEX(whitePlayer), INDEX(blackPlayer));
+CREATE TABLE IF NOT EXISTS gameDataLookup (id INT NOT NULL AUTO_INCREMENT, name VARCHAR(255) NOT NULL, gameJSON TEXT NOT NULL, whitePlayer VARCHAR(255), blackPlayer VARCHAR(255), PRIMARY KEY(id), INDEX(whitePlayer), INDEX(blackPlayer), INDEX(name));
 
 
 Clear Tables Commands: 

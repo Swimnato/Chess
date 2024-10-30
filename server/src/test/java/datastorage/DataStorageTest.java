@@ -3,6 +3,7 @@ package datastorage;
 import chess.ChessGame;
 import chess.datastructures.GameData;
 import dataaccess.DataAccessException;
+import dataaccess.DatabaseDataAccess;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import server.DataStorage;
@@ -15,7 +16,7 @@ public class DataStorageTest {
 
     @BeforeAll
     public static void createStorage() throws DataAccessException {
-        storage = new MemoryDataAccess();
+        storage = new DatabaseDataAccess();
     }
 
     @AfterAll
