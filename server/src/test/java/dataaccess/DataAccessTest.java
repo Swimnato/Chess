@@ -178,8 +178,19 @@ public class DataAccessTest {
         Assertions.assertNotEquals(0, result, "Failed to create a second game");
         result = storage.createGame(new GameData(new ChessGame(), "Joe's House", 39485)); // game with same name, but different ID
         Assertions.assertNotEquals(0, result, "Failed to create a game that has a distinct ID, but same name as other game");
-        result = storage.createGame(new GameData(new ChessGame(), "Duplicate ID", 65));
+    }
+
+    @Test
+    @DisplayName("Create Invalid Game")
+    public void createInvalidGames() throws DataAccessException {
+        createGames();
+
+        var result = storage.createGame(new GameData(new ChessGame(), "Duplicate ID", 65));
         Assertions.assertEquals(0, result, "Created a game with a duplicate ID!");
+        result = storage.createGame(new GameData(new ChessGame(), null, 750));
+        Assertions.assertEquals(0, result, "Created a game with no name!");
+        result = storage.createGame(new GameData(null, "No Game", 924));
+        Assertions.assertEquals(0, result, "Created a game with no game!");
     }
 
     @Test
@@ -213,8 +224,14 @@ public class DataAccessTest {
 
         result = storage.getGame(39485);
         Assertions.assertNotNull(result, "Valid game returned as null");
+    }
 
-        result = storage.getGame(24601);
+    @Test
+    @DisplayName("Get Invalid Game")
+    public void getInvalidGame() throws DataAccessException {
+        createGames();
+
+        var result = storage.getGame(24601);
         Assertions.assertNull(result, "Invalid game returned a game");
     }
 
@@ -269,6 +286,12 @@ public class DataAccessTest {
         Assertions.assertEquals("Newer Name", result.getName(), "Name Update didn't work!");
         result = storage.getGame(39485);
         Assertions.assertEquals("Joe's House", result.getName(), "Name Update edited other game!");
+    }
+
+    @Test
+    @DisplayName("Update Invalid Game")
+    public void updateInvalidGames() throws DataAccessException {
+        createGames();
 
         Assertions.assertThrows(DataAccessException.class, () -> storage.updateGame(new GameData(new ChessGame(), "", 55555)));
     }
