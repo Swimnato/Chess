@@ -1,4 +1,4 @@
-package datastorage;
+package dataaccess;
 
 import chess.ChessGame;
 import chess.datastructures.GameData;
@@ -12,7 +12,7 @@ import server.MemoryDataAccess;
 
 import java.util.ArrayList;
 
-public class DataStorageTest {
+public class DataAccessTest {
     private static DataStorage storage;
 
     @BeforeAll
