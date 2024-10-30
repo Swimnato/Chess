@@ -28,14 +28,17 @@ public class DatabaseDataAccess implements DataStorage {
     };
     private static final String CREATEUSERCOMMAND = "INSERT INTO userLookup (username, hashedPassword, email) VALUES (?,?,?);";
     private static final String GETUSERBYUSERNAME = "SELECT hashedPassword, email FROM userLookup WHERE username = ?;";
-    private static final String GETUSERBYAUTHCODE = "SELECT userLookup.username, userLookup.hashedPassword, userLookup.email FROM " +
-            "authTokenLookup JOIN userLookup ON authTokenLookup.username = userLookup.username FROM token = ?;";
+    private static final String GETUSERBYAUTHCODE = "SELECT userLookup.username, userLookup.hashedPassword, userLookup.email FROM authTokenLookup JOIN userLookup ON authTokenLookup.username = userLookup.username WHERE token = ?;";
     private static final String MAKENEWCHESSBOARD = "INSERT INTO gameDataLookup (gameJSON, name, whitePlayer, blackPlayer) VALUES (?,?,?,?);";
     private static final String MAKECHESSBOARDALT = "INSERT INTO gameDataLookup (gameJSON, name, whitePlayer, blackPlayer, id) VALUES (?,?,?,?,?);";
     private static final String GETACHESSGAMEBYID = "SELECT * FROM gameDataLookup WHERE id = ?;";
     private static final String GETAGAMEBYITSNAME = "SELECT * FROM gameDataLookup WHERE name = ?;";
     private static final String LISTALLACTIVEGAME = "SELECT * FROM gameDataLookup;";
+    private static final String LISTALLGAMEBYUSER = "SELECT * FROM gameDataLookup WHERE whitePlayer = ? OR blackPlayer = ?;";
+    private static final String UPDATEGAMEINTHEDB = "UPDATE gameDataLookup SET gameJSON = ?, name = ?, whitePlayer = ?, blackPlayer = ? WHERE id = ?;";
+    private static final String GETUSERNAMEBYAUTH = "SELECT username FROM authTokenLookup WHERE token = ?;";
     private static final String CREATEAUTHCOMMAND = "INSERT INTO authTokenLookup (token, username) VALUES (?,?);";
+    private static final String AUTHENTICATE4AUTH = "SELECT token FROM authTokenLookup WHERE username = ?;";
     private static final String DELETEAUTHCOMMAND = "DELETE FROM authTokenLookup WHERE token = ?;";
 
     public static void main(String[] args) throws DataAccessException {
@@ -248,17 +251,63 @@ public class DatabaseDataAccess implements DataStorage {
 
     @Override
     public Collection<GameData> listGames(String username) throws DataAccessException {
-        return List.of();
+        ArrayList<GameData> toReturn = new ArrayList<>();
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(LISTALLGAMEBYUSER)) {
+                preparedStatement.setNString(1, username);
+                preparedStatement.setNString(2, username);
+                try (var rs = preparedStatement.executeQuery()) {
+                    while (rs.next()) {
+                        toReturn.add(parseGameData(rs));
+                    }
+                } catch (SQLException e) {
+                    toReturn = null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        return toReturn;
     }
 
     @Override
     public void updateGame(GameData gameData) throws DataAccessException {
-
+        GameData game = getGame(gameData.getId());
+        if (game == null) {
+            throw new DataAccessException("Game Does Not Exist!");
+        }
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(UPDATEGAMEINTHEDB)) {
+                preparedStatement.setString(1, new Gson().toJson(gameData.getGame()));
+                preparedStatement.setString(2, gameData.getName());
+                preparedStatement.setString(3, gameData.getPlayer1());
+                preparedStatement.setString(4, gameData.getPlayer2());
+                preparedStatement.setInt(5, gameData.getId());
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
     public int hasAuth(String username) throws DataAccessException {
-        return 0;
+        int toReturn = 0;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(AUTHENTICATE4AUTH)) {
+                preparedStatement.setNString(1, username);
+                try (var rs = preparedStatement.executeQuery()) {
+                    if (rs.next()) {
+                        toReturn = rs.getInt("token");
+                    }
+                } catch (SQLException e) {
+                    toReturn = 0;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        return toReturn;
     }
 
     @Override
@@ -276,11 +325,30 @@ public class DatabaseDataAccess implements DataStorage {
 
     @Override
     public String getAuth(int authCode) throws DataAccessException {
-        return "";
+        String toReturn = null;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(GETUSERNAMEBYAUTH)) {
+                preparedStatement.setInt(1, authCode);
+                try (var rs = preparedStatement.executeQuery()) {
+                    if (rs.next()) {
+                        toReturn = rs.getNString("username");
+                    }
+                } catch (SQLException e) {
+                    toReturn = null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        return toReturn;
     }
 
     @Override
     public void deleteAuth(int authCode) throws DataAccessException {
+        UserData user = getUser(authCode);
+        if (user == null) {
+            throw new DataAccessException("Auth Does Not Exist!");
+        }
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(DELETEAUTHCOMMAND)) {
                 preparedStatement.setInt(1, authCode);

@@ -1,9 +1,9 @@
 package server;
 
 import spark.*;
-import dataaccess.DataAccessException;
 import com.google.gson.Gson;
 import chess.datastructures.*;
+import dataaccess.*;
 
 import java.util.ArrayList;
 
@@ -30,14 +30,15 @@ public class Server {
         Spark.init();
 
         //we can do some other stuff before we just are waiting for the other thread to finish initialization
-        service = new Services(new MemoryDataAccess());
+        try {
+            service = new Services(new DatabaseDataAccess());
+        } catch (DataAccessException e) {
+            System.err.print(e.getMessage());
+            stop();
+            return 0;
+        }
 
         Spark.awaitInitialization();
-        try {
-            Thread.sleep(5000); // for some reason this is needed
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
         return Spark.port();
     }
 
