@@ -46,6 +46,15 @@ public class DataAccessTest {
     }
 
     @Test
+    @DisplayName("Create Users Fail")
+    public void createUsersFail() throws DataAccessException {
+        createUsers();
+        Assertions.assertThrows(DataAccessException.class, () -> storage.createUser("User", "Password", "e@mail.com"), "Duplicate user created");
+        Assertions.assertThrows(DataAccessException.class, () -> storage.createUser("User2", "Password2", "e2@mail.com"), "Duplicate user created");
+        Assertions.assertThrows(DataAccessException.class, () -> storage.createUser("User3", "Password3", "e3@mail.com"), "Duplicate user created");
+    }
+
+    @Test
     @DisplayName("Get Users")
     public void getUsers() throws DataAccessException {
         createUsers();
@@ -55,8 +64,14 @@ public class DataAccessTest {
 
         result = storage.getUser("User2");
         Assertions.assertNotEquals(null, result, "User2 Could not be retrieved!");
+    }
 
-        result = storage.getUser("User27");
+    @Test
+    @DisplayName("Get User Fail")
+    public void getUserFail() throws DataAccessException {
+        createUsers();
+
+        var result = storage.getUser("User27");
         Assertions.assertNull(result, "Bad User Retrieved!");
     }
 
@@ -70,6 +85,15 @@ public class DataAccessTest {
     }
 
     @Test
+    @DisplayName("Create Invalid Auth")
+    public void makeInvalidAuth() throws DataAccessException {
+        makeAuth();
+        Assertions.assertThrows(DataAccessException.class, () -> storage.createAuth(0, "User"), "Invalid AuthToken was created");
+        Assertions.assertThrows(DataAccessException.class, () -> storage.createAuth(654321, "User3"), "duplicate ID was inserted");
+        Assertions.assertThrows(DataAccessException.class, () -> storage.createAuth(444444, null), "Null User authToken Created");
+    }
+
+    @Test
     @DisplayName("Get User by Auth")
     public void getAuth() throws DataAccessException {
         makeAuth();
@@ -79,8 +103,14 @@ public class DataAccessTest {
 
         result = storage.getUser(654321);
         Assertions.assertNotEquals(null, result, "User2 Could not be retrieved by auth code!");
+    }
 
-        result = storage.getUser(11111111);
+    @Test
+    @DisplayName("Get Invalid User")
+    public void getInvalidAuth() throws DataAccessException {
+        makeAuth();
+
+        var result = storage.getUser(11111111);
         Assertions.assertNull(result, "Bad authToken returned user!");
     }
 
@@ -97,8 +127,14 @@ public class DataAccessTest {
 
         result = storage.hasAuth("User3");
         Assertions.assertNotEquals(0, result, "User3 did not have an auth code");
+    }
 
-        result = storage.hasAuth("User4");
+    @Test
+    @DisplayName("Has Invalid Auth")
+    public void hasInvalidAuth() throws DataAccessException {
+        makeAuth();
+
+        var result = storage.hasAuth("User4");
         Assertions.assertEquals(0, result, "User4 returned an auth code");
     }
 

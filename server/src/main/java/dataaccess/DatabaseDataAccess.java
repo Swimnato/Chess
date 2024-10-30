@@ -93,6 +93,10 @@ public class DatabaseDataAccess implements DataStorage {
 
     @Override
     public void createUser(String username, String password, String email) throws DataAccessException {
+        var user = getUser(username);
+        if (user != null) {
+            throw new DataAccessException("User Already Exists!");
+        }
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(CREATEUSERCOMMAND)) {
                 preparedStatement.setString(1, username);
@@ -316,6 +320,9 @@ public class DatabaseDataAccess implements DataStorage {
 
     @Override
     public void createAuth(int authCode, String username) throws DataAccessException {
+        if (authCode == 0 || username == null) {
+            throw new DataAccessException("Invalid Auth Creation!");
+        }
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(CREATEAUTHCOMMAND)) {
                 preparedStatement.setInt(1, authCode);
