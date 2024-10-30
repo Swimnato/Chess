@@ -17,9 +17,11 @@ import java.util.List;
 
 public class DatabaseDataAccess implements DataStorage {
     private static final String[] CREATEDBCOMMANDS = {
-            "CREATE TABLE IF NOT EXISTS userLookup (username VARCHAR(255) NOT NULL, hashedPassword TEXT NOT NULL, email TEXT NOT NULL, PRIMARY KEY(username));",
+            "CREATE TABLE IF NOT EXISTS userLookup (username VARCHAR(255) NOT NULL, hashedPassword TEXT NOT NULL, email TEXT NOT NULL, " +
+                    "PRIMARY KEY(username));",
             "CREATE TABLE IF NOT EXISTS authTokenLookup (token INT NOT NULL, username VARCHAR(255) NOT NULL, PRIMARY KEY(token), INDEX(username));",
-            "CREATE TABLE IF NOT EXISTS gameDataLookup (id INT NOT NULL AUTO_INCREMENT, name VARCHAR(255) NOT NULL, gameJSON TEXT NOT NULL, whitePlayer VARCHAR(255), blackPlayer VARCHAR(255), PRIMARY KEY(id), INDEX(whitePlayer), INDEX(blackPlayer), INDEX(name));"
+            "CREATE TABLE IF NOT EXISTS gameDataLookup (id INT NOT NULL AUTO_INCREMENT, name VARCHAR(255) NOT NULL, gameJSON TEXT NOT NULL, " +
+                    "whitePlayer VARCHAR(255), blackPlayer VARCHAR(255), PRIMARY KEY(id), INDEX(whitePlayer), INDEX(blackPlayer), INDEX(name));"
     };
     private static final String[] CLEARDBCOMMANDS = {
             "TRUNCATE TABLE userLookup;",
@@ -28,14 +30,16 @@ public class DatabaseDataAccess implements DataStorage {
     };
     private static final String CREATEUSERCOMMAND = "INSERT INTO userLookup (username, hashedPassword, email) VALUES (?,?,?);";
     private static final String GETUSERBYUSERNAME = "SELECT hashedPassword, email FROM userLookup WHERE username = ?;";
-    private static final String GETUSERBYAUTHCODE = "SELECT userLookup.username, userLookup.hashedPassword, userLookup.email FROM authTokenLookup JOIN userLookup ON authTokenLookup.username = userLookup.username WHERE token = ?;";
+    private static final String GETUSERBYAUTHCODE = "SELECT userLookup.username, userLookup.hashedPassword, userLookup.email FROM authTokenLookup " +
+            "JOIN userLookup ON authTokenLookup.username = userLookup.username WHERE token = ?;";
     private static final String MAKENEWCHESSBOARD = "INSERT INTO gameDataLookup (gameJSON, name, whitePlayer, blackPlayer) VALUES (?,?,?,?);";
     private static final String MAKECHESSBOARDALT = "INSERT INTO gameDataLookup (gameJSON, name, whitePlayer, blackPlayer, id) VALUES (?,?,?,?,?);";
     private static final String GETACHESSGAMEBYID = "SELECT * FROM gameDataLookup WHERE id = ?;";
     private static final String GETAGAMEBYITSNAME = "SELECT * FROM gameDataLookup WHERE name = ?;";
     private static final String LISTALLACTIVEGAME = "SELECT * FROM gameDataLookup;";
     private static final String LISTALLGAMEBYUSER = "SELECT * FROM gameDataLookup WHERE whitePlayer = ? OR blackPlayer = ?;";
-    private static final String UPDATEGAMEINTHEDB = "UPDATE gameDataLookup SET gameJSON = ?, name = ?, whitePlayer = ?, blackPlayer = ? WHERE id = ?;";
+    private static final String UPDATEGAMEINTHEDB = "UPDATE gameDataLookup SET gameJSON = ?, name = ?, whitePlayer = ?," +
+            " blackPlayer = ? WHERE id = ?;";
     private static final String GETUSERNAMEBYAUTH = "SELECT username FROM authTokenLookup WHERE token = ?;";
     private static final String CREATEAUTHCOMMAND = "INSERT INTO authTokenLookup (token, username) VALUES (?,?);";
     private static final String AUTHENTICATE4AUTH = "SELECT token FROM authTokenLookup WHERE username = ?;";

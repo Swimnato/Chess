@@ -64,7 +64,8 @@ public class MemoryDataAccess implements DataStorage {
         if (gameID != 0 && containsKey) {
             return 0;
         }
-        while (containsKey || gameID == 0) { // this makes sure that should our game ID number repeat, that it will generate a new one it uses the time as a seed so it should change every time it is called
+        while (containsKey || gameID == 0) { // this makes sure that should our game ID number repeat,
+            // that it will generate a new one it uses the time as a seed so it should change every time it is called
             gameID = IDGENERATOR.createGameID(gameData.getName());
             containsKey = gameDataLookup.containsKey(gameID);
         }
