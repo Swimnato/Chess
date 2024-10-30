@@ -163,7 +163,7 @@ public class DatabaseDataAccess implements DataStorage {
     @Override
     public int createGame(GameData gameData) throws DataAccessException {
         int toReturn = 0;
-        if (gameData.getName() == null || gameData.getGame() == null || gameData.getId() <= 0) {
+        if (gameData.getName() == null || gameData.getGame() == null || gameData.getId() < 0) {
             return 0;
         }
         try (var conn = DatabaseManager.getConnection()) {

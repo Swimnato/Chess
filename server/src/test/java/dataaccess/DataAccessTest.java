@@ -191,6 +191,8 @@ public class DataAccessTest {
         Assertions.assertEquals(0, result, "Created a game with no name!");
         result = storage.createGame(new GameData(null, "No Game", 924));
         Assertions.assertEquals(0, result, "Created a game with no game!");
+        result = storage.createGame(new GameData(null, "No Game", -3));
+        Assertions.assertEquals(0, result, "Created a game with invalid ID!");
     }
 
     @Test
