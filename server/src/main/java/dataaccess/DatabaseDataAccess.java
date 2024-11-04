@@ -45,26 +45,6 @@ public class DatabaseDataAccess implements DataStorage {
     private static final String AUTHENTICATE4AUTH = "SELECT token FROM authTokenLookup WHERE username = ?;";
     private static final String DELETEAUTHCOMMAND = "DELETE FROM authTokenLookup WHERE token = ?;";
 
-    public static void main(String[] args) throws DataAccessException {
-        DatabaseDataAccess main = new DatabaseDataAccess();
-        main.clear();
-        main.createUser("admin", "321", "test");
-        main.createUser("ad", "32441", "test");
-        main.createUser("min", "lolz", "test");
-        main.createUser("reerere", "reererere", "test");
-
-        var gotUser = main.getUser("admin");
-        System.out.println("Got User == Null? " + (gotUser == null));
-        if (gotUser != null) {
-            System.out.print(gotUser.getUsername() + " , ");
-            System.out.print(gotUser.getPassword() + " , ");
-            System.out.println(gotUser.getEmail());
-        }
-        gotUser = main.getUser("noexist");
-        System.out.println("Got User == Null? " + (gotUser == null));
-
-    }
-
     public DatabaseDataAccess() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
