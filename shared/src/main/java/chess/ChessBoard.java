@@ -155,13 +155,61 @@ public class ChessBoard {
                 ChessPiece curr = board[row][col];
                 if (curr != null) {
                     output.append(curr.getTeamColor() == ChessGame.TeamColor.WHITE ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK);
-                    output.append(" ").append(curr).append(" ");
+                    output.append(curr);
                 } else {
                     output.append(EMPTY);
                 }
             }
             output.append(SET_BG_COLOR_BLACK);
             output.append("\r\n");
+        }
+        return output.toString();
+    }
+
+    public String toString(ChessGame.TeamColor view) {
+        StringBuilder output = new StringBuilder();
+        output.append(SET_TEXT_BOLD);
+        if (view == ChessGame.TeamColor.WHITE) {
+            for (int row = rows - 1; row >= 0; row--) {
+                output.append(printRow(row, view));
+            }
+        } else {
+            for (int row = 0; row < rows; row++) {
+                output.append(printRow(row, view));
+            }
+        }
+        return output.toString();
+    }
+
+    private String printRow(int row, ChessGame.TeamColor view) {
+        StringBuilder output = new StringBuilder();
+        if (view == ChessGame.TeamColor.WHITE) {
+            for (int col = 0; col < cols; col++) {
+                output.append(printBox(row, col));
+            }
+        } else {
+            for (int col = cols - 1; col >= 0; col--) {
+                output.append(printBox(row, col));
+            }
+        }
+        output.append(SET_BG_COLOR_BLACK);
+        output.append("\r\n");
+        return output.toString();
+    }
+
+    private String printBox(int row, int col) {
+        StringBuilder output = new StringBuilder();
+        if (row % 2 != col % 2) {
+            output.append(SET_BG_COLOR_LIGHT_GREY);
+        } else {
+            output.append(SET_BG_COLOR_DARK_GREY);
+        }
+        ChessPiece curr = board[row][col];
+        if (curr != null) {
+            output.append(curr.getTeamColor() == ChessGame.TeamColor.WHITE ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK);
+            output.append(curr);
+        } else {
+            output.append(EMPTY);
         }
         return output.toString();
     }

@@ -108,12 +108,12 @@ public class ChessPiece {
             };
         } else {
             output = switch (myType) {
-                case PAWN -> "♟";
-                case ROOK -> "♜";
-                case KING -> "♚";
-                case KNIGHT -> "♞";
-                case BISHOP -> "♝";
-                case QUEEN -> "♛";
+                case PAWN -> BLACK_PAWN;
+                case ROOK -> BLACK_ROOK;
+                case KING -> BLACK_KING;
+                case KNIGHT -> BLACK_KNIGHT;
+                case BISHOP -> BLACK_BISHOP;
+                case QUEEN -> BLACK_QUEEN;
             };
         }
         return output;
