@@ -183,6 +183,8 @@ public class ChessBoard {
 
     private String printRow(int row, ChessGame.TeamColor view) {
         StringBuilder output = new StringBuilder();
+        final String rowNum = SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE + ' ' + (row + 1) + ' ';
+        output.append(rowNum);
         if (view == ChessGame.TeamColor.WHITE) {
             for (int col = 0; col < cols; col++) {
                 output.append(printBox(row, col));
@@ -192,7 +194,7 @@ public class ChessBoard {
                 output.append(printBox(row, col));
             }
         }
-        output.append(SET_BG_COLOR_BLACK);
+        output.append(rowNum);
         output.append("\r\n");
         return output.toString();
     }
