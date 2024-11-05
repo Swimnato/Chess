@@ -34,12 +34,15 @@ public class CommandParser {
         boolean onString = false;
         char currentChar;
         int indexStart = 0;
+        if (rawCommand.isEmpty()) {
+            return; // nothing to parse
+        }
         for (int index = 0; index < rawCommand.length(); index++) {
             currentChar = rawCommand.charAt(index);
             if (!onString && !isWhitespace(currentChar)) {
                 indexStart = index;
                 onString = true;
-            } else if (onString && isWhitespace(currentChar)) {
+            } else if (onString && (isWhitespace(currentChar))) {
                 onString = false;
                 if (command.isEmpty()) {
                     command = rawCommand.substring(indexStart, index);
@@ -48,10 +51,17 @@ public class CommandParser {
                 }
             }
         }
+        if (onString) {
+            if (command.isEmpty()) {
+                command = rawCommand.substring(indexStart);
+            } else {
+                parameters.add(rawCommand.substring(indexStart));
+            }
+        }
     }
 
     private boolean isWhitespace(char input) {
-        return input == '\r' || input == '\n' || input == ' ' || input == ' ' || input == ' ';
+        return input == '\r' || input == '\n' || input == ' ' || input == ' ' || input == ' ' || input == '\t';
     }
 
 
@@ -67,6 +77,9 @@ public class CommandParser {
 
     private String removeFrontWhitespace(String input) {
         int index = 0;
+        if (input.isEmpty()) {
+            return "";
+        }
         char currentChar = input.charAt(index);
 
         while (isWhitespace(currentChar)) {
