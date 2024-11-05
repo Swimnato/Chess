@@ -395,6 +395,23 @@ public class ChessGame {
     }
 
     @Override
+    public String toString() {
+        StringBuilder output = new StringBuilder();
+
+        output.append(mainBoard.toString());
+
+        return output.toString();
+    }
+
+    public String toString(TeamColor view) {
+        StringBuilder output = new StringBuilder();
+
+        output.append(mainBoard.toString(view));
+
+        return output.toString();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

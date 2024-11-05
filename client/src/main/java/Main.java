@@ -14,6 +14,7 @@ public class Main {
         board.resetBoard();
         System.out.println(board.toString(WHITE));
         System.out.println(board.toString(BLACK));
-        System.out.println(game);
+        System.out.println(game.toString(WHITE));
+        System.out.println(game.toString(BLACK));
     }
 }
