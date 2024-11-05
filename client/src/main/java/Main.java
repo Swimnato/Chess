@@ -30,13 +30,25 @@ public class Main {
     }
 
     private static void runCommand(String input) {
-        if (input.substring(0, 4).equalsIgnoreCase("Help")) {
-            System.out.println("List Of Available Commands:");
-            System.out.println(SET_TEXT_COLOR_BLUE + "\tRegister " + SET_TEXT_COLOR_GREEN + "<username> <password> <email>" + SET_TEXT_COLOR_LIGHT_GREY + " - To create an account on the server");
-            System.out.println(SET_TEXT_COLOR_BLUE + "\tLogin " + SET_TEXT_COLOR_GREEN + "<username> <password>" + SET_TEXT_COLOR_LIGHT_GREY + " - To play chess");
-            System.out.println(SET_TEXT_COLOR_BLUE + "\tQuit " + SET_TEXT_COLOR_LIGHT_GREY + " - To close the client");
-            System.out.println(SET_TEXT_COLOR_BLUE + "\tHelp " + SET_TEXT_COLOR_LIGHT_GREY + " - Display available commands");
+        if (input.toLowerCase().contains("help")) {
+            if (removeWhitespace(input).length() == 4) {
+                System.out.println("List Of Available Commands:");
+                System.out.println(SET_TEXT_COLOR_BLUE + "\tRegister " + SET_TEXT_COLOR_GREEN + "<username> <password> <email>" + SET_TEXT_COLOR_LIGHT_GREY + " - To create an account on the server");
+                System.out.println(SET_TEXT_COLOR_BLUE + "\tLogin " + SET_TEXT_COLOR_GREEN + "<username> <password>" + SET_TEXT_COLOR_LIGHT_GREY + " - To play chess");
+                System.out.println(SET_TEXT_COLOR_BLUE + "\tQuit " + SET_TEXT_COLOR_LIGHT_GREY + " - To close the client");
+                System.out.println(SET_TEXT_COLOR_BLUE + "\tHelp " + SET_TEXT_COLOR_LIGHT_GREY + " - Display available commands");
+            }
         }
+    }
+
+    private static String removeWhitespace(String input) {
+        String output = input.replace(" ", "");
+        output = output.replace("\r", "");
+        output = output.replace("\n", "");
+        output = output.replace(" ", "");
+        output = output.replace(" ", "");
+
+        return output;
     }
 
     enum LoginStatus {
