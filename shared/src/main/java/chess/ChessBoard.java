@@ -1,5 +1,8 @@
 package chess;
 
+
+import static chess.ui.EscapeSequences.*;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -140,20 +143,26 @@ public class ChessBoard {
 
     @Override
     public String toString() {
-        String output = "";
+        StringBuilder output = new StringBuilder();
+        output.append(SET_TEXT_BOLD);
         for (int row = rows - 1; row >= 0; row--) {
-            output = output + "|";
             for (int col = 0; col < cols; col++) {
+                if (row % 2 != col % 2) {
+                    output.append(SET_BG_COLOR_LIGHT_GREY);
+                } else {
+                    output.append(SET_BG_COLOR_DARK_GREY);
+                }
                 ChessPiece curr = board[row][col];
                 if (curr != null) {
-                    output = output + curr + '|';
+                    output.append(" ").append(curr).append(" ");
                 } else {
-                    output = output + " |";
+                    output.append("   ");
                 }
             }
-            output = output + "\r\n";
+            output.append(SET_BG_COLOR_BLACK);
+            output.append("\r\n");
         }
-        return output;
+        return output.toString();
     }
 
     @Override

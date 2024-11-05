@@ -97,21 +97,21 @@ public class ChessPiece {
         var output = "";
         if (myColor == ChessGame.TeamColor.WHITE) {
             output = switch (myType) {
-                case PAWN -> "P";
-                case ROOK -> "R";
-                case KING -> "K";
-                case KNIGHT -> "N";
-                case BISHOP -> "B";
-                case QUEEN -> "Q";
+                case PAWN -> "♙";
+                case ROOK -> "♖";
+                case KING -> "♔";
+                case KNIGHT -> "♘";
+                case BISHOP -> "♗";
+                case QUEEN -> "♕";
             };
         } else {
             output = switch (myType) {
                 case PAWN -> "p";
                 case ROOK -> "r";
-                case KING -> "k";
+                case KING -> "♚";
                 case KNIGHT -> "n";
                 case BISHOP -> "b";
-                case QUEEN -> "q";
+                case QUEEN -> "♛";
             };
         }
         return output;
