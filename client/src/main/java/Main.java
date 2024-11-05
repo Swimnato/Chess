@@ -68,7 +68,7 @@ public class Main {
     private static void printHelpForCommand(CommandParser input) {
         if (input.numOfParameters() > 1) {
             System.out.println(SET_TEXT_COLOR_RED + "Invalid Syntax of Help! use \"Help Help\" to see proper syntax.");
-        } else if (loggedIn == LoginStatus.LOGGED_OUT && input.getParameter(0).equalsIgnoreCase("Register")) {
+        } else if (loggedIn == LoginStatus.LOGGED_OUT && input.isParameterEqual(0, "Register")) {
             System.out.println(SET_TEXT_COLOR_BLUE + "Register" + SET_TEXT_COLOR_LIGHT_GREY + ": This is a command to create an account on the created server.");
             System.out.println("Syntax:");
             System.out.println(SET_TEXT_COLOR_BLUE + "\tRegister " + SET_TEXT_COLOR_GREEN + "<username> <password> <email>");
@@ -76,20 +76,20 @@ public class Main {
             System.out.println(SET_TEXT_COLOR_GREEN + "\t<username> " + SET_TEXT_COLOR_LIGHT_GREY + "This is your chosen alias on the server, or what you wish to be called.");
             System.out.println(SET_TEXT_COLOR_GREEN + "\t<password> " + SET_TEXT_COLOR_LIGHT_GREY + "A password, to keep your account safe, something you will remember.");
             System.out.println(SET_TEXT_COLOR_GREEN + "\t<email> " + SET_TEXT_COLOR_LIGHT_GREY + "How you can be reached by the server operator.");
-        } else if (loggedIn == LoginStatus.LOGGED_OUT && input.getParameter(0).equalsIgnoreCase("Login")) {
+        } else if (loggedIn == LoginStatus.LOGGED_OUT && input.isParameterEqual(0, "Login")) {
             System.out.println(SET_TEXT_COLOR_BLUE + "Login" + SET_TEXT_COLOR_LIGHT_GREY + ": This is a command to login into a server. If you need to create an account, use " + SET_TEXT_COLOR_BLUE + "\tRegister ");
             System.out.println("Syntax:");
             System.out.println(SET_TEXT_COLOR_BLUE + "\tLogin " + SET_TEXT_COLOR_GREEN + "<username> <password>");
             System.out.println("Parameters:");
             System.out.println(SET_TEXT_COLOR_GREEN + "\t<username> " + SET_TEXT_COLOR_LIGHT_GREY + "Your Username on the server.");
             System.out.println(SET_TEXT_COLOR_GREEN + "\t<password> " + SET_TEXT_COLOR_LIGHT_GREY + "Your Password.");
-        } else if (input.getParameter(0).equalsIgnoreCase("Quit")) {
+        } else if (input.isParameterEqual(0, "Quit")) {
             System.out.println(SET_TEXT_COLOR_BLUE + "Quit" + SET_TEXT_COLOR_LIGHT_GREY + " Stops the client.");
             System.out.println("Syntax:");
             System.out.println(SET_TEXT_COLOR_BLUE + "\tQuit");
             System.out.println(SET_TEXT_COLOR_WHITE + "Parameters:");
             System.out.println(SET_TEXT_COLOR_GREEN + "\tNone");
-        } else if (input.getParameter(0).equalsIgnoreCase("Help")) {
+        } else if (input.isParameterEqual(0, "Help")) {
             System.out.println(SET_TEXT_COLOR_BLUE + "Help" + SET_TEXT_COLOR_LIGHT_GREY + " Shows available commands, alternativly can be used to learn more about a given command.");
             System.out.println("Syntax:");
             System.out.println(SET_TEXT_COLOR_BLUE + "\tHelp");

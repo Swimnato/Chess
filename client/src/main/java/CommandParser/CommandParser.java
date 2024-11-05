@@ -30,6 +30,10 @@ public class CommandParser {
         return parameters.get(index);
     }
 
+    public boolean isParameterEqual(int parameterNum, String valueToCompare) {
+        return parameters.get(parameterNum).equalsIgnoreCase(valueToCompare);
+    }
+
     private void parseCommand() {
         boolean onString = false;
         char currentChar;
