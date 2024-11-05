@@ -1,3 +1,4 @@
+import CommandParser.CommandParser;
 import chess.*;
 
 import static chess.ChessGame.TeamColor.*;
@@ -34,8 +35,9 @@ public class Main {
     }
 
     private static boolean runCommand(String input) {
-        if (input.toLowerCase().contains("help")) {
-            if (removeWhitespace(input).length() == 4) {
+        CommandParser parser = new CommandParser(input);
+        if (parser.isCommand("Help")) {
+            if (parser.numOfParameters() == 0) {
                 if (loggedIn == LoginStatus.LOGGED_OUT) {
                     System.out.println("List Of Available Commands:");
                     System.out.println(SET_TEXT_COLOR_BLUE + "\tRegister " + SET_TEXT_COLOR_GREEN + "<username> <password> <email>" + SET_TEXT_COLOR_LIGHT_GREY + " - To create an account on the server");
@@ -44,14 +46,18 @@ public class Main {
                     System.out.println(SET_TEXT_COLOR_BLUE + "\tHelp " + SET_TEXT_COLOR_LIGHT_GREY + " - Display available commands");
                 }
             } else {
-                printHelpForCommand(input);
+                printHelpForCommand(parser);
             }
-        } else if (input.toLowerCase().contains("quit")) {
-            System.out.println("Goodbye! Come back soon! :)");
-            return false;
-        } else if (input.toLowerCase().contains("register")) {
+        } else if (parser.isCommand("quit")) {
+            if (parser.numOfParameters() == 0) {
+                System.out.println("Goodbye! Come back soon! :)");
+                return false;
+            } else {
+                System.out.println(SET_TEXT_COLOR_RED + "Invalid Syntax of Quit! use \"Help Quit\" to see proper syntax.");
+            }
+        } else if (parser.isCommand("register")) {
 
-        } else if (input.toLowerCase().contains("login")) {
+        } else if (parser.isCommand("login")) {
 
         } else {
 
@@ -59,7 +65,7 @@ public class Main {
         return true;
     }
 
-    private static void printHelpForCommand(String input) {
+    private static void printHelpForCommand(CommandParser input) {
         input = input.substring(4).toLowerCase();
         if (loggedIn == LoginStatus.LOGGED_OUT && input.contains("register")) {
             System.out.println(SET_TEXT_COLOR_BLUE + "Register" + SET_TEXT_COLOR_LIGHT_GREY + ": This is a command to create an account on the created server.");
@@ -93,14 +99,8 @@ public class Main {
         }
     }
 
-    private static String removeWhitespace(String input) {
-        String output = input.replace(" ", "");
-        output = output.replace("\r", "");
-        output = output.replace("\n", "");
-        output = output.replace(" ", "");
-        output = output.replace(" ", "");
+    private static String getNextParameter(String input) {
 
-        return output;
     }
 
     enum LoginStatus {
