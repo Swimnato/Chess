@@ -4,6 +4,8 @@ import chess.rules.*;
 
 import java.util.Collection;
 
+import static chess.ui.EscapeSequences.*;
+
 /**
  * Represents a single chess piece
  * <p>
@@ -97,12 +99,12 @@ public class ChessPiece {
         var output = "";
         if (myColor == ChessGame.TeamColor.WHITE) {
             output = switch (myType) {
-                case PAWN -> "♙";
-                case ROOK -> "♖";
-                case KING -> "♔";
-                case KNIGHT -> "♘";
-                case BISHOP -> "♗";
-                case QUEEN -> "♕";
+                case PAWN -> WHITE_PAWN;
+                case ROOK -> WHITE_ROOK;
+                case KING -> WHITE_KING;
+                case KNIGHT -> WHITE_KNIGHT;
+                case BISHOP -> WHITE_BISHOP;
+                case QUEEN -> WHITE_QUEEN;
             };
         } else {
             output = switch (myType) {

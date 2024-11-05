@@ -155,9 +155,9 @@ public class ChessBoard {
                 ChessPiece curr = board[row][col];
                 if (curr != null) {
                     output.append(curr.getTeamColor() == ChessGame.TeamColor.WHITE ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK);
-                    output.append(" ").append(curr).append(" ");
+                    output.append(" ").append(curr).append(" ");
                 } else {
-                    output.append("   ");
+                    output.append(EMPTY);
                 }
             }
             output.append(SET_BG_COLOR_BLACK);
