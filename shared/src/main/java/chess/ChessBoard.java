@@ -169,6 +169,8 @@ public class ChessBoard {
     public String toString(ChessGame.TeamColor view) {
         StringBuilder output = new StringBuilder();
         output.append(SET_TEXT_BOLD);
+        final String rowLetters = printColumnNumbers(view);
+        output.append(rowLetters);
         if (view == ChessGame.TeamColor.WHITE) {
             for (int row = rows - 1; row >= 0; row--) {
                 output.append(printRow(row, view));
@@ -178,12 +180,13 @@ public class ChessBoard {
                 output.append(printRow(row, view));
             }
         }
+        output.append(rowLetters);
         return output.toString();
     }
 
     private String printRow(int row, ChessGame.TeamColor view) {
         StringBuilder output = new StringBuilder();
-        final String rowNum = SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE + ' ' + (row + 1) + ' ';
+        final String rowNum = SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE + ' ' + (row + 1) + ' ';
         output.append(rowNum);
         if (view == ChessGame.TeamColor.WHITE) {
             for (int col = 0; col < cols; col++) {
@@ -214,6 +217,44 @@ public class ChessBoard {
             output.append(EMPTY);
         }
         return output.toString();
+    }
+
+    private String printColumnNumbers(ChessGame.TeamColor view) {
+        StringBuilder output = new StringBuilder();
+
+        output.append(EMPTY + SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE + ' ');
+        if (view == ChessGame.TeamColor.WHITE) {
+            for (int col = 0; col < cols; col++) {
+                output.append(getColumnLetter(col)).append("\u2003");
+                if (col != 3) {
+                    output.append(' ');
+                }
+            }
+        } else {
+            for (int col = cols - 1; col >= 0; col--) {
+                output.append(getColumnLetter(col)).append("\u2003");
+                if (col != 4) {
+                    output.append(' ');
+                }
+            }
+        }
+        output.append("\r\n");
+
+        return output.toString();
+    }
+
+    private char getColumnLetter(int index) {
+        return switch (index) {
+            case 0 -> 'a';
+            case 1 -> 'b';
+            case 2 -> 'c';
+            case 3 -> 'd';
+            case 4 -> 'e';
+            case 5 -> 'f';
+            case 6 -> 'g';
+            case 7 -> 'h';
+            default -> ' ';
+        };
     }
 
     @Override
