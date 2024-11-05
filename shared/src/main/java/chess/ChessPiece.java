@@ -106,11 +106,11 @@ public class ChessPiece {
             };
         } else {
             output = switch (myType) {
-                case PAWN -> "p";
-                case ROOK -> "r";
+                case PAWN -> "♟";
+                case ROOK -> "♜";
                 case KING -> "♚";
-                case KNIGHT -> "n";
-                case BISHOP -> "b";
+                case KNIGHT -> "♞";
+                case BISHOP -> "♝";
                 case QUEEN -> "♛";
             };
         }
