@@ -1,15 +1,51 @@
 import CommandParser.CommandParser;
 import chess.*;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+
 import static chess.ChessGame.TeamColor.*;
 import static chess.ui.EscapeSequences.*;
 
 public class Main {
 
     static LoginStatus loggedIn = LoginStatus.LOGGED_OUT;
+    static ServerFacade facade;
 
     public static void main(String[] args) {
-        System.out.println(ERASE_SCREEN + SET_TEXT_BOLD + SET_TEXT_COLOR_WHITE + SET_BG_COLOR_BLACK + "♕ 240 Chess Client - Type 'Help' to get started");
+        if (args.length == 2) {
+            int port = Integer.parseInt(args[0]);
+            String ip = args[1];
+            facade = new ServerFacade(port, ip);
+        } else if (args.length == 0) {
+            facade = new ServerFacade();
+        } else {
+            System.out.println(SET_TEXT_COLOR_RED + "Invalid arguments! Correct Syntax: " + SET_TEXT_COLOR_BLUE + "<ChessClient.exe/jar> " + SET_TEXT_COLOR_GREEN + "<port> <ip>" +
+                    SET_TEXT_COLOR_RED + " Port and IP are optional, though the loopback IP is the default value, and port 8080 will be used. You must include both or neither");
+            return;
+        }
+        boolean serverAvailable;
+        try {
+            serverAvailable = facade.testServer();
+        } catch (URISyntaxException e) {
+            System.out.println(SET_TEXT_COLOR_RED + "Invalid arguments! URL was malformed! Correct Syntax: " + SET_TEXT_COLOR_BLUE + "<ChessClient.exe/jar> " + SET_TEXT_COLOR_GREEN + "<port> <ip>" +
+                    SET_TEXT_COLOR_RED + " Port and IP are optional, though the loopback IP is the default value, and port 8080 will be used. You must include both or neither");
+            return;
+        } catch (IOException e) {
+            System.out.println(SET_TEXT_COLOR_RED + e.getMessage() + " Please try another Port/IP");
+            return;
+        } catch (Exception e) {
+            System.out.println(SET_TEXT_COLOR_RED + "Unknown Exception! " + e.getMessage());
+            return;
+        }
+
+        if (!serverAvailable) {
+            System.out.println(SET_TEXT_COLOR_RED + "Server Unreachable/Incompatable! Check Port and IP, it could also be that the server is down.");
+            return;
+        }
+
+        System.out.println(ERASE_SCREEN + SET_TEXT_BOLD + SET_TEXT_COLOR_WHITE + SET_BG_COLOR_BLACK + "Connected to server Successfully!\r\n\r\n♕ 240 Chess Client - Type 'Help' to get started");
 
         boolean running = true;
 
