@@ -14,42 +14,17 @@ public class Main {
     static ServerFacade facade;
 
     public static void main(String[] args) {
-        if (args.length == 2) {
-            int port = Integer.parseInt(args[0]);
-            String ip = args[1];
-            facade = new ServerFacade(port, ip);
-        } else if (args.length == 0) {
-            facade = new ServerFacade();
-        } else {
-            System.out.println(SET_TEXT_COLOR_RED + "Invalid arguments! Correct Syntax: " + SET_TEXT_COLOR_BLUE + "<ChessClient.exe/jar> " + SET_TEXT_COLOR_GREEN + "<port> <ip>" +
-                    SET_TEXT_COLOR_RED + " Port and IP are optional, though the loopback IP is the default value, and port 8080 will be used. You must include both or neither");
-            return;
-        }
-        boolean serverAvailable;
-        try {
-            serverAvailable = facade.testServer();
-        } catch (URISyntaxException e) {
-            System.out.println(SET_TEXT_COLOR_RED + "Invalid arguments! URL was malformed! Correct Syntax: " + SET_TEXT_COLOR_BLUE + "<ChessClient.exe/jar> " + SET_TEXT_COLOR_GREEN + "<port> <ip>" +
-                    SET_TEXT_COLOR_RED + " Port and IP are optional, though the loopback IP is the default value, and port 8080 will be used. You must include both or neither");
-            return;
-        } catch (IOException e) {
-            System.out.println(SET_TEXT_COLOR_RED + e.getMessage() + " Please try another Port/IP");
-            return;
-        } catch (Exception e) {
-            System.out.println(SET_TEXT_COLOR_RED + "Unknown Exception! " + e.getMessage());
+
+        if (!setupIPAndPortFromUserInput(args)) {
             return;
         }
 
-        if (!serverAvailable) {
-            System.out.println(SET_TEXT_COLOR_RED + "Server Unreachable/Incompatable! Check Port and IP, it could also be that the server is down.");
-            return;
-        }
 
         System.out.println(ERASE_SCREEN + SET_TEXT_BOLD + SET_TEXT_COLOR_WHITE + SET_BG_COLOR_BLACK + "Connected to server Successfully!\r\n\r\n♕ 240 Chess Client - Type 'Help' to get started");
 
         boolean running = true;
 
-        System.out.print(loggedIn + ">> ");
+        printPrompt();
         while (running) {
             try {
                 if (System.in.available() > 0) {
@@ -61,13 +36,17 @@ public class Main {
                     }
                     running = runCommand(command.toString());
                     if (running) {
-                        System.out.print(SET_TEXT_COLOR_WHITE + loggedIn + ">> ");
+                        printPrompt();
                     }
                 }
             } catch (Exception e) {
                 System.err.println("ERROR - UNCAUGHT EXCEPTION: " + e.getMessage());
             }
         }
+    }
+
+    private static void printPrompt() {
+        System.out.print(SET_TEXT_COLOR_WHITE + '[' + loggedIn + ']' + ">> ");
     }
 
     private static boolean runCommand(String input) {
@@ -142,10 +121,92 @@ public class Main {
             System.out.println("Syntax:");
             System.out.println(SET_TEXT_COLOR_BLUE + "\tHelp");
             System.out.println(SET_TEXT_COLOR_WHITE + "Parameters:");
-            System.out.println(SET_TEXT_COLOR_GREEN + "\t<command>" + SET_TEXT_COLOR_LIGHT_GREY + "(Optional) - The desired command that will be explained. If not given, the system will display all available commands.");
+            System.out.println(SET_TEXT_COLOR_GREEN + "\t<command> " + SET_TEXT_COLOR_LIGHT_GREY + "(Optional) - The desired command that will be explained. If not given, the system will display all available commands.");
         } else {
             throw new InvalidSyntaxException("Help");
         }
+    }
+
+    private static boolean setupIPAndPortFromUserInput(String[] args) {
+        if (args.length == 2) {
+            int port = Integer.parseInt(args[0]);
+            String ip = args[1];
+            facade = new ServerFacade(port, ip);
+
+            boolean serverAvailable;
+            try {
+                serverAvailable = facade.testServer();
+            } catch (URISyntaxException e) {
+                System.out.println(SET_TEXT_COLOR_RED + "Invalid arguments! URL was malformed! Correct Syntax: " + SET_TEXT_COLOR_BLUE + "<ChessClient.exe/jar> " + SET_TEXT_COLOR_GREEN + "<port> <ip>" +
+                        SET_TEXT_COLOR_RED + " Port and IP are optional, though the loopback IP is the default value, and port 8080 will be used. You must include both or neither");
+                return false;
+            } catch (IOException e) {
+                System.out.println(SET_TEXT_COLOR_RED + e.getMessage() + " Please try another Port/IP");
+                return false;
+            } catch (Exception e) {
+                System.out.println(SET_TEXT_COLOR_RED + "Unknown Exception! " + e.getMessage());
+                return false;
+            }
+
+            if (!serverAvailable) {
+                System.out.println(SET_TEXT_COLOR_RED + "Server Unreachable/Incompatable! Check Port and IP, it could also be that the server is down.");
+                return false;
+            }
+
+        } else if (args.length == 0) {
+            boolean inputsNotValid = true;
+            while (inputsNotValid) {
+                try {
+                    System.out.print(SET_TEXT_COLOR_WHITE + "Enter Server Port and IP, or use [enter] to accept default values of port: 8080 and IP: 127.0.0.1\r\nServer port: ");
+                    while (System.in.available() == 0) {
+                    }
+                    char currentCharacter = (char) System.in.read();
+                    StringBuilder input = new StringBuilder();
+                    while (currentCharacter != '\n') {
+                        input.append(currentCharacter);
+                        currentCharacter = (char) System.in.read();
+                    }
+                    if (input.toString().equalsIgnoreCase("Quit")) {
+                        return false;
+                    }
+                    if (input.toString().isEmpty()) {
+                        facade = new ServerFacade();
+                        inputsNotValid = !facade.testServer();
+                        continue;
+                    }
+                    int port = Integer.parseInt(input.toString());
+
+                    System.out.print("Server IP: ");
+
+                    currentCharacter = (char) System.in.read();
+                    input = new StringBuilder();
+                    while (currentCharacter != '\n') {
+                        input.append(currentCharacter);
+                        currentCharacter = (char) System.in.read();
+                    }
+                    if (input.toString().equalsIgnoreCase("Quit")) {
+                        return false;
+                    }
+                    String ip;
+                    if (input.toString().isEmpty()) {
+                        ip = "127.0.0.1";
+                    } else {
+                        ip = input.toString();
+                    }
+
+                    facade = new ServerFacade(port, ip);
+
+                    inputsNotValid = !facade.testServer();
+                } catch (Exception e) {
+                    System.out.println(SET_TEXT_COLOR_RED + "Invalid IP/Port or server is unreachable! Try Again or type quit to quit.");
+                }
+            }
+        } else {
+            System.out.println(SET_TEXT_COLOR_RED + "Invalid arguments! Correct Syntax: " + SET_TEXT_COLOR_BLUE + "<ChessClient.exe/jar> " + SET_TEXT_COLOR_GREEN + "<port> <ip>" +
+                    SET_TEXT_COLOR_RED + " Port and IP are optional, though you will be prompted for them.");
+            return false;
+        }
+        return true;
     }
 
     enum LoginStatus {

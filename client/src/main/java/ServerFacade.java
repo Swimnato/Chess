@@ -9,7 +9,7 @@ public class ServerFacade {
     public ServerFacade(int port, String ip) {
         this.ip = ip;
         this.port = port;
-        linkAndPort = ip + ':' + port;
+        linkAndPort = "http://" + ip + ':' + port;
     }
 
     public ServerFacade() {
