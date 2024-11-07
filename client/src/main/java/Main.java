@@ -73,7 +73,8 @@ public class Main {
                 }
             } else if (parser.isCommand("register")) {
                 if (parser.numOfParameters() == 3 && loggedIn == LoginStatus.LOGGED_OUT) {
-
+                    String response = facade.register(parser.getParameter(0), parser.getParameter(1), parser.getParameter(2));
+                    System.out.println(response);
                 } else {
                     throw new InvalidSyntaxException("Register");
                 }
@@ -86,7 +87,7 @@ public class Main {
             } else {
                 System.out.println(SET_TEXT_COLOR_RED + "Unrecognized command! Use \"Help\" to find a list of available commands!");
             }
-        } catch (InvalidSyntaxException e) {
+        } catch (InvalidSyntaxException | ErrorResponseException e) {
             System.out.println(SET_TEXT_COLOR_RED + "Invalid Syntax of " + e.getMessage() + "! Use \"Help " + e.getMessage() + "\" to see proper syntax.");
         }
         return true;
