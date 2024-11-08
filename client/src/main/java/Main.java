@@ -48,6 +48,7 @@ public class Main {
                 }
             } catch (Exception e) {
                 System.err.println("ERROR - UNCAUGHT EXCEPTION: " + e.getMessage());
+                printPrompt();
             }
         }
     }
@@ -114,11 +115,18 @@ public class Main {
             if (parser.numOfParameters() == 0 && loggedIn == LoginStatus.LOGGED_IN) {
                 String response = facade.logout();
                 System.out.println(response);
-                if (!response.isEmpty()) {
+                if (!response.equals("Logged Out Successfully!")) {
                     loggedIn = LoginStatus.LOGGED_OUT;
                 }
             } else {
                 throw new InvalidSyntaxException("Logout");
+            }
+        } else if (parser.isCommand("list") && parser.getParameter(0).equalsIgnoreCase("Games")) {
+            if (parser.numOfParameters() <= 2 && loggedIn == LoginStatus.LOGGED_IN) {
+                String response = facade.listGames();
+                System.out.println(response);
+            } else {
+                throw new InvalidSyntaxException("List Games");
             }
         } else {
             System.out.println(SET_TEXT_COLOR_RED + "Unrecognized command! Use \"Help\" to find a list of available commands!");
@@ -165,6 +173,18 @@ public class Main {
             System.out.println("Parameters:");
             System.out.println(SET_TEXT_COLOR_GREEN + "\t<id> " + SET_TEXT_COLOR_LIGHT_GREY + "The id or number it appeared using the " + SET_TEXT_COLOR_BLUE + "List Games" + SET_TEXT_COLOR_LIGHT_GREY + " Command");
             System.out.println(SET_TEXT_COLOR_GREEN + "\t<color> " + SET_TEXT_COLOR_LIGHT_GREY + "The desired chess color [" + SET_TEXT_COLOR_WHITE + "WHITE" + SET_TEXT_COLOR_LIGHT_GREY + "/" + SET_TEXT_COLOR_DARK_GREY + "BLACK" + SET_TEXT_COLOR_LIGHT_GREY + "].");
+        } else if (input.isParameterEqual(0, "Observe") && input.isParameterEqual(1, "Game")) {
+            System.out.println(SET_TEXT_COLOR_BLUE + "Observe Game" + SET_TEXT_COLOR_LIGHT_GREY + ": This is a command to observe a game on the server.");
+            System.out.println("Syntax:");
+            System.out.println(SET_TEXT_COLOR_BLUE + "\tJoin Game " + SET_TEXT_COLOR_GREEN + "<id>");
+            System.out.println("Parameters:");
+            System.out.println(SET_TEXT_COLOR_GREEN + "\t<id> " + SET_TEXT_COLOR_LIGHT_GREY + "The id or number it appeared using the " + SET_TEXT_COLOR_BLUE + "List Games" + SET_TEXT_COLOR_LIGHT_GREY + " Command");
+        } else if (input.isParameterEqual(0, "List") && input.isParameterEqual(1, "Games")) {
+            System.out.println(SET_TEXT_COLOR_BLUE + "List Games" + SET_TEXT_COLOR_LIGHT_GREY + ": This is a command to show all games on the server.");
+            System.out.println("Syntax:");
+            System.out.println(SET_TEXT_COLOR_BLUE + "\tList Games");
+            System.out.println("Parameters:");
+            System.out.println(SET_TEXT_COLOR_GREEN + "\tNone");
         } else if (input.isParameterEqual(0, "Quit")) {
             System.out.println(SET_TEXT_COLOR_BLUE + "Quit" + SET_TEXT_COLOR_LIGHT_GREY + " Stops the client.");
             System.out.println("Syntax:");

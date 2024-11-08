@@ -1,12 +1,12 @@
-import chess.datastructures.LoginInfo;
-import chess.datastructures.RegisterInfo;
-import chess.datastructures.UsernameAuthTokenPair;
+import chess.datastructures.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.net.*;
+import java.util.ArrayList;
 
 public class ServerFacade {
     String ip;
@@ -90,7 +90,7 @@ public class ServerFacade {
     public String logout() throws InvalidSyntaxException, ErrorResponseException {
         String output;
         try {
-            output = makeRequest("/session", "DELETE", "");
+            output = makeRequest("/session", "DELETE", null);
             if (output.equals("Unauthorized")) {
                 return "Bad Session!";
             }
@@ -101,6 +101,22 @@ public class ServerFacade {
         }
 
         return "Logged Out Successfully!";
+    }
+
+    public String listGames() throws InvalidSyntaxException, ErrorResponseException {
+        String output;
+        try {
+            output = makeRequest("/game", "GET", null);
+            if (output.equals("Unauthorized")) {
+                return "Bad Session!";
+            } else if (output.equals("Bad Request")) {
+                return "Bad Request!";
+            }
+            GamesList usernameAuthTokenPair = new Gson().fromJson(output, GamesList.class);
+        } catch (IOException | URISyntaxException e) {
+            throw new InvalidSyntaxException(e.getMessage());
+        }
+        return output;
     }
 
 
