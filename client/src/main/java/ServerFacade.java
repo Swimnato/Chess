@@ -1,3 +1,4 @@
+import chess.datastructures.LoginInfo;
 import chess.datastructures.RegisterInfo;
 import chess.datastructures.UsernameAuthTokenPair;
 import com.google.gson.Gson;
@@ -17,17 +18,20 @@ public class ServerFacade {
         this.ip = ip;
         this.port = port;
         linkAndPort = "http://" + ip + ':' + port;
+        authToken = 0;
     }
 
     public ServerFacade() {
         ip = "127.0.0.1";
         port = 8080;
         linkAndPort = "http://" + ip + ':' + port;
+        authToken = 0;
     }
 
     private String makeRequest(String path, String type, String body) throws IOException, URISyntaxException, ErrorResponseException {
         URL url = (new URI(linkAndPort + path)).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestProperty("Authorization", String.valueOf(this.authToken));
         conn.setRequestMethod(type);
         conn.setDoOutput(true);
         conn.addRequestProperty("Accept", "application/json");
@@ -37,13 +41,13 @@ public class ServerFacade {
             }
         }
         conn.connect();
+        if (conn.getResponseCode() != 200) {
+            return conn.getResponseMessage();
+        }
         var inputStream = conn.getInputStream();
         StringBuilder output = new StringBuilder();
         while (inputStream.available() > 0)
             output.append((char) inputStream.read());
-        if (conn.getResponseCode() != 200) {
-            throw new ErrorResponseException(output.toString());
-        }
         return output.toString();
     }
 
@@ -52,12 +56,51 @@ public class ServerFacade {
         String output;
         try {
             output = makeRequest("/user", "POST", new Gson().toJson(info));
+            if (output.equals("Forbidden")) {
+                return "Username Already Taken!";
+            } else if (output.equals("Bad Request")) {
+                return "Bad Request!";
+            }
             UsernameAuthTokenPair usernameAuthTokenPair = new Gson().fromJson(output, UsernameAuthTokenPair.class);
             authToken = usernameAuthTokenPair.getAuthToken();
         } catch (IOException | URISyntaxException e) {
             throw new InvalidSyntaxException(e.getMessage());
         }
         return "Registered Successfully!";
+    }
+
+    public String login(String username, String password) throws InvalidSyntaxException, ErrorResponseException {
+        LoginInfo info = new LoginInfo(username, password);
+        String output;
+        try {
+            output = makeRequest("/session", "POST", new Gson().toJson(info));
+            if (output.equals("Unauthorized")) {
+                return "Bad Username/Password!";
+            } else if (output.equals("Bad Request")) {
+                return "Bad Request!";
+            }
+            UsernameAuthTokenPair usernameAuthTokenPair = new Gson().fromJson(output, UsernameAuthTokenPair.class);
+            authToken = usernameAuthTokenPair.getAuthToken();
+        } catch (IOException | URISyntaxException e) {
+            throw new InvalidSyntaxException(e.getMessage());
+        }
+        return "Logged In Successfully!";
+    }
+
+    public String logout() throws InvalidSyntaxException, ErrorResponseException {
+        String output;
+        try {
+            output = makeRequest("/session", "DELETE", "");
+            if (output.equals("Unauthorized")) {
+                return "Bad Session!";
+            }
+            UsernameAuthTokenPair usernameAuthTokenPair = new Gson().fromJson(output, UsernameAuthTokenPair.class);
+            authToken = usernameAuthTokenPair.getAuthToken();
+        } catch (IOException | URISyntaxException e) {
+            throw new InvalidSyntaxException(e.getMessage());
+        }
+
+        return "Logged Out Successfully!";
     }
 
 

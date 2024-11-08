@@ -58,9 +58,11 @@ public class Main {
                         System.out.println("List Of Available Commands:");
                         System.out.println(SET_TEXT_COLOR_BLUE + "\tRegister " + SET_TEXT_COLOR_GREEN + "<username> <password> <email>" + SET_TEXT_COLOR_LIGHT_GREY + " - To create an account on the server");
                         System.out.println(SET_TEXT_COLOR_BLUE + "\tLogin " + SET_TEXT_COLOR_GREEN + "<username> <password>" + SET_TEXT_COLOR_LIGHT_GREY + " - To play chess");
-                        System.out.println(SET_TEXT_COLOR_BLUE + "\tQuit " + SET_TEXT_COLOR_LIGHT_GREY + " - To close the client");
-                        System.out.println(SET_TEXT_COLOR_BLUE + "\tHelp " + SET_TEXT_COLOR_LIGHT_GREY + " - Display available commands");
+                    } else {
+
                     }
+                    System.out.println(SET_TEXT_COLOR_BLUE + "\tQuit " + SET_TEXT_COLOR_LIGHT_GREY + " - To close the client");
+                    System.out.println(SET_TEXT_COLOR_BLUE + "\tHelp " + SET_TEXT_COLOR_LIGHT_GREY + " - Display available commands");
                 } else {
                     printHelpForCommand(parser);
                 }
@@ -75,14 +77,31 @@ public class Main {
                 if (parser.numOfParameters() == 3 && loggedIn == LoginStatus.LOGGED_OUT) {
                     String response = facade.register(parser.getParameter(0), parser.getParameter(1), parser.getParameter(2));
                     System.out.println(response);
+                    if (response.equals("Registered Successfully!")) {
+                        loggedIn = LoginStatus.LOGGED_IN;
+                    }
                 } else {
                     throw new InvalidSyntaxException("Register");
                 }
             } else if (parser.isCommand("login")) {
                 if (parser.numOfParameters() == 2 && loggedIn == LoginStatus.LOGGED_OUT) {
-
+                    String response = facade.login(parser.getParameter(0), parser.getParameter(1));
+                    System.out.println(response);
+                    if (response.equals("Logged In Successfully!")) {
+                        loggedIn = LoginStatus.LOGGED_IN;
+                    }
                 } else {
                     throw new InvalidSyntaxException("Login");
+                }
+            } else if (parser.isCommand("logout")) {
+                if (parser.numOfParameters() == 0 && loggedIn == LoginStatus.LOGGED_IN) {
+                    String response = facade.logout();
+                    System.out.println(response);
+                    if (!response.isEmpty()) {
+                        loggedIn = LoginStatus.LOGGED_OUT;
+                    }
+                } else {
+                    throw new InvalidSyntaxException("Logout");
                 }
             } else {
                 System.out.println(SET_TEXT_COLOR_RED + "Unrecognized command! Use \"Help\" to find a list of available commands!");
