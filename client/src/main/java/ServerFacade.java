@@ -8,17 +8,21 @@ import java.lang.reflect.Array;
 import java.net.*;
 import java.util.ArrayList;
 
+import static chess.ui.EscapeSequences.*;
+
 public class ServerFacade {
     String ip;
     int port;
     String linkAndPort;
     int authToken;
+    GameOverview[] gamesList;
 
     public ServerFacade(int port, String ip) {
         this.ip = ip;
         this.port = port;
         linkAndPort = "http://" + ip + ':' + port;
         authToken = 0;
+        gamesList = null;
     }
 
     public ServerFacade() {
@@ -26,6 +30,7 @@ public class ServerFacade {
         port = 8080;
         linkAndPort = "http://" + ip + ':' + port;
         authToken = 0;
+        gamesList = null;
     }
 
     private String makeRequest(String path, String type, String body) throws IOException, URISyntaxException, ErrorResponseException {
@@ -104,19 +109,53 @@ public class ServerFacade {
     }
 
     public String listGames() throws InvalidSyntaxException, ErrorResponseException {
-        String output;
+        String response;
         try {
-            output = makeRequest("/game", "GET", null);
-            if (output.equals("Unauthorized")) {
+            response = makeRequest("/game", "GET", null);
+            if (response.equals("Unauthorized")) {
                 return "Bad Session!";
-            } else if (output.equals("Bad Request")) {
+            } else if (response.equals("Bad Request")) {
                 return "Bad Request!";
             }
-            GamesList usernameAuthTokenPair = new Gson().fromJson(output, GamesList.class);
+            gamesList = new Gson().fromJson(response, GamesList.class).getGames();
         } catch (IOException | URISyntaxException e) {
             throw new InvalidSyntaxException(e.getMessage());
         }
-        return output;
+        return printGamePrompts();
+    }
+
+    public String createGame(String name) throws InvalidSyntaxException, ErrorResponseException {
+        CreateGameInfo info = new CreateGameInfo(name);
+        String output;
+        try {
+            output = makeRequest("/game", "POST", new Gson().toJson(info));
+            if (output.equals("Unauthorized")) {
+                return "Bad Username/Password!";
+            } else if (output.equals("Bad Request")) {
+                return "Bad Request!";
+            }
+            GameID gameID = new Gson().fromJson(output, GameID.class);
+            if (gameID.getGameID() <= 0) {
+                return "Error Creating Game!";
+            }
+        } catch (IOException | URISyntaxException e) {
+            throw new InvalidSyntaxException(e.getMessage());
+        }
+        return "Created Game Successfully!";
+    }
+
+    private String printGamePrompts() {
+        if (gamesList.length != 0) {
+            StringBuilder output = new StringBuilder();
+            output.append(SET_TEXT_COLOR_LIGHT_GREY).append("\tGameID\tGame Name\tWhite Player\tBlack Player\r\n").append(SET_TEXT_COLOR_WHITE);
+            int index = 0;
+            for (GameOverview game : gamesList) {
+                output.append("\t").append(index++).append("     \t");
+                output.append(game.toString(false)).append("\r\n");
+            }
+            return output.toString();
+        }
+        return "No Games on the server! Use " + SET_TEXT_COLOR_BLUE + "Create Game" + SET_TEXT_COLOR_WHITE + " to create one!";
     }
 
 

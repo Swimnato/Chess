@@ -3,7 +3,7 @@ package chess.datastructures;
 public class CreateGameInfo {
     String gameName;
 
-    CreateGameInfo(String gameName) {
+    public CreateGameInfo(String gameName) {
         this.gameName = gameName;
     }
 

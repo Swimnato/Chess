@@ -51,4 +51,26 @@ public class GameOverview {
     public String getWhiteUsername() {
         return whiteUsername;
     }
+
+    @Override
+    public String toString() {
+        return gameID +
+                " Game Name: " +
+                gameName +
+                " White Player: " +
+                whiteUsername +
+                " Black Player: " +
+                blackUsername;
+    }
+
+    public String toString(boolean returnID) {
+        if (returnID) {
+            return toString();
+        }
+        return gameName +
+                "\t" +
+                (whiteUsername == null ? "       " : whiteUsername) +
+                "\t" +
+                (blackUsername == null ? "       " : blackUsername);
+    }
 }

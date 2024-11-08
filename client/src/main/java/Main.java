@@ -77,7 +77,7 @@ public class Main {
             } else {
                 printHelpForCommand(parser);
             }
-        } else if (parser.isCommand("quit")) {
+        } else if (parser.isCommand("Quit")) {
             if (parser.numOfParameters() == 0) {
                 if (loggedIn == LoginStatus.LOGGED_IN) {
                     String response = facade.logout();
@@ -91,7 +91,7 @@ public class Main {
             } else {
                 throw new InvalidSyntaxException("Quit");
             }
-        } else if (parser.isCommand("register")) {
+        } else if (parser.isCommand("Register")) {
             if (parser.numOfParameters() == 3 && loggedIn == LoginStatus.LOGGED_OUT) {
                 String response = facade.register(parser.getParameter(0), parser.getParameter(1), parser.getParameter(2));
                 System.out.println(response);
@@ -101,7 +101,7 @@ public class Main {
             } else {
                 throw new InvalidSyntaxException("Register");
             }
-        } else if (parser.isCommand("login")) {
+        } else if (parser.isCommand("Login")) {
             if (parser.numOfParameters() == 2 && loggedIn == LoginStatus.LOGGED_OUT) {
                 String response = facade.login(parser.getParameter(0), parser.getParameter(1));
                 System.out.println(response);
@@ -111,7 +111,7 @@ public class Main {
             } else {
                 throw new InvalidSyntaxException("Login");
             }
-        } else if (parser.isCommand("logout")) {
+        } else if (parser.isCommand("Logout")) {
             if (parser.numOfParameters() == 0 && loggedIn == LoginStatus.LOGGED_IN) {
                 String response = facade.logout();
                 System.out.println(response);
@@ -121,12 +121,19 @@ public class Main {
             } else {
                 throw new InvalidSyntaxException("Logout");
             }
-        } else if (parser.isCommand("list") && parser.getParameter(0).equalsIgnoreCase("Games")) {
-            if (parser.numOfParameters() <= 2 && loggedIn == LoginStatus.LOGGED_IN) {
+        } else if (parser.isCommand("List") && parser.isParameterEqual(0, "Games")) {
+            if (parser.numOfParameters() == 1 && loggedIn == LoginStatus.LOGGED_IN) {
                 String response = facade.listGames();
                 System.out.println(response);
             } else {
                 throw new InvalidSyntaxException("List Games");
+            }
+        } else if (parser.isCommand("Create") && parser.isParameterEqual(0, "Game")) {
+            if (parser.numOfParameters() == 2 && loggedIn == LoginStatus.LOGGED_IN) {
+                String response = facade.createGame(parser.getParameter(1));
+                System.out.println(response);
+            } else {
+                throw new InvalidSyntaxException("Create Game");
             }
         } else {
             System.out.println(SET_TEXT_COLOR_RED + "Unrecognized command! Use \"Help\" to find a list of available commands!");
