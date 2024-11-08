@@ -47,7 +47,7 @@ public class ServerFacade {
         }
         conn.connect();
         if (conn.getResponseCode() != 200) {
-            return conn.getResponseMessage();
+            return "" + conn.getResponseCode();
         }
         var inputStream = conn.getInputStream();
         StringBuilder output = new StringBuilder();
@@ -61,9 +61,9 @@ public class ServerFacade {
         String output;
         try {
             output = makeRequest("/user", "POST", new Gson().toJson(info));
-            if (output.equals("Forbidden")) {
+            if (output.equals("403")) {
                 return "Username Already Taken!";
-            } else if (output.equals("Bad Request")) {
+            } else if (output.equals("400")) {
                 return "Bad Request!";
             }
             UsernameAuthTokenPair usernameAuthTokenPair = new Gson().fromJson(output, UsernameAuthTokenPair.class);
@@ -79,9 +79,9 @@ public class ServerFacade {
         String output;
         try {
             output = makeRequest("/session", "POST", new Gson().toJson(info));
-            if (output.equals("Unauthorized")) {
+            if (output.equals("401")) {
                 return "Bad Username/Password!";
-            } else if (output.equals("Bad Request")) {
+            } else if (output.equals("400")) {
                 return "Bad Request!";
             }
             UsernameAuthTokenPair usernameAuthTokenPair = new Gson().fromJson(output, UsernameAuthTokenPair.class);
@@ -96,7 +96,7 @@ public class ServerFacade {
         String output;
         try {
             output = makeRequest("/session", "DELETE", null);
-            if (output.equals("Unauthorized")) {
+            if (output.equals("401")) {
                 return "Bad Session!";
             }
             UsernameAuthTokenPair usernameAuthTokenPair = new Gson().fromJson(output, UsernameAuthTokenPair.class);
@@ -112,9 +112,9 @@ public class ServerFacade {
         String response;
         try {
             response = makeRequest("/game", "GET", null);
-            if (response.equals("Unauthorized")) {
+            if (response.equals("401")) {
                 return "Bad Session!";
-            } else if (response.equals("Bad Request")) {
+            } else if (response.equals("400")) {
                 return "Bad Request!";
             }
             gamesList = new Gson().fromJson(response, GamesList.class).getGames();
@@ -129,9 +129,9 @@ public class ServerFacade {
         String output;
         try {
             output = makeRequest("/game", "POST", new Gson().toJson(info));
-            if (output.equals("Unauthorized")) {
+            if (output.equals("401")) {
                 return "Bad Username/Password!";
-            } else if (output.equals("Bad Request")) {
+            } else if (output.equals("400")) {
                 return "Bad Request!";
             }
             GameID gameID = new Gson().fromJson(output, GameID.class);
@@ -144,11 +144,59 @@ public class ServerFacade {
         return "Created Game Successfully!";
     }
 
+    public String joinGame(int desiredGame, String desiredColor) throws InvalidSyntaxException, ErrorResponseException {
+        if (gamesList == null) {
+            return "Please run " + SET_TEXT_COLOR_BLUE + "List Games" + SET_TEXT_COLOR_WHITE + " to show available games first";
+        }
+        if (desiredGame > gamesList.length) {
+            throw new InvalidSyntaxException(SET_TEXT_COLOR_RED + "Invalid Game ID! Use" + SET_TEXT_COLOR_BLUE +
+                    "List Games" + SET_TEXT_COLOR_RED + " to show available games with their IDs", true);
+        }
+        try {
+            JoinGameInfo joinGameInfo = new JoinGameInfo(desiredColor, desiredGame);
+            String output = makeRequest("/game", "PUT", new Gson().toJson(joinGameInfo));
+            if (output.equals("401")) {
+                return "Bad Username/Password!";
+            } else if (output.equals("400")) {
+                return "Bad Request!";
+            } else if (output.equals("403")) {
+                return "Color Already Taken In Desired Game! Use " + SET_TEXT_COLOR_BLUE + "List Games" + SET_TEXT_COLOR_WHITE + " to show updated games";
+            }
+            GameID gameID = new Gson().fromJson(output, GameID.class);
+            if (gameID.getGameID() <= 0) {
+                return "Error Joining Game!";
+            }
+        } catch (IOException | URISyntaxException e) {
+            throw new InvalidSyntaxException(e.getMessage());
+        }
+        return "Joined Game Successfully!\r\n" + getChessGame(desiredGame);
+    }
+
+    public String getChessGame(int desiredGame) throws InvalidSyntaxException, ErrorResponseException {
+        if (desiredGame > gamesList.length) {
+            throw new InvalidSyntaxException(SET_TEXT_COLOR_RED + "Invalid Game ID! Use" + SET_TEXT_COLOR_BLUE +
+                    "List Games" + SET_TEXT_COLOR_RED + " to show available games with their IDs", true);
+        }
+        String response;
+        try {
+            response = makeRequest("/chessGame", "GET", null);
+            if (response.equals("401")) {
+                return "Bad Session!";
+            } else if (response.equals("400")) {
+                return "Bad Request!";
+            }
+            gamesList = new Gson().fromJson(response, GamesList.class).getGames();
+        } catch (IOException | URISyntaxException e) {
+            throw new InvalidSyntaxException(e.getMessage());
+        }
+        return printGamePrompts();
+    }
+
     private String printGamePrompts() {
         if (gamesList.length != 0) {
             StringBuilder output = new StringBuilder();
             output.append(SET_TEXT_COLOR_LIGHT_GREY).append("\tGameID\tGame Name\tWhite Player\tBlack Player\r\n").append(SET_TEXT_COLOR_WHITE);
-            int index = 0;
+            int index = 1;
             for (GameOverview game : gamesList) {
                 output.append("\t").append(index++).append("     \t");
                 output.append(game.toString(false)).append("\r\n");

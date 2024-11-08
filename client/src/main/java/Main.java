@@ -38,7 +38,9 @@ public class Main {
                     try {
                         running = runCommand(command.toString());
                     } catch (InvalidSyntaxException e) {
-                        System.out.println(SET_TEXT_COLOR_RED + "Invalid Syntax of " + e.getMessage() + "! Use \"Help " + e.getMessage() + "\" to see proper syntax.");
+                        System.out.println(e.isShowRawMessage() ? e.getMessage() :
+                                SET_TEXT_COLOR_RED + "Invalid Syntax of " + e.getMessage() +
+                                        "! Use \"Help " + e.getMessage() + "\" to see proper syntax.");
                     } catch (ErrorResponseException e) {
                         System.out.println(SET_TEXT_COLOR_RED + "Recieved Error Code From the Server: " + e.getMessage());
                     }
@@ -134,6 +136,13 @@ public class Main {
                 System.out.println(response);
             } else {
                 throw new InvalidSyntaxException("Create Game");
+            }
+        } else if (parser.isCommand("Join") && parser.isParameterEqual(0, "Game")) {
+            if (parser.numOfParameters() == 3 && loggedIn == LoginStatus.LOGGED_IN) {
+                String response = facade.joinGame(Integer.parseInt(parser.getParameter(1)), parser.getParameter(2));
+                System.out.println(response);
+            } else {
+                throw new InvalidSyntaxException("Join Game");
             }
         } else {
             System.out.println(SET_TEXT_COLOR_RED + "Unrecognized command! Use \"Help\" to find a list of available commands!");

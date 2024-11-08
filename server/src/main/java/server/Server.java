@@ -18,6 +18,7 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.get("/game", this::listGames);
+        Spark.get("/chessGame", this::getGame);
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
         Spark.delete("/db", this::clearApplication);
@@ -58,6 +59,22 @@ public class Server {
             return "{ \"message\": \"Error: bad request\" }";
         }
         String result = service.listGames(authToken);
+        if (result == "{ \"message\": \"Error: unauthorized\" }") {
+            res.status(401);
+        }
+        return result;
+    }
+
+    private Object getGame(Request req, Response res) throws DataAccessException {
+        int authToken = 0;
+        try {
+            String auth = req.headers("Authorization");
+            authToken = Integer.parseInt(auth);
+        } catch (Exception e) {
+            res.status(400);
+            return "{ \"message\": \"Error: bad request\" }";
+        }
+        String result = service.getGame(authToken);
         if (result == "{ \"message\": \"Error: unauthorized\" }") {
             res.status(401);
         }

@@ -6,7 +6,7 @@ public class JoinGameInfo {
     private String playerColor;
     private int gameID;
 
-    JoinGameInfo(String color, int id) {
+    public JoinGameInfo(String color, int id) {
         playerColor = color;
         gameID = id;
     }
