@@ -167,26 +167,30 @@ public class REPLClient {
         return true;
     }
 
+    private void printAvailableCommands() {
+        if (loggedIn == LoginStatus.LOGGED_OUT) {
+            outputToUser.println("List Of Available Commands:");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tRegister " + SET_TEXT_COLOR_GREEN +
+                    "<username> <password> <email>" + SET_TEXT_COLOR_LIGHT_GREY + " - To create an account on the server");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tLogin " + SET_TEXT_COLOR_GREEN +
+                    "<username> <password>" + SET_TEXT_COLOR_LIGHT_GREY + " - To play chess");
+        } else {
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tCreate Game " + SET_TEXT_COLOR_GREEN +
+                    "<name>" + SET_TEXT_COLOR_LIGHT_GREY + " - Create a game on the server");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tList Games " + SET_TEXT_COLOR_LIGHT_GREY + " - List the games on the server");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tPlay Game " + SET_TEXT_COLOR_GREEN + "<#> <color>" + SET_TEXT_COLOR_LIGHT_GREY +
+                    " - List the games on the server");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tObserve Game " + SET_TEXT_COLOR_GREEN + "<#>" + SET_TEXT_COLOR_LIGHT_GREY +
+                    " - List the games on the server");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tlogout " + SET_TEXT_COLOR_LIGHT_GREY + " - To logout of the server");
+        }
+        outputToUser.println(SET_TEXT_COLOR_BLUE + "\tQuit " + SET_TEXT_COLOR_LIGHT_GREY + " - To close the client");
+        outputToUser.println(SET_TEXT_COLOR_BLUE + "\tHelp " + SET_TEXT_COLOR_LIGHT_GREY + " - Display available commands");
+    }
+
     private void printHelpForCommand(CommandParser input) throws InvalidSyntaxException {
         if (input.numOfParameters() == 0) {
-            if (loggedIn == LoginStatus.LOGGED_OUT) {
-                outputToUser.println("List Of Available Commands:");
-                outputToUser.println(SET_TEXT_COLOR_BLUE + "\tRegister " + SET_TEXT_COLOR_GREEN +
-                        "<username> <password> <email>" + SET_TEXT_COLOR_LIGHT_GREY + " - To create an account on the server");
-                outputToUser.println(SET_TEXT_COLOR_BLUE + "\tLogin " + SET_TEXT_COLOR_GREEN +
-                        "<username> <password>" + SET_TEXT_COLOR_LIGHT_GREY + " - To play chess");
-            } else {
-                outputToUser.println(SET_TEXT_COLOR_BLUE + "\tCreate Game " + SET_TEXT_COLOR_GREEN +
-                        "<name>" + SET_TEXT_COLOR_LIGHT_GREY + " - Create a game on the server");
-                outputToUser.println(SET_TEXT_COLOR_BLUE + "\tList Games " + SET_TEXT_COLOR_LIGHT_GREY + " - List the games on the server");
-                outputToUser.println(SET_TEXT_COLOR_BLUE + "\tPlay Game " + SET_TEXT_COLOR_GREEN + "<#> <color>" + SET_TEXT_COLOR_LIGHT_GREY +
-                        " - List the games on the server");
-                outputToUser.println(SET_TEXT_COLOR_BLUE + "\tObserve Game " + SET_TEXT_COLOR_GREEN + "<#>" + SET_TEXT_COLOR_LIGHT_GREY +
-                        " - List the games on the server");
-                outputToUser.println(SET_TEXT_COLOR_BLUE + "\tlogout " + SET_TEXT_COLOR_LIGHT_GREY + " - To logout of the server");
-            }
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tQuit " + SET_TEXT_COLOR_LIGHT_GREY + " - To close the client");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tHelp " + SET_TEXT_COLOR_LIGHT_GREY + " - Display available commands");
+            printAvailableCommands();
             return;
         }
         if (input.numOfParameters() > 2) {
