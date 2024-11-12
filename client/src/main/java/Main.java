@@ -70,7 +70,7 @@ public class Main {
                 } else {
                     System.out.println(SET_TEXT_COLOR_BLUE + "\tCreate Game " + SET_TEXT_COLOR_GREEN + "<name>" + SET_TEXT_COLOR_LIGHT_GREY + " - Create a game on the server");
                     System.out.println(SET_TEXT_COLOR_BLUE + "\tList Games " + SET_TEXT_COLOR_LIGHT_GREY + " - List the games on the server");
-                    System.out.println(SET_TEXT_COLOR_BLUE + "\tJoin Game " + SET_TEXT_COLOR_GREEN + "<id> <color>" + SET_TEXT_COLOR_LIGHT_GREY + " - List the games on the server");
+                    System.out.println(SET_TEXT_COLOR_BLUE + "\tPlay Game " + SET_TEXT_COLOR_GREEN + "<id> <color>" + SET_TEXT_COLOR_LIGHT_GREY + " - List the games on the server");
                     System.out.println(SET_TEXT_COLOR_BLUE + "\tObserve Game " + SET_TEXT_COLOR_GREEN + "<id>" + SET_TEXT_COLOR_LIGHT_GREY + " - List the games on the server");
                     System.out.println(SET_TEXT_COLOR_BLUE + "\tlogout " + SET_TEXT_COLOR_LIGHT_GREY + " - To logout of the server");
                 }
@@ -137,12 +137,19 @@ public class Main {
             } else {
                 throw new InvalidSyntaxException("Create Game");
             }
-        } else if (parser.isCommand("Join") && parser.isParameterEqual(0, "Game")) {
+        } else if (parser.isCommand("Play") && parser.isParameterEqual(0, "Game")) {
             if (parser.numOfParameters() == 3 && loggedIn == LoginStatus.LOGGED_IN) {
                 String response = facade.joinGame(Integer.parseInt(parser.getParameter(1)), parser.getParameter(2));
                 System.out.println(response);
             } else {
-                throw new InvalidSyntaxException("Join Game");
+                throw new InvalidSyntaxException("Play Game");
+            }
+        } else if (parser.isCommand("Observe") && parser.isParameterEqual(0, "Game")) {
+            if (parser.numOfParameters() == 2 && loggedIn == LoginStatus.LOGGED_IN) {
+                String response = facade.getChessGameFromServer(Integer.parseInt(parser.getParameter(1)));
+                System.out.println("Observing game " + parser.getParameter(1) + ",\r\n\r\n" + response);
+            } else {
+                throw new InvalidSyntaxException("Observe Game");
             }
         } else {
             System.out.println(SET_TEXT_COLOR_RED + "Unrecognized command! Use \"Help\" to find a list of available commands!");
@@ -182,17 +189,17 @@ public class Main {
             System.out.println(SET_TEXT_COLOR_BLUE + "\tCreate Game " + SET_TEXT_COLOR_GREEN + "<name>");
             System.out.println("Parameters:");
             System.out.println(SET_TEXT_COLOR_GREEN + "\t<name> " + SET_TEXT_COLOR_LIGHT_GREY + "The name of the game.");
-        } else if (input.isParameterEqual(0, "Join") && input.isParameterEqual(1, "Game")) {
-            System.out.println(SET_TEXT_COLOR_BLUE + "Join Game" + SET_TEXT_COLOR_LIGHT_GREY + ": This is a command to join a game on the server.");
+        } else if (input.isParameterEqual(0, "Play") && input.isParameterEqual(1, "Game")) {
+            System.out.println(SET_TEXT_COLOR_BLUE + "Play Game" + SET_TEXT_COLOR_LIGHT_GREY + ": This is a command to join a game on the server.");
             System.out.println("Syntax:");
-            System.out.println(SET_TEXT_COLOR_BLUE + "\tJoin Game " + SET_TEXT_COLOR_GREEN + "<id> <color>");
+            System.out.println(SET_TEXT_COLOR_BLUE + "\tPlay Game " + SET_TEXT_COLOR_GREEN + "<id> <color>");
             System.out.println("Parameters:");
             System.out.println(SET_TEXT_COLOR_GREEN + "\t<id> " + SET_TEXT_COLOR_LIGHT_GREY + "The id or number it appeared using the " + SET_TEXT_COLOR_BLUE + "List Games" + SET_TEXT_COLOR_LIGHT_GREY + " Command");
             System.out.println(SET_TEXT_COLOR_GREEN + "\t<color> " + SET_TEXT_COLOR_LIGHT_GREY + "The desired chess color [" + SET_TEXT_COLOR_WHITE + "WHITE" + SET_TEXT_COLOR_LIGHT_GREY + "/" + SET_TEXT_COLOR_DARK_GREY + "BLACK" + SET_TEXT_COLOR_LIGHT_GREY + "].");
         } else if (input.isParameterEqual(0, "Observe") && input.isParameterEqual(1, "Game")) {
             System.out.println(SET_TEXT_COLOR_BLUE + "Observe Game" + SET_TEXT_COLOR_LIGHT_GREY + ": This is a command to observe a game on the server.");
             System.out.println("Syntax:");
-            System.out.println(SET_TEXT_COLOR_BLUE + "\tJoin Game " + SET_TEXT_COLOR_GREEN + "<id>");
+            System.out.println(SET_TEXT_COLOR_BLUE + "\tPlay Game " + SET_TEXT_COLOR_GREEN + "<id>");
             System.out.println("Parameters:");
             System.out.println(SET_TEXT_COLOR_GREEN + "\t<id> " + SET_TEXT_COLOR_LIGHT_GREY + "The id or number it appeared using the " + SET_TEXT_COLOR_BLUE + "List Games" + SET_TEXT_COLOR_LIGHT_GREY + " Command");
         } else if (input.isParameterEqual(0, "List") && input.isParameterEqual(1, "Games")) {

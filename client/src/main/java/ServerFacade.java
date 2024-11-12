@@ -1,3 +1,4 @@
+import chess.ChessGame;
 import chess.datastructures.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -7,6 +8,9 @@ import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static chess.ui.EscapeSequences.*;
 
@@ -33,10 +37,15 @@ public class ServerFacade {
         gamesList = null;
     }
 
-    private String makeRequest(String path, String type, String body) throws IOException, URISyntaxException, ErrorResponseException {
+    private String makeRequest(String path, String type, String body, Map<String, String> extraHeaders) throws IOException, URISyntaxException, ErrorResponseException {
         URL url = (new URI(linkAndPort + path)).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Authorization", String.valueOf(this.authToken));
+        if (extraHeaders != null) {
+            for (var headerVal : extraHeaders.entrySet()) {
+                conn.setRequestProperty(headerVal.getKey(), headerVal.getValue());
+            }
+        }
         conn.setRequestMethod(type);
         conn.setDoOutput(true);
         conn.addRequestProperty("Accept", "application/json");
@@ -60,7 +69,7 @@ public class ServerFacade {
         RegisterInfo info = new RegisterInfo(username, password, email);
         String output;
         try {
-            output = makeRequest("/user", "POST", new Gson().toJson(info));
+            output = makeRequest("/user", "POST", new Gson().toJson(info), null);
             if (output.equals("403")) {
                 return "Username Already Taken!";
             } else if (output.equals("400")) {
@@ -78,7 +87,7 @@ public class ServerFacade {
         LoginInfo info = new LoginInfo(username, password);
         String output;
         try {
-            output = makeRequest("/session", "POST", new Gson().toJson(info));
+            output = makeRequest("/session", "POST", new Gson().toJson(info), null);
             if (output.equals("401")) {
                 return "Bad Username/Password!";
             } else if (output.equals("400")) {
@@ -95,7 +104,7 @@ public class ServerFacade {
     public String logout() throws InvalidSyntaxException, ErrorResponseException {
         String output;
         try {
-            output = makeRequest("/session", "DELETE", null);
+            output = makeRequest("/session", "DELETE", null, null);
             if (output.equals("401")) {
                 return "Bad Session!";
             }
@@ -111,7 +120,7 @@ public class ServerFacade {
     public String listGames() throws InvalidSyntaxException, ErrorResponseException {
         String response;
         try {
-            response = makeRequest("/game", "GET", null);
+            response = makeRequest("/game", "GET", null, null);
             if (response.equals("401")) {
                 return "Bad Session!";
             } else if (response.equals("400")) {
@@ -128,7 +137,7 @@ public class ServerFacade {
         CreateGameInfo info = new CreateGameInfo(name);
         String output;
         try {
-            output = makeRequest("/game", "POST", new Gson().toJson(info));
+            output = makeRequest("/game", "POST", new Gson().toJson(info), null);
             if (output.equals("401")) {
                 return "Bad Username/Password!";
             } else if (output.equals("400")) {
@@ -154,7 +163,7 @@ public class ServerFacade {
         }
         try {
             JoinGameInfo joinGameInfo = new JoinGameInfo(desiredColor, desiredGame);
-            String output = makeRequest("/game", "PUT", new Gson().toJson(joinGameInfo));
+            String output = makeRequest("/game", "PUT", new Gson().toJson(joinGameInfo), null);
             if (output.equals("401")) {
                 return "Bad Username/Password!";
             } else if (output.equals("400")) {
@@ -169,27 +178,26 @@ public class ServerFacade {
         } catch (IOException | URISyntaxException e) {
             throw new InvalidSyntaxException(e.getMessage());
         }
-        return "Joined Game Successfully!\r\n" + getChessGame(desiredGame);
+        return "Joined Game Successfully!\r\n" + getChessGameFromServer(desiredGame);
     }
 
-    public String getChessGame(int desiredGame) throws InvalidSyntaxException, ErrorResponseException {
+    public String getChessGameFromServer(int desiredGame) throws InvalidSyntaxException, ErrorResponseException {
+        GameData game;
         if (desiredGame > gamesList.length) {
             throw new InvalidSyntaxException(SET_TEXT_COLOR_RED + "Invalid Game ID! Use" + SET_TEXT_COLOR_BLUE +
                     "List Games" + SET_TEXT_COLOR_RED + " to show available games with their IDs", true);
         }
         String response;
         try {
-            response = makeRequest("/chessGame", "GET", null);
-            if (response.equals("401")) {
-                return "Bad Session!";
-            } else if (response.equals("400")) {
+            response = makeRequest("/chessGame", "GET", null, Map.of("gameID", Integer.toString(desiredGame)));
+            if (response.equals("400")) {
                 return "Bad Request!";
             }
-            gamesList = new Gson().fromJson(response, GamesList.class).getGames();
+            game = new Gson().fromJson(response, GameData.class);
         } catch (IOException | URISyntaxException e) {
             throw new InvalidSyntaxException(e.getMessage());
         }
-        return printGamePrompts();
+        return game.getGame().toString(ChessGame.TeamColor.WHITE) + "\r\n\r\n" + game.getGame().toString(ChessGame.TeamColor.BLACK);
     }
 
     private String printGamePrompts() {
@@ -208,6 +216,6 @@ public class ServerFacade {
 
 
     public boolean testServer() throws IOException, URISyntaxException, ErrorResponseException {
-        return !makeRequest("", "GET", null).isEmpty();
+        return !makeRequest("", "GET", null, null).isEmpty();
     }
 }
