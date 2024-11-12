@@ -36,6 +36,10 @@ public class Services {
         return "{ \"games\": " + new Gson().toJson(output) + "}";
     }
 
+    public GameData getGame(int gameID) throws DataAccessException {
+        return dataAccess.getGame(gameID);
+    }
+
     public String createGame(int authToken, String gameName) throws DataAccessException {
         var user = dataAccess.getUser(authToken);
         if (user == null) {

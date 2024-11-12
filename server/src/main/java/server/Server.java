@@ -67,18 +67,19 @@ public class Server {
 
     private Object getGame(Request req, Response res) throws DataAccessException {
         int authToken = 0;
+        int gameID;
         try {
-            String auth = req.headers("Authorization");
-            authToken = Integer.parseInt(auth);
+            gameID = Integer.parseInt(req.headers("gameID"));
         } catch (Exception e) {
             res.status(400);
             return "{ \"message\": \"Error: bad request\" }";
         }
-        String result = service.getGame(authToken);
-        if (result == "{ \"message\": \"Error: unauthorized\" }") {
-            res.status(401);
+        GameData result = service.getGame(gameID);
+        if (result == null) {
+            res.status(400);
+            return "{ \"message\": \"Error: bad request\" }";
         }
-        return result;
+        return (new Gson().toJson(result));
     }
 
     private Object createGame(Request req, Response res) throws DataAccessException {
