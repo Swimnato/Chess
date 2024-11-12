@@ -64,12 +64,14 @@ public class Services {
             return "{ \"message\": \"Error: bad request\" }";
         }
         if (color.equals("WHITE")) {
-            if (desiredGame.getPlayer1() != null) { //make sure white is free
+            if (desiredGame.getPlayer1() != null && !desiredGame.getPlayer1().equals(user.getUsername())) {
+                //make sure white is free or is that user, and user hasn't joined
                 return "{ \"message\": \"Error: already taken\" }";
             }
             desiredGame.setPlayer1(user.getUsername());
         } else {
-            if (desiredGame.getPlayer2() != null) { //make sure black is free
+            if (desiredGame.getPlayer2() != null && !desiredGame.getPlayer2().equals(user.getUsername())) {
+                //make sure black is free or is that user, and user hasn't joined
                 return "{ \"message\": \"Error: already taken\" }";
             }
             desiredGame.setPlayer2(user.getUsername());

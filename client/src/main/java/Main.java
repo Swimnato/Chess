@@ -139,7 +139,7 @@ public class Main {
             }
         } else if (parser.isCommand("Play") && parser.isParameterEqual(0, "Game")) {
             if (parser.numOfParameters() == 3 && loggedIn == LoginStatus.LOGGED_IN) {
-                String response = facade.joinGame(Integer.parseInt(parser.getParameter(1)), parser.getParameter(2));
+                String response = facade.joinGame(Integer.parseInt(parser.getParameter(1)), parser.getParameter(2).toUpperCase());
                 System.out.println(response);
             } else {
                 throw new InvalidSyntaxException("Play Game");

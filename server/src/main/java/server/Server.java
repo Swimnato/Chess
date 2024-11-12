@@ -116,7 +116,6 @@ public class Server {
             res.status(401);
             return "{ \"message\": \"Error: unauthorized\" }";
         }
-        System.out.println(inputs.getplayerColor());
         if (inputs.getplayerColor() == null || (!inputs.getplayerColor().equals("WHITE") && !inputs.getplayerColor().equals("BLACK"))) {
             res.status(400);
             return "{ \"message\": \"Error: bad request\" }";
