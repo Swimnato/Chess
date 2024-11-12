@@ -180,7 +180,7 @@ public class ServerFacade {
             return "Please run " + SET_TEXT_COLOR_BLUE + "List Games" + SET_TEXT_COLOR_WHITE + " to show available games first";
         }
         if (desiredGame > gamesList.length || desiredGame <= 0) {
-            throw new InvalidSyntaxException(SET_TEXT_COLOR_RED + "Invalid Game ID! Use" + SET_TEXT_COLOR_BLUE +
+            throw new InvalidSyntaxException(SET_TEXT_COLOR_RED + "Invalid Game ID! Use " + SET_TEXT_COLOR_BLUE +
                     "List Games" + SET_TEXT_COLOR_RED + " to show available games with their IDs", true);
         }
         try {
