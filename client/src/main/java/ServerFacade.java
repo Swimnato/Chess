@@ -154,13 +154,7 @@ public class ServerFacade {
     }
 
     public String joinGame(String desiredGame, String desiredColor) throws InvalidSyntaxException, ErrorResponseException {
-        int indexOnList = 0;
-        for (var item : gamesList) {
-            if (item.getGameName().equals(desiredGame)) {
-                break;
-            }
-            indexOnList++;
-        }
+        int indexOnList = getGameIndex(desiredGame);
         return joinGame(indexOnList, desiredColor);
     }
 
@@ -193,14 +187,19 @@ public class ServerFacade {
         return "Joined Game Successfully!\r\n" + getChessGameFromServer(desiredGame);
     }
 
-    public String getChessGameFromServer(String desiredGame) throws InvalidSyntaxException, ErrorResponseException {
-        int indexOnList = 0;
+    private int getGameIndex(String desiredGame) {
+        int indexOnList = 1;
         for (var item : gamesList) {
             if (item.getGameName().equals(desiredGame)) {
                 break;
             }
             indexOnList++;
         }
+        return indexOnList;
+    }
+
+    public String getChessGameFromServer(String desiredGame) throws InvalidSyntaxException, ErrorResponseException {
+        int indexOnList = getGameIndex(desiredGame);
         return getChessGameFromServer(indexOnList);
     }
 
@@ -226,7 +225,7 @@ public class ServerFacade {
     private String printGamePrompts() {
         if (gamesList.length != 0) {
             StringBuilder output = new StringBuilder();
-            output.append(SET_TEXT_COLOR_LIGHT_GREY).append("\tList Order Num\tGame Name\tWhite Player\tBlack Player\r\n").append(SET_TEXT_COLOR_WHITE);
+            output.append(SET_TEXT_COLOR_LIGHT_GREY).append("\t#\tGame Name\tWhite Player\tBlack Player\r\n").append(SET_TEXT_COLOR_WHITE);
             int index = 1;
             for (GameOverview game : gamesList) {
                 output.append("\t").append(index++).append("     \t");
