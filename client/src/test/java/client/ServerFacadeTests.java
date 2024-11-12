@@ -16,7 +16,7 @@ public class ServerFacadeTests {
 
     private static Server server;
     private static ServerFacade facade;
-    private static final String ip = "127.0.0.1 ";
+    private static final String IP = "127.0.0.1";
 
 
     @BeforeAll
@@ -27,7 +27,7 @@ public class ServerFacadeTests {
 
         System.out.println("AttemptingToRunClient");
 
-        facade = new ServerFacade(port, "127.0.0.1");
+        facade = new ServerFacade(port, IP);
     }
 
     @AfterAll
@@ -143,7 +143,7 @@ public class ServerFacadeTests {
 
     @Test
     @DisplayName("Join When Not Logged In")
-    public void JoinWhenNotLoggedIn() throws Exception {
+    public void joinWhenNotLoggedIn() throws Exception {
         clearServer();
 
         String output = facade.joinGame(0, "WHITE");
