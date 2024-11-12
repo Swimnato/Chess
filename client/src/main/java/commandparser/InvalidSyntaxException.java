@@ -1,17 +1,19 @@
+package commandparser;
+
 public class InvalidSyntaxException extends Exception {
     private boolean showRawMessage;
 
-    InvalidSyntaxException(String message) {
+    public InvalidSyntaxException(String message) {
         super(message);
         showRawMessage = false;
     }
 
-    InvalidSyntaxException(String message, boolean showRawMessage) {
+    public InvalidSyntaxException(String message, boolean showRawMessage) {
         super(message);
         this.showRawMessage = showRawMessage;
     }
 
-    boolean isShowRawMessage() {
+    public boolean isShowRawMessage() {
         return showRawMessage;
     }
 }

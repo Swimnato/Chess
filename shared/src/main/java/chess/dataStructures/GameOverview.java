@@ -69,8 +69,9 @@ public class GameOverview {
         if (returnID) {
             return toString();
         }
-        return SET_TEXT_COLOR_MAGENTA + gameName + (gameName.length() < 4 ? "\t" : "") +
-                SET_TEXT_COLOR_WHITE + "\t\t" +
+        return SET_TEXT_COLOR_MAGENTA + gameName + (gameName.length() < 4 ?
+                "\t\t" : (gameName.length() < 8 ? "\t" : "")) +
+                SET_TEXT_COLOR_WHITE + "\t" +
                 (whiteUsername == null ? "            " : whiteUsername +
                         (whiteUsername.length() < 4 ? "\t\t\t" :
                                 (whiteUsername.length() < 8 ? "\t\t" :

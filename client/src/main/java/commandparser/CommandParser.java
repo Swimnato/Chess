@@ -1,4 +1,4 @@
-package CommandParser;
+package commandparser;
 
 import java.util.ArrayList;
 

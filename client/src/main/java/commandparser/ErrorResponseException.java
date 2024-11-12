@@ -1,5 +1,7 @@
+package commandparser;
+
 public class ErrorResponseException extends Exception {
-    ErrorResponseException(String message) {
+    public ErrorResponseException(String message) {
         super(message);
     }
 }
