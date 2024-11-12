@@ -37,6 +37,14 @@ public class ServerFacade {
         gamesList = null;
     }
 
+    public void clearServer() throws InvalidSyntaxException, ErrorResponseException {
+        try {
+            makeRequest("/db", "DELETE", null, null);
+        } catch (IOException | URISyntaxException e) {
+            throw new InvalidSyntaxException(e.getMessage());
+        }
+    }
+
     private String makeRequest(String path, String type, String body, Map<String, String> extraHeaders) throws IOException, URISyntaxException, ErrorResponseException {
         URL url = (new URI(linkAndPort + path)).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
