@@ -72,7 +72,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @DisplayName("Create Game")
+    @DisplayName("Create Games")
     public void createGames() throws Exception {
         clearServer();
         String output = facade.createGame("uhOh");
@@ -134,7 +134,11 @@ public class ServerFacadeTests {
         }
         output = facade.joinGame(1, "WHITE");
         if (!output.contains("Joined Game Successfully!")) {
-            Assertions.assertEquals(0, 1, "Unable to Join Game!");
+            Assertions.assertEquals(0, 1, "Unable to Join Game as Same Color!");
+        }
+        output = facade.joinGame("ChickenAlfredo", "BLACK");
+        if (!output.contains("Joined Game Successfully!")) {
+            Assertions.assertEquals(0, 1, "Unable to Join Game as Same Color by name!");
         }
         Assertions.assertThrows(InvalidSyntaxException.class, () -> facade.joinGame(9, "WHITE"), "Joined Invalid Game!");
 
@@ -149,6 +153,19 @@ public class ServerFacadeTests {
         if (!output.contains("Joined Game Successfully!")) {
             Assertions.assertEquals(0, 1, "Unable to Join Game with second user!");
         }
+    }
+
+    @Test
+    @DisplayName("Logout")
+    public void logout() throws Exception {
+        registerUser();
+        String output = facade.createGame("CheeseAndRice");
+        Assertions.assertEquals("Created Game Successfully!", output, "Failed to create game");
+
+        facade.logout();
+
+        output = facade.createGame("uhOh");
+        Assertions.assertNotEquals("Created Game Successfully!", output, "Logout Didn't Work!");
     }
 
 }
