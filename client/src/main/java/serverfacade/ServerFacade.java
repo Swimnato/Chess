@@ -43,6 +43,8 @@ public class ServerFacade {
         } catch (IOException | URISyntaxException e) {
             throw new InvalidSyntaxException(e.getMessage());
         }
+        authToken = 0;
+        gamesList = null;
     }
 
     private String makeRequest(String path, String type, String body, Map<String, String> extraHeaders) throws IOException, URISyntaxException, ErrorResponseException {

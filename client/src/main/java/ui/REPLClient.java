@@ -75,7 +75,7 @@ public class REPLClient {
         outputToUser.print(SET_TEXT_COLOR_WHITE + '[' + loggedIn + ']' + ">> ");
     }
 
-    public boolean runCommand(String input) throws InvalidSyntaxException, ErrorResponseException {
+    private boolean runCommand(String input) throws InvalidSyntaxException, ErrorResponseException {
         CommandParser parser = new CommandParser(input);
         if (parser.isCommand("Help")) {
             if (parser.numOfParameters() == 0) {
@@ -188,7 +188,7 @@ public class REPLClient {
         return true;
     }
 
-    public void printHelpForCommand(CommandParser input) throws InvalidSyntaxException {
+    private void printHelpForCommand(CommandParser input) throws InvalidSyntaxException {
         if (input.numOfParameters() > 2) {
             throw new InvalidSyntaxException("Help");
         }
