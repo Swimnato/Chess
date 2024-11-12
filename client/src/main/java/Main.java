@@ -117,7 +117,7 @@ public class Main {
             if (parser.numOfParameters() == 0 && loggedIn == LoginStatus.LOGGED_IN) {
                 String response = facade.logout();
                 System.out.println(response);
-                if (!response.equals("Logged Out Successfully!")) {
+                if (response.equals("Logged Out Successfully!")) {
                     loggedIn = LoginStatus.LOGGED_OUT;
                 }
             } else {

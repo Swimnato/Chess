@@ -225,10 +225,14 @@ public class ServerFacade {
     private String printGamePrompts() {
         if (gamesList.length != 0) {
             StringBuilder output = new StringBuilder();
-            output.append(SET_TEXT_COLOR_LIGHT_GREY).append("\t#\tGame Name\tWhite Player\tBlack Player\r\n").append(SET_TEXT_COLOR_WHITE);
-            int index = 1;
+            output.append(SET_TEXT_COLOR_LIGHT_GREY).append("\t#" + SET_TEXT_COLOR_MAGENTA +
+                    "\tGame Name" + SET_TEXT_COLOR_WHITE + "\tWhite Player" +
+                    SET_TEXT_COLOR_DARK_GREY + "\tBlack Player\r\n").append(SET_TEXT_COLOR_WHITE);
+            int index = 0;
             for (GameOverview game : gamesList) {
-                output.append("\t").append(index++).append("     \t");
+                index++;
+                output.append(SET_TEXT_COLOR_WHITE).append("\t").append(index);
+                output.append(index >= 1000 ? "" : (index >= 100 ? " " : (index >= 10 ? "  " : "   ")));
                 output.append(game.toString(false)).append("\r\n");
             }
             return output.toString();

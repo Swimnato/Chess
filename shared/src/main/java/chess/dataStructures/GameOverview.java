@@ -1,5 +1,7 @@
 package chess.datastructures;
 
+import static chess.ui.EscapeSequences.*;
+
 public class GameOverview {
     private int gameID;
     private String whiteUsername;
@@ -67,10 +69,13 @@ public class GameOverview {
         if (returnID) {
             return toString();
         }
-        return gameName +
-                "\t" +
-                (whiteUsername == null ? "       " : whiteUsername) +
-                "\t" +
-                (blackUsername == null ? "       " : blackUsername);
+        return SET_TEXT_COLOR_MAGENTA + gameName + (gameName.length() < 4 ? "\t" : "") +
+                SET_TEXT_COLOR_WHITE + "\t\t" +
+                (whiteUsername == null ? "            " : whiteUsername +
+                        (whiteUsername.length() < 4 ? "\t\t\t" :
+                                (whiteUsername.length() < 8 ? "\t\t" :
+                                        (whiteUsername.length() < 12 ? "\t" : "")))) +
+                SET_TEXT_COLOR_DARK_GREY + "\t" +
+                (blackUsername == null ? "" : blackUsername);
     }
 }
