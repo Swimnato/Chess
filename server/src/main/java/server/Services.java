@@ -65,13 +65,13 @@ public class Services {
         }
         if (color.equals("WHITE")) {
             if (desiredGame.getPlayer1() != null && !desiredGame.getPlayer1().equals(user.getUsername())) {
-                //make sure white is free or is that user, and user hasn't joined
+                //make sure white is free or is that user
                 return "{ \"message\": \"Error: already taken\" }";
             }
             desiredGame.setPlayer1(user.getUsername());
         } else {
             if (desiredGame.getPlayer2() != null && !desiredGame.getPlayer2().equals(user.getUsername())) {
-                //make sure black is free or is that user, and user hasn't joined
+                //make sure black is free or is that user
                 return "{ \"message\": \"Error: already taken\" }";
             }
             desiredGame.setPlayer2(user.getUsername());

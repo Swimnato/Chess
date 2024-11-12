@@ -153,6 +153,18 @@ public class ServerFacade {
         return "Created Game Successfully!";
     }
 
+    public String joinGame(String desiredGame, String desiredColor) throws InvalidSyntaxException, ErrorResponseException {
+        int indexOnList = 0;
+        for (var item : gamesList) {
+            if (item.getGameName().equals(desiredGame)) {
+                break;
+            }
+            indexOnList++;
+        }
+        return joinGame(indexOnList, desiredColor);
+    }
+
+
     public String joinGame(int desiredGame, String desiredColor) throws InvalidSyntaxException, ErrorResponseException {
         if (gamesList == null) {
             return "Please run " + SET_TEXT_COLOR_BLUE + "List Games" + SET_TEXT_COLOR_WHITE + " to show available games first";
@@ -181,11 +193,22 @@ public class ServerFacade {
         return "Joined Game Successfully!\r\n" + getChessGameFromServer(desiredGame);
     }
 
+    public String getChessGameFromServer(String desiredGame) throws InvalidSyntaxException, ErrorResponseException {
+        int indexOnList = 0;
+        for (var item : gamesList) {
+            if (item.getGameName().equals(desiredGame)) {
+                break;
+            }
+            indexOnList++;
+        }
+        return getChessGameFromServer(indexOnList);
+    }
+
     public String getChessGameFromServer(int desiredGame) throws InvalidSyntaxException, ErrorResponseException {
         GameData game;
         if (desiredGame > gamesList.length) {
-            throw new InvalidSyntaxException(SET_TEXT_COLOR_RED + "Invalid Game ID! Use" + SET_TEXT_COLOR_BLUE +
-                    "List Games" + SET_TEXT_COLOR_RED + " to show available games with their IDs", true);
+            throw new InvalidSyntaxException(SET_TEXT_COLOR_RED + "Invalid Game #! Use" + SET_TEXT_COLOR_BLUE +
+                    "List Games" + SET_TEXT_COLOR_RED + " to show available games with their #s", true);
         }
         String response;
         try {
@@ -203,7 +226,7 @@ public class ServerFacade {
     private String printGamePrompts() {
         if (gamesList.length != 0) {
             StringBuilder output = new StringBuilder();
-            output.append(SET_TEXT_COLOR_LIGHT_GREY).append("\tGameID\tGame Name\tWhite Player\tBlack Player\r\n").append(SET_TEXT_COLOR_WHITE);
+            output.append(SET_TEXT_COLOR_LIGHT_GREY).append("\tList Order Num\tGame Name\tWhite Player\tBlack Player\r\n").append(SET_TEXT_COLOR_WHITE);
             int index = 1;
             for (GameOverview game : gamesList) {
                 output.append("\t").append(index++).append("     \t");
