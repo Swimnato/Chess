@@ -47,7 +47,9 @@ public class ServerFacade {
         gamesList = null;
     }
 
-    private String makeRequest(String path, String type, String body, Map<String, String> extraHeaders) throws IOException, URISyntaxException, ErrorResponseException {
+    private String makeRequest(String path, String type, String body,
+                               Map<String, String> extraHeaders)
+            throws IOException, URISyntaxException, ErrorResponseException {
         URL url = (new URI(linkAndPort + path)).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Authorization", String.valueOf(this.authToken));
@@ -73,8 +75,9 @@ public class ServerFacade {
         }
         var inputStream = conn.getInputStream();
         StringBuilder output = new StringBuilder();
-        while (inputStream.available() > 0)
+        while (inputStream.available() > 0) {
             output.append((char) inputStream.read());
+        }
         return output.toString();
     }
 
@@ -188,7 +191,8 @@ public class ServerFacade {
             } else if (output.equals("400")) {
                 return BAD_REQUEST;
             } else if (output.equals("403")) {
-                return "Color Already Taken In Desired Game! Use " + SET_TEXT_COLOR_BLUE + "List Games" + SET_TEXT_COLOR_WHITE + " to show updated games";
+                return "Color Already Taken In Desired Game! Use " + SET_TEXT_COLOR_BLUE +
+                        "List Games" + SET_TEXT_COLOR_WHITE + " to show updated games";
             }
             GameID gameID = new Gson().fromJson(output, GameID.class);
             if (gameID.getGameID() <= 0) {

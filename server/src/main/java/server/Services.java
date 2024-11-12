@@ -103,13 +103,9 @@ public class Services {
         if (user != null && checkHash(password, user.getPassword())) {
             int authToken = dataAccess.hasAuth(username);
 
-            /* These next 3 lines are to assure that you never get more than one auth token for each user
+            /* Originally I had code to assure that you never get more than one auth token for each user
             the TA tests require the use of outdated tokens though sadly so I had to remove this to pass
             the passoff. */
-
-            /*if(authToken != 0) {
-                dataAccess.deleteAuth(authToken);
-            }*/
 
             authToken = IDGENERATOR.createAuth();
             dataAccess.createAuth(authToken, username);

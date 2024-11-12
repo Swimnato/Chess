@@ -69,7 +69,7 @@ public class CommandParser {
     }
 
 
-    private String removeWhitespace(String input) {
+    public static String removeWhitespace(String input) {
         String output = input.replace(" ", "");
         output = output.replace("\r", "");
         output = output.replace("\n", "");

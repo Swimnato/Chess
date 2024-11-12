@@ -27,4 +27,15 @@ public class CommandParserTests {
         Assertions.assertEquals("applePie", parser.getParameter(1), "Couldn't get parameter!");
         Assertions.assertEquals("crackers", parser.getParameter(2), "Couldn't get parameter!");
     }
+
+    @Test
+    @DisplayName("Remove Whitespace")
+    public void removeWhitespace() {
+        String testString = "       f f d k  \r \n";
+        Assertions.assertFalse(CommandParser.removeWhitespace(testString).contains(" "), "Did Not Remove spaces");
+        Assertions.assertFalse(CommandParser.removeWhitespace(testString).contains("\n"), "Did Not Remove newline");
+        Assertions.assertFalse(CommandParser.removeWhitespace(testString).contains("\r"), "Did Not Remove carriage return");
+        Assertions.assertFalse(CommandParser.removeWhitespace(testString).contains(" "), "Did Not Remove emspace");
+        Assertions.assertFalse(CommandParser.removeWhitespace(testString).contains(" "), "Did Not Remove enspace");
+    }
 }
