@@ -1,11 +1,10 @@
 package server;
 
+import server.websocket.WebSocketHandler;
 import spark.*;
 import com.google.gson.Gson;
 import chess.datastructures.*;
 import dataaccess.*;
-
-import java.util.ArrayList;
 
 public class Server {
 
@@ -17,6 +16,8 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
+        WebSocketHandler webSocketHandler = new WebSocketHandler();
+        Spark.webSocket("/ws", webSocketHandler);
         Spark.get("/game", this::listGames);
         Spark.get("/chessGame", this::getGame);
         Spark.post("/game", this::createGame);
