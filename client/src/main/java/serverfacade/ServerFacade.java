@@ -20,6 +20,7 @@ public class ServerFacade {
     private GameOverview[] gamesList;
     private static final String BAD_REQUEST = SET_TEXT_COLOR_RED + "Bad Request!";
     private static final String BAD_SESSION = SET_TEXT_COLOR_RED + "Bad Session!";
+    private WebSocketFacade webSocketFacade;
 
     public ServerFacade(int port, String ip) {
         this.ip = ip;
@@ -27,6 +28,7 @@ public class ServerFacade {
         linkAndPort = "http://" + ip + ':' + port;
         authToken = 0;
         gamesList = null;
+        webSocketFacade = new WebSocketFacade();
     }
 
     public ServerFacade() {
@@ -35,6 +37,7 @@ public class ServerFacade {
         linkAndPort = "http://" + ip + ':' + port;
         authToken = 0;
         gamesList = null;
+        webSocketFacade = new WebSocketFacade();
     }
 
     public void clearServer() throws InvalidSyntaxException, ErrorResponseException {
@@ -93,6 +96,7 @@ public class ServerFacade {
             }
             UsernameAuthTokenPair usernameAuthTokenPair = new Gson().fromJson(output, UsernameAuthTokenPair.class);
             authToken = usernameAuthTokenPair.getAuthToken();
+            webSocketFacade.setAuthToken(authToken);
         } catch (IOException | URISyntaxException e) {
             throw new InvalidSyntaxException(e.getMessage());
         }
@@ -111,6 +115,7 @@ public class ServerFacade {
             }
             UsernameAuthTokenPair usernameAuthTokenPair = new Gson().fromJson(output, UsernameAuthTokenPair.class);
             authToken = usernameAuthTokenPair.getAuthToken();
+            webSocketFacade.setAuthToken(authToken);
         } catch (IOException | URISyntaxException e) {
             throw new InvalidSyntaxException(e.getMessage());
         }
@@ -183,25 +188,7 @@ public class ServerFacade {
             throw new InvalidSyntaxException(SET_TEXT_COLOR_RED + "Invalid Game ID! Use " + SET_TEXT_COLOR_BLUE +
                     "List Games" + SET_TEXT_COLOR_RED + " to show available games with their IDs", true);
         }
-        try {
-            JoinGameInfo joinGameInfo = new JoinGameInfo(desiredColor, gamesList[desiredGame - 1].getGameID());
-            String output = makeRequest("/game", "PUT", new Gson().toJson(joinGameInfo), null);
-            if (output.equals("401")) {
-                return BAD_SESSION;
-            } else if (output.equals("400")) {
-                return BAD_REQUEST;
-            } else if (output.equals("403")) {
-                return "Color Already Taken In Desired Game! Use " + SET_TEXT_COLOR_BLUE +
-                        "List Games" + SET_TEXT_COLOR_WHITE + " to show updated games";
-            }
-            GameID gameID = new Gson().fromJson(output, GameID.class);
-            if (gameID.getGameID() <= 0) {
-                return "Error Joining Game!";
-            }
-        } catch (IOException | URISyntaxException e) {
-            throw new InvalidSyntaxException(e.getMessage());
-        }
-        return "Joined Game Successfully!\r\n" + getChessGameFromServer(desiredGame);
+        return webSocketFacade.joinGame(desiredColor, gamesList[desiredGame - 1].getGameID());
     }
 
     private int getGameIndex(String desiredGame) {
@@ -258,8 +245,11 @@ public class ServerFacade {
         return "No Games on the server! Use " + SET_TEXT_COLOR_BLUE + "Create Game" + SET_TEXT_COLOR_WHITE + " to create one!";
     }
 
-
     public boolean testServer() throws IOException, URISyntaxException, ErrorResponseException {
         return !makeRequest("", "GET", null, null).isEmpty();
+    }
+
+    public String redrawChessBoard() {
+        return webSocketFacade.redrawChessBoard();
     }
 }
