@@ -34,6 +34,7 @@ public class WebSocketFacade {
 
     public String joinGame(String desiredColor, int gameID) {
         connectToWebsocket(gameID);
+        return "";
     }
 
     public String leaveGame() {
