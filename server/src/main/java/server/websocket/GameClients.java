@@ -19,7 +19,19 @@ public class GameClients {
         return blackPlayer;
     }
 
+    public void setBlackPlayer(Session blackPlayer) {
+        this.blackPlayer = blackPlayer;
+    }
+
     public Session getWhitePlayer() {
         return whitePlayer;
+    }
+
+    public void setWhitePlayer(Session whitePlayer) {
+        this.whitePlayer = whitePlayer;
+    }
+
+    public void setObservers(ArrayList<Session> observers) {
+        this.observers = observers;
     }
 }
