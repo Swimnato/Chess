@@ -56,14 +56,28 @@ public class SessionManager {
         if (sessions.get(gameID) == null) {
             throw new DataAccessException("Game Not Found!");
         }
-        Session blackPlayer = sessions.get(gameID).getWhitePlayer();
+        Session blackPlayer = sessions.get(gameID).getBlackPlayer();
         if (blackPlayer == null) {
             return;
         }
         if (!blackPlayer.isOpen()) {
-            sessions.get(gameID).setWhitePlayer(null);
+            sessions.get(gameID).setBlackPlayer(null);
         }
         blackPlayer.getRemote().sendString(message);
     }
-    
+
+    public void setWhitePlayer(int gameID, Session session) {
+        sessions.computeIfAbsent(gameID, k -> new GameClients());
+        sessions.get(gameID).setWhitePlayer(session);
+    }
+
+    public void setBlackPlayer(int gameID, Session session) {
+        sessions.computeIfAbsent(gameID, k -> new GameClients());
+        sessions.get(gameID).setBlackPlayer(session);
+    }
+
+    public void addObserver(int gameID, Session session) {
+        sessions.computeIfAbsent(gameID, k -> new GameClients());
+        sessions.get(gameID).addObserver(session);
+    }
 }

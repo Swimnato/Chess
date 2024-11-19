@@ -13,10 +13,20 @@ public class Server {
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
+        DataStorage dataPersistence;
+        try {
+            dataPersistence = new DatabaseDataAccess();
+            service = new Services(dataPersistence);
+        } catch (DataAccessException e) {
+            System.err.print(e.getMessage());
+            stop();
+            return 0;
+        }
+
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        WebSocketHandler webSocketHandler = new WebSocketHandler();
+        WebSocketHandler webSocketHandler = new WebSocketHandler(dataPersistence);
         Spark.webSocket("/ws", webSocketHandler);
         Spark.get("/game", this::listGames);
         Spark.get("/chessGame", this::getGame);
@@ -30,15 +40,6 @@ public class Server {
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
-
-        //we can do some other stuff before we just are waiting for the other thread to finish initialization
-        try {
-            service = new Services(new DatabaseDataAccess());
-        } catch (DataAccessException e) {
-            System.err.print(e.getMessage());
-            stop();
-            return 0;
-        }
 
         Spark.awaitInitialization();
         return Spark.port();

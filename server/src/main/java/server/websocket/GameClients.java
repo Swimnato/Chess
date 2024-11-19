@@ -34,4 +34,8 @@ public class GameClients {
     public void setObservers(ArrayList<Session> observers) {
         this.observers = observers;
     }
+
+    public void addObserver(Session observer) {
+        this.observers.add(observer);
+    }
 }
