@@ -16,9 +16,9 @@ import java.net.URISyntaxException;
 
 import static chess.ui.EscapeSequences.*;
 
+@ClientEndpoint
 public class WebSocketFacade {
 
-    int authToken;
     ChessGame currentGame = null;
     ChessGame.TeamColor playerColor = TeamColor.WHITE;
     Session session = null;
@@ -26,12 +26,8 @@ public class WebSocketFacade {
     MessageHandler.Whole handler;
 
     WebSocketFacade(String URL, MessageHandler.Whole handler) throws URISyntaxException {
-        uri = new URI(URL);
+        uri = new URI(URL.replace("http", "ws") + "/ws");
         this.handler = handler;
-    }
-
-    public void setAuthToken(int newToken) {
-        authToken = newToken;
     }
 
     public void connectToWebsocket() throws IOException, InvalidSyntaxException {
@@ -42,17 +38,20 @@ public class WebSocketFacade {
                 this.session = container.connectToServer(this, uri);
 
                 this.session.addMessageHandler(handler);
+
             } catch (DeploymentException e) {
                 throw new InvalidSyntaxException(SET_TEXT_COLOR_RED + "Could not connect to server, please reboot client and try again", true);
             }
         }
     }
 
-    public String joinGame(String desiredColor, int gameID) throws IOException, InvalidSyntaxException {
+    public String joinGame(String desiredColor, int gameID, int authToken) throws IOException, InvalidSyntaxException {
         connectToWebsocket();
         UserGameCommand joinGameCommand =
                 new UserGameCommand(UserGameCommand.CommandType.CONNECT, Integer.toString(authToken), gameID);
-        return "Joined Game Successfully!";
+        session.getBasicRemote().sendText(new Gson().toJson(joinGameCommand));
+
+        return "";
     }
 
     public String leaveGame() {

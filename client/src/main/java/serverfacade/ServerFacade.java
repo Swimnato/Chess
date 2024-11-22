@@ -97,7 +97,6 @@ public class ServerFacade {
             }
             UsernameAuthTokenPair usernameAuthTokenPair = new Gson().fromJson(output, UsernameAuthTokenPair.class);
             authToken = usernameAuthTokenPair.getAuthToken();
-            webSocketFacade.setAuthToken(authToken);
         } catch (IOException | URISyntaxException e) {
             throw new InvalidSyntaxException(e.getMessage());
         }
@@ -116,7 +115,6 @@ public class ServerFacade {
             }
             UsernameAuthTokenPair usernameAuthTokenPair = new Gson().fromJson(output, UsernameAuthTokenPair.class);
             authToken = usernameAuthTokenPair.getAuthToken();
-            webSocketFacade.setAuthToken(authToken);
         } catch (IOException | URISyntaxException e) {
             throw new InvalidSyntaxException(e.getMessage());
         }
@@ -190,7 +188,7 @@ public class ServerFacade {
                     "List Games" + SET_TEXT_COLOR_RED + " to show available games with their IDs", true);
         }
         try {
-            return webSocketFacade.joinGame(desiredColor, gamesList[desiredGame - 1].getGameID());
+            return webSocketFacade.joinGame(desiredColor, gamesList[desiredGame - 1].getGameID(), authToken);
         } catch (IOException e) {
             throw new InvalidSyntaxException("Play Game");
         }

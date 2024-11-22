@@ -4,7 +4,6 @@ import commandparser.CommandParser;
 import commandparser.ErrorResponseException;
 import commandparser.InvalidSyntaxException;
 import serverfacade.ServerFacade;
-import serverfacade.ServerMessageHandler;
 
 import javax.websocket.MessageHandler;
 import java.io.IOException;
