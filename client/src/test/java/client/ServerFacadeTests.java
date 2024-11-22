@@ -8,6 +8,7 @@ import ui.REPLClient;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 
 import static chess.ui.EscapeSequences.*;
 
@@ -26,8 +27,11 @@ public class ServerFacadeTests {
         System.out.println("Started test HTTP server on " + port);
 
         System.out.println("AttemptingToRunClient");
-
-        facade = new ServerFacade(port, IP);
+        try {
+            facade = new ServerFacade(port, IP);
+        } catch (URISyntaxException e) {
+            System.err.println("IP Was Malformed");
+        }
     }
 
     @AfterAll
@@ -43,7 +47,7 @@ public class ServerFacadeTests {
 
     @Test
     @DisplayName("Clear Fail")
-    public void clearFail() {
+    public void clearFail() throws Exception {
         ServerFacade failFacade = new ServerFacade(0, "0.0.0.0");
         Assertions.assertThrows(Exception.class, () -> failFacade.clearServer(), "Cleared False Server!");
     }

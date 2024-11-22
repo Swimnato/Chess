@@ -22,22 +22,22 @@ public class ServerFacade {
     private static final String BAD_SESSION = SET_TEXT_COLOR_RED + "Bad Session!";
     private WebSocketFacade webSocketFacade;
 
-    public ServerFacade(int port, String ip) {
+    public ServerFacade(int port, String ip, ServerMessageHandler handler) throws URISyntaxException {
         this.ip = ip;
         this.port = port;
         linkAndPort = "http://" + ip + ':' + port;
         authToken = 0;
         gamesList = null;
-        webSocketFacade = new WebSocketFacade();
+        webSocketFacade = new WebSocketFacade(linkAndPort, handler);
     }
 
-    public ServerFacade() {
+    public ServerFacade(ServerMessageHandler handler) throws URISyntaxException {
         ip = "127.0.0.1";
         port = 8080;
         linkAndPort = "http://" + ip + ':' + port;
         authToken = 0;
         gamesList = null;
-        webSocketFacade = new WebSocketFacade();
+        webSocketFacade = new WebSocketFacade(linkAndPort, handler);
     }
 
     public void clearServer() throws InvalidSyntaxException, ErrorResponseException {
@@ -188,7 +188,11 @@ public class ServerFacade {
             throw new InvalidSyntaxException(SET_TEXT_COLOR_RED + "Invalid Game ID! Use " + SET_TEXT_COLOR_BLUE +
                     "List Games" + SET_TEXT_COLOR_RED + " to show available games with their IDs", true);
         }
-        return webSocketFacade.joinGame(desiredColor, gamesList[desiredGame - 1].getGameID());
+        try {
+            return webSocketFacade.joinGame(desiredColor, gamesList[desiredGame - 1].getGameID());
+        } catch (IOException e) {
+            throw new InvalidSyntaxException("Play Game");
+        }
     }
 
     private int getGameIndex(String desiredGame) {

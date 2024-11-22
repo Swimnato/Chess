@@ -8,7 +8,10 @@ import com.google.gson.Gson;
 import commandparser.InvalidSyntaxException;
 import websocket.commands.UserGameCommand;
 
+import javax.websocket.*;
+
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import static chess.ui.EscapeSequences.*;
@@ -18,22 +21,41 @@ public class WebSocketFacade {
     int authToken;
     ChessGame currentGame = null;
     ChessGame.TeamColor playerColor = TeamColor.WHITE;
+    Session session = null;
+    URI uri;
+    ServerMessageHandler handler;
 
-    WebSocketFacade() {
+    WebSocketFacade(String URL, ServerMessageHandler handler) throws URISyntaxException {
+        uri = new URI(URL);
+        this.handler = handler;
+    }
 
+    WebSocketFacade(URI uri, ServerMessageHandler handler) {
+        this.uri = uri;
+        this.handler = handler;
     }
 
     public void setAuthToken(int newToken) {
         authToken = newToken;
     }
 
-    public void connectToWebsocket(int gameID) {
-        UserGameCommand joinGameCommand =
-                new UserGameCommand(UserGameCommand.CommandType.CONNECT, Integer.toString(authToken), gameID);
+    public void connectToWebsocket() throws IOException, InvalidSyntaxException {
+        if (session == null || !session.isOpen()) {
+            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+
+            try {
+                this.session = container.connectToServer(this, uri);
+
+            } catch (DeploymentException e) {
+                throw new InvalidSyntaxException(SET_TEXT_COLOR_RED + "Could not connect to server, please reboot client and try again", true);
+            }
+        }
     }
 
-    public String joinGame(String desiredColor, int gameID) {
-        connectToWebsocket(gameID);
+    public String joinGame(String desiredColor, int gameID) throws IOException, InvalidSyntaxException {
+        connectToWebsocket();
+        UserGameCommand joinGameCommand =
+                new UserGameCommand(UserGameCommand.CommandType.CONNECT, Integer.toString(authToken), gameID);
         return "";
     }
 

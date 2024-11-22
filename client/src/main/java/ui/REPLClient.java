@@ -4,6 +4,7 @@ import commandparser.CommandParser;
 import commandparser.ErrorResponseException;
 import commandparser.InvalidSyntaxException;
 import serverfacade.ServerFacade;
+import serverfacade.ServerMessageHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +14,7 @@ import java.net.URISyntaxException;
 
 import static chess.ui.EscapeSequences.*;
 
-public class REPLClient {
+public class REPLClient implements ServerMessageHandler {
 
     private LoginStatus loggedIn = LoginStatus.LOGGED_OUT;
     private ServerFacade facade;
@@ -281,10 +282,10 @@ public class REPLClient {
         if (args.length == 2) {
             int port = Integer.parseInt(args[0]);
             String ip = args[1];
-            facade = new ServerFacade(port, ip);
 
             boolean serverAvailable;
             try {
+                facade = new ServerFacade(port, ip, this);
                 serverAvailable = facade.testServer();
             } catch (URISyntaxException e) {
                 outputToUser.println(SET_TEXT_COLOR_RED + "Invalid arguments! URL" +
@@ -320,7 +321,7 @@ public class REPLClient {
                     }
                     String input = getLineInputFromUser();
                     if (input.isEmpty()) {
-                        facade = new ServerFacade();
+                        facade = new ServerFacade(this);
                         inputsNotValid = !facade.testServer();
                         continue;
                     }
@@ -340,7 +341,7 @@ public class REPLClient {
                         ip = input;
                     }
 
-                    facade = new ServerFacade(port, ip);
+                    facade = new ServerFacade(port, ip, this);
 
                     inputsNotValid = !facade.testServer();
                 } catch (Exception e) {
@@ -367,6 +368,11 @@ public class REPLClient {
             inputFromUser.read();
         }
         return input.toString();
+    }
+
+    public void handleServerMessage(String message) {
+        outputToUser.println(message);
+        printPrompt();
     }
 
     private enum LoginStatus {
