@@ -5,6 +5,7 @@ import chess.datastructures.*;
 import com.google.gson.Gson;
 import commandparser.*;
 
+import javax.websocket.MessageHandler;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.*;
@@ -22,7 +23,7 @@ public class ServerFacade {
     private static final String BAD_SESSION = SET_TEXT_COLOR_RED + "Bad Session!";
     private WebSocketFacade webSocketFacade;
 
-    public ServerFacade(int port, String ip, ServerMessageHandler handler) throws URISyntaxException {
+    public ServerFacade(int port, String ip, MessageHandler.Whole handler) throws URISyntaxException {
         this.ip = ip;
         this.port = port;
         linkAndPort = "http://" + ip + ':' + port;
@@ -31,7 +32,7 @@ public class ServerFacade {
         webSocketFacade = new WebSocketFacade(linkAndPort, handler);
     }
 
-    public ServerFacade(ServerMessageHandler handler) throws URISyntaxException {
+    public ServerFacade(MessageHandler.Whole handler) throws URISyntaxException {
         ip = "127.0.0.1";
         port = 8080;
         linkAndPort = "http://" + ip + ':' + port;

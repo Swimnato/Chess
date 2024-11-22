@@ -28,7 +28,7 @@ public class ServerFacadeTests {
 
         System.out.println("AttemptingToRunClient");
         try {
-            facade = new ServerFacade(port, IP);
+            facade = new ServerFacade(port, IP, null);
         } catch (URISyntaxException e) {
             System.err.println("IP Was Malformed");
         }
@@ -48,7 +48,7 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Clear Fail")
     public void clearFail() throws Exception {
-        ServerFacade failFacade = new ServerFacade(0, "0.0.0.0");
+        ServerFacade failFacade = new ServerFacade(0, "0.0.0.0", null);
         Assertions.assertThrows(Exception.class, () -> failFacade.clearServer(), "Cleared False Server!");
     }
 

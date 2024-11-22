@@ -6,6 +6,7 @@ import commandparser.InvalidSyntaxException;
 import serverfacade.ServerFacade;
 import serverfacade.ServerMessageHandler;
 
+import javax.websocket.MessageHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,7 +15,7 @@ import java.net.URISyntaxException;
 
 import static chess.ui.EscapeSequences.*;
 
-public class REPLClient implements ServerMessageHandler {
+public class REPLClient implements MessageHandler.Whole<String> {
 
     private LoginStatus loggedIn = LoginStatus.LOGGED_OUT;
     private ServerFacade facade;
@@ -370,7 +371,7 @@ public class REPLClient implements ServerMessageHandler {
         return input.toString();
     }
 
-    public void handleServerMessage(String message) {
+    public void onMessage(String message) {
         outputToUser.println(message);
         printPrompt();
     }

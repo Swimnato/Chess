@@ -23,15 +23,10 @@ public class WebSocketFacade {
     ChessGame.TeamColor playerColor = TeamColor.WHITE;
     Session session = null;
     URI uri;
-    ServerMessageHandler handler;
+    MessageHandler.Whole handler;
 
-    WebSocketFacade(String URL, ServerMessageHandler handler) throws URISyntaxException {
+    WebSocketFacade(String URL, MessageHandler.Whole handler) throws URISyntaxException {
         uri = new URI(URL);
-        this.handler = handler;
-    }
-
-    WebSocketFacade(URI uri, ServerMessageHandler handler) {
-        this.uri = uri;
         this.handler = handler;
     }
 
@@ -46,6 +41,7 @@ public class WebSocketFacade {
             try {
                 this.session = container.connectToServer(this, uri);
 
+                this.session.addMessageHandler(handler);
             } catch (DeploymentException e) {
                 throw new InvalidSyntaxException(SET_TEXT_COLOR_RED + "Could not connect to server, please reboot client and try again", true);
             }
@@ -56,7 +52,7 @@ public class WebSocketFacade {
         connectToWebsocket();
         UserGameCommand joinGameCommand =
                 new UserGameCommand(UserGameCommand.CommandType.CONNECT, Integer.toString(authToken), gameID);
-        return "";
+        return "Joined Game Successfully!";
     }
 
     public String leaveGame() {
