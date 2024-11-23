@@ -16,14 +16,25 @@ public class ChessGame {
     private TeamColor turn;
     private ChessBoard mainBoard;
     private ChessBoard previousBoard;
+    private boolean gameOver;
+    private TeamColor winner;
 
+    public boolean isGameOver() {
+        if (!gameOver) {
+            if (isInCheckmate(TeamColor.WHITE)) {
+                winner = TeamColor.BLACK;
+                gameOver = true;
+            } else if (isInCheckmate(TeamColor.BLACK)) {
+                winner = TeamColor.WHITE;
+                gameOver = true;
+            }
+        }
+        return gameOver;
+    }
 
-    public static void main(String[] argv) {
-        ChessGame game = new ChessGame();
-        System.out.println(game.toString(TeamColor.WHITE, new ChessPosition(1, 1)));
-        System.out.println(game.toString(TeamColor.WHITE, new ChessPosition(1, 2)));
-        System.out.println(game.toString(TeamColor.WHITE, new ChessPosition(2, 4)));
-        System.out.println(game.toString(TeamColor.WHITE, new ChessPosition(2, 6)));
+    public void declairWinner(TeamColor winner) {
+        this.winner = winner;
+        gameOver = true;
     }
 
     public ChessGame() {
@@ -247,6 +258,7 @@ public class ChessGame {
         }
         changeTurn();
         previousBoard = new ChessBoard(soonToBePreviousBoard);
+        isGameOver();
     }
 
     /**

@@ -190,6 +190,10 @@ public class REPLClient implements MessageHandler.Whole<String> {
                 && parser.isParameterEqual(1, "Moves")) {
             if ((parser.numOfParameters() == 3 || parser.numOfParameters() == 4) && loggedIn == LoginStatus.LOGGED_IN
                     && gameStatus == GameStatus.PLAYING) {
+                if (currentGame.isGameOver()) {
+                    outputToUser.println("Game Is Over, No More Moves! (You should play another though ;) )");
+                    return true;
+                }
                 int row = -1;
                 int col = -1;
                 if (parser.numOfParameters() == 3) {
