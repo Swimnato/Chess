@@ -52,7 +52,9 @@ public class WebSocketFacade {
         return "Successfully!\r\n";
     }
 
-    public String leaveGame() {
+    public String leaveGame(int gameID, int authToken) {
+        UserGameCommand joinGameCommand =
+                new UserGameCommand(UserGameCommand.CommandType.LEAVE, Integer.toString(authToken), gameID);
         return "";
     }
 

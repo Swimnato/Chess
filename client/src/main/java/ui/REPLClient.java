@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
 import commandparser.CommandParser;
@@ -194,36 +195,41 @@ public class REPLClient implements MessageHandler.Whole<String> {
                     outputToUser.println("Game Is Over, No More Moves! (You should play another though ;) )");
                     return true;
                 }
-                int row = -1;
-                int col = -1;
-                if (parser.numOfParameters() == 3) {
-                    String coords = parser.getParameter(2).toLowerCase();
-                    if (coords.length() != 2) {
-                        throw new InvalidSyntaxException("Highlight Legal Moves");
-                    }
 
-                    col = getColNum(coords.charAt(0));
-                    row = Integer.parseInt(coords.substring(1));
+                String coords;
+                if (parser.numOfParameters() == 3) {
+                    coords = parser.getParameter(2).toLowerCase();
+
 
                 } else {
-                    String colString = parser.getParameter(2);
-                    if (colString.length() > 1) {
-                        throw new InvalidSyntaxException("Highlight Legal Moves");
-                    }
-                    col = getColNum(colString.charAt(0));
-                    row = Integer.parseInt(parser.getParameter(3));
+                    coords = parser.getParameter(2);
                 }
 
-                var move = new ChessPosition(row, col);
+                ChessPosition piece;
+                if (coords.length() != 2) {
+                    throw new InvalidSyntaxException("Highlight Legal Moves");
+                }
+                try {
+                    piece = new ChessPosition(coords);
+                } catch (IOException e) {
+                    throw new InvalidSyntaxException("Highlight Legal Moves");
+                }
 
-                if (!move.isValid(currentGame.getBoard())) {
+                if (!piece.isValid(currentGame.getBoard())) {
                     outputToUser.println("Invalid Chess Coordinates! \r\n They should be structured <col char> <row num> \r\n" +
-                            "also use \"Help Highlight Legal Moves\" to get more help");
+                            "also use" + SET_TEXT_COLOR_BLUE + " \"Help Highlight Legal Moves\" " + SET_TEXT_COLOR_WHITE + " to get more help");
                 } else {
-                    outputToUser.println(currentGame.toString(playerColor, move));
+                    outputToUser.println(currentGame.toString(playerColor, piece));
                 }
             } else {
                 throw new InvalidSyntaxException("Highlight Legal Moves");
+            }
+        } else if (parser.isCommand("Leave")) {
+            if ((parser.numOfParameters() == 0) && loggedIn == LoginStatus.LOGGED_IN
+                    && gameStatus == GameStatus.PLAYING) {
+                facade.leaveGame();
+            } else {
+                throw new InvalidSyntaxException("Leave");
             }
         } else {
             outputToUser.println(SET_TEXT_COLOR_RED + "Unrecognized command! Use \"Help\" to find a list of available commands!");
@@ -232,19 +238,6 @@ public class REPLClient implements MessageHandler.Whole<String> {
         return true;
     }
 
-    private int getColNum(char letter) {
-        return switch (letter) {
-            case 'a' -> 1;
-            case 'b' -> 2;
-            case 'c' -> 3;
-            case 'd' -> 4;
-            case 'e' -> 5;
-            case 'f' -> 6;
-            case 'g' -> 7;
-            case 'h' -> 8;
-            default -> -1;
-        };
-    }
 
     private void printAvailableCommands() {
         if (loggedIn == LoginStatus.LOGGED_OUT) {

@@ -16,6 +16,7 @@ import static chess.ui.EscapeSequences.*;
 public class ServerFacade {
     private String ip;
     private int port;
+    private int gameID = 0;
     private String linkAndPort;
     private int authToken;
     private GameOverview[] gamesList;
@@ -202,6 +203,7 @@ public class ServerFacade {
             if (gameID.getGameID() <= 0) {
                 return "Error Joining Game!";
             }
+            this.gameID = gameID.getGameID();
             return "Joined Game " + webSocketFacade.subscribeToGame(gamesList[desiredGame - 1].getGameID(), authToken);
         } catch (Exception e) {
             throw new InvalidSyntaxException("Play Game");
@@ -276,5 +278,9 @@ public class ServerFacade {
 
     public boolean testServer() throws IOException, URISyntaxException, ErrorResponseException {
         return !makeRequest("", "GET", null, null).isEmpty();
+    }
+
+    public void leaveGame() {
+        webSocketFacade.leaveGame(gameID, authToken);
     }
 }

@@ -1,5 +1,7 @@
 package chess;
 
+import java.io.IOException;
+
 /**
  * Represents a single square position on a chess board
  * <p>
@@ -19,6 +21,29 @@ public class ChessPosition {
     public ChessPosition(ChessPosition toCopy) {
         this.row = toCopy.getRow();
         this.col = toCopy.getColumn();
+    }
+
+    public ChessPosition(String toConvert) throws IOException {
+        if (toConvert.length() != 2) {
+            throw new IOException("Invalid String to Convert to Chess Position");
+        }
+        this.col = getColNum(toConvert.charAt(0));
+        this.row = Integer.parseInt(toConvert.substring(1));
+    }
+
+
+    private int getColNum(char letter) {
+        return switch (letter) {
+            case 'a' -> 1;
+            case 'b' -> 2;
+            case 'c' -> 3;
+            case 'd' -> 4;
+            case 'e' -> 5;
+            case 'f' -> 6;
+            case 'g' -> 7;
+            case 'h' -> 8;
+            default -> -1;
+        };
     }
 
     /**
