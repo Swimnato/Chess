@@ -49,6 +49,14 @@ public class ChessMove {
         return "SP: " + startPosition + " EP: " + endPosition + " PP: " + promotionPiece + "\r\n";
     }
 
+    public String toString(boolean displayForUser) {
+        if (displayForUser) {
+            return startPosition.toString(true) + " -> " + endPosition.toString(true);
+        } else {
+            return toString();
+        }
+    }
+
     @Override
     public int hashCode() {
         int hash1 = 0;

@@ -38,6 +38,22 @@ public class SessionManager {
         }
     }
 
+    public void updateAllPlayers(int gameID, String message) throws IOException, DataAccessException {
+        updateBlackPlayer(gameID, message);
+        updateWhitePlayer(gameID, message);
+        updateObservers(gameID, message);
+    }
+
+    public void updateAllButWhite(int gameID, String message) throws IOException, DataAccessException {
+        updateBlackPlayer(gameID, message);
+        updateObservers(gameID, message);
+    }
+
+    public void updateAllButBlack(int gameID, String message) throws IOException, DataAccessException {
+        updateWhitePlayer(gameID, message);
+        updateObservers(gameID, message);
+    }
+
     public void updateWhitePlayer(int gameID, String message) throws IOException, DataAccessException {
         if (sessions.get(gameID) == null) {
             throw new DataAccessException("Game Not Found!");
