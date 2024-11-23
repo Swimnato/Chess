@@ -1,9 +1,13 @@
 package ui;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import commandparser.CommandParser;
 import commandparser.ErrorResponseException;
 import commandparser.InvalidSyntaxException;
 import serverfacade.ServerFacade;
+import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
 
 import javax.websocket.MessageHandler;
 import java.io.IOException;
@@ -17,9 +21,13 @@ import static chess.ui.EscapeSequences.*;
 public class REPLClient implements MessageHandler.Whole<String> {
 
     private LoginStatus loggedIn = LoginStatus.LOGGED_OUT;
+    private GameStatus gameStatus = GameStatus.NOT_PLAYING;
     private ServerFacade facade;
     private final PrintStream outputToUser;
     private final InputStream inputFromUser;
+
+    private ChessGame currentGame = null;
+    private ChessGame.TeamColor playerColor = ChessGame.TeamColor.WHITE;
 
     public REPLClient() {
         inputFromUser = System.in;
@@ -141,12 +149,21 @@ public class REPLClient implements MessageHandler.Whole<String> {
                 try {
                     int gameNum = Integer.parseInt(parser.getParameter(1));
                     response = facade.joinGame(gameNum, parser.getParameter(2).toUpperCase());
+                    playerColor = (parser.isParameterEqual(2, "White") ?
+                            ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK);
                 } catch (NumberFormatException e) {
                     response = facade.joinGame(parser.getParameter(1), parser.getParameter(2).toUpperCase());
                 }
                 outputToUser.println(response);
+                gameStatus = GameStatus.PLAYING;
             } else {
                 throw new InvalidSyntaxException("Play Game");
+            }
+        } else if (parser.isCommand("Redraw") && parser.isParameterEqual(0, "Board")) {
+            if (parser.numOfParameters() == 1 && loggedIn == LoginStatus.LOGGED_IN) {
+                outputToUser.println("\r\n" + currentGame.toString(playerColor));
+            } else {
+                throw new InvalidSyntaxException("Redraw Board");
             }
         } else if (parser.isCommand("Observe") && parser.isParameterEqual(0, "Game")) {
             if (parser.numOfParameters() == 2 && loggedIn == LoginStatus.LOGGED_IN) {
@@ -371,12 +388,27 @@ public class REPLClient implements MessageHandler.Whole<String> {
     }
 
     public void onMessage(String message) {
-        outputToUser.println(message);
+        ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+        if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+            currentGame = new Gson().fromJson(serverMessage.getPayload(), ChessGame.class);
+        }
+        outputToUser.println(
+                switch (serverMessage.getServerMessageType()) {
+                    case NOTIFICATION -> serverMessage.getPayload();
+                    case ERROR -> SET_TEXT_COLOR_RED + serverMessage.getPayload();
+                    case LOAD_GAME -> "\r\n" + currentGame.toString(playerColor);
+                }
+        );
         printPrompt();
     }
 
     private enum LoginStatus {
         LOGGED_IN,
         LOGGED_OUT
+    }
+
+    private enum GameStatus {
+        NOT_PLAYING,
+        PLAYING
     }
 }

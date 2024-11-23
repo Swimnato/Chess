@@ -19,8 +19,6 @@ import static chess.ui.EscapeSequences.*;
 @ClientEndpoint
 public class WebSocketFacade {
 
-    ChessGame currentGame = null;
-    ChessGame.TeamColor playerColor = TeamColor.WHITE;
     Session session = null;
     URI uri;
     MessageHandler.Whole handler;
@@ -51,7 +49,7 @@ public class WebSocketFacade {
                 new UserGameCommand(UserGameCommand.CommandType.CONNECT, Integer.toString(authToken), gameID);
         session.getBasicRemote().sendText(new Gson().toJson(joinGameCommand));
 
-        return "";
+        return "Joined Game Successfully!\r\n";
     }
 
     public String leaveGame() {
@@ -68,13 +66,5 @@ public class WebSocketFacade {
 
     public String highlightMoves() {
         return "";
-    }
-
-    public String redrawChessBoard() {
-        if (currentGame != null) {
-            return currentGame.toString(playerColor);
-        } else {
-            return "No game is loaded, please use " + SET_TEXT_COLOR_BLUE + "Join Game " + SET_TEXT_COLOR_WHITE + "to join one";
-        }
     }
 }

@@ -188,8 +188,22 @@ public class ServerFacade {
                     "List Games" + SET_TEXT_COLOR_RED + " to show available games with their IDs", true);
         }
         try {
+            JoinGameInfo joinGameInfo = new JoinGameInfo(desiredColor, gamesList[desiredGame - 1].getGameID());
+            String output = makeRequest("/game", "PUT", new Gson().toJson(joinGameInfo), null);
+            if (output.equals("401")) {
+                return BAD_SESSION;
+            } else if (output.equals("400")) {
+                return BAD_REQUEST;
+            } else if (output.equals("403")) {
+                return "Color Already Taken In Desired Game! Use " + SET_TEXT_COLOR_BLUE +
+                        "List Games" + SET_TEXT_COLOR_WHITE + " to show updated games";
+            }
+            GameID gameID = new Gson().fromJson(output, GameID.class);
+            if (gameID.getGameID() <= 0) {
+                return "Error Joining Game!";
+            }
             return webSocketFacade.joinGame(desiredColor, gamesList[desiredGame - 1].getGameID(), authToken);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new InvalidSyntaxException("Play Game");
         }
     }
@@ -250,9 +264,5 @@ public class ServerFacade {
 
     public boolean testServer() throws IOException, URISyntaxException, ErrorResponseException {
         return !makeRequest("", "GET", null, null).isEmpty();
-    }
-
-    public String redrawChessBoard() {
-        return webSocketFacade.redrawChessBoard();
     }
 }

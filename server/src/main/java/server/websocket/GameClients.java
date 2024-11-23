@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class GameClients {
     Session whitePlayer;
     Session blackPlayer;
-    ArrayList<Session> observers;
+    ArrayList<Session> observers = new ArrayList<>();
 
     public ArrayList<Session> getObservers() {
         return observers;

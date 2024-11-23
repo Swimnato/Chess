@@ -6,6 +6,7 @@ import server.Server;
 import serverfacade.ServerFacade;
 import ui.REPLClient;
 
+import javax.websocket.MessageHandler;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
@@ -28,7 +29,12 @@ public class ServerFacadeTests {
 
         System.out.println("AttemptingToRunClient");
         try {
-            facade = new ServerFacade(port, IP, null);
+            facade = new ServerFacade(port, IP, new MessageHandler.Whole<String>() {
+                @Override
+                public void onMessage(String message) {
+                    return;
+                }
+            });
         } catch (URISyntaxException e) {
             System.err.println("IP Was Malformed");
         }
@@ -48,7 +54,12 @@ public class ServerFacadeTests {
     @Test
     @DisplayName("Clear Fail")
     public void clearFail() throws Exception {
-        ServerFacade failFacade = new ServerFacade(0, "0.0.0.0", null);
+        ServerFacade failFacade = new ServerFacade(0, "0.0.0.0", new MessageHandler.Whole<String>() {
+            @Override
+            public void onMessage(String message) {
+                return;
+            }
+        });
         Assertions.assertThrows(Exception.class, () -> failFacade.clearServer(), "Cleared False Server!");
     }
 
@@ -219,5 +230,4 @@ public class ServerFacadeTests {
         String output = facade.logout();
         Assertions.assertEquals(SET_TEXT_COLOR_RED + "Bad Session!", output, "Logout on bad session worked!");
     }
-
 }

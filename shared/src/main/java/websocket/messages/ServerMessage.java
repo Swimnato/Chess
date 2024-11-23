@@ -32,6 +32,10 @@ public class ServerMessage {
         return this.serverMessageType;
     }
 
+    public String getPayload() {
+        return payload;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

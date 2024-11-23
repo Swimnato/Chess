@@ -42,7 +42,7 @@ public class WebSocketHandler {
 
     private String connect(UserGameCommand command, Session session) {
         try {
-            var user = mainDB.getUser(command.getAuthToken());
+            var user = mainDB.getUser(Integer.parseInt(command.getAuthToken()));
             if (user == null) {
                 return (new Gson().toJson(
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Session")));
@@ -61,11 +61,12 @@ public class WebSocketHandler {
             } else if (game.getPlayer2().equals(user.getUsername())) {
                 sessionManager.setBlackPlayer(game.getId(), session);
             }
+
+            return new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, new Gson().toJson(game)));
         } catch (DataAccessException e) {
             return (new Gson().toJson(
                     new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Internal Server Error")));
         }
-        return new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "Connected Successfully!"));
     }
 
     private String makeMove(MakeMoveCommand command) {
