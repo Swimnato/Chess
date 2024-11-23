@@ -1,6 +1,9 @@
 package chess;
 
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import static chess.ui.EscapeSequences.*;
 
 /**
@@ -143,58 +146,42 @@ public class ChessBoard {
 
     @Override
     public String toString() {
-        StringBuilder output = new StringBuilder();
-        output.append(SET_TEXT_BOLD);
-        for (int row = rows - 1; row >= 0; row--) {
-            for (int col = 0; col < cols; col++) {
-                if (row % 2 != col % 2) {
-                    output.append(SET_BG_COLOR_LIGHT_GREY);
-                } else {
-                    output.append(SET_BG_COLOR_DARK_GREY);
-                }
-                ChessPiece curr = board[row][col];
-                if (curr != null) {
-                    output.append(curr.getTeamColor() == ChessGame.TeamColor.WHITE ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK);
-                    output.append(curr);
-                } else {
-                    output.append(EMPTY);
-                }
-            }
-            output.append(SET_BG_COLOR_BLACK);
-            output.append("\r\n");
-        }
-        return output.toString();
+        return toString(ChessGame.TeamColor.WHITE, null, null);
     }
 
     public String toString(ChessGame.TeamColor view) {
+        return toString(view, null, null);
+    }
+
+    public String toString(ChessGame.TeamColor view, Collection<ChessPosition> availableMoves, ChessPosition highlightedPiece) {
         StringBuilder output = new StringBuilder();
         output.append(SET_TEXT_BOLD);
         final String rowLetters = printColumnNumbers(view);
         output.append(rowLetters);
         if (view == ChessGame.TeamColor.WHITE) {
             for (int row = rows - 1; row >= 0; row--) {
-                output.append(printRow(row, view));
+                output.append(printRow(row, view, availableMoves, highlightedPiece));
             }
         } else {
             for (int row = 0; row < rows; row++) {
-                output.append(printRow(row, view));
+                output.append(printRow(row, view, availableMoves, highlightedPiece));
             }
         }
         output.append(rowLetters);
         return output.toString();
     }
 
-    private String printRow(int row, ChessGame.TeamColor view) {
+    private String printRow(int row, ChessGame.TeamColor view, Collection<ChessPosition> availableMoves, ChessPosition highlightedPiece) {
         StringBuilder output = new StringBuilder();
         final String rowNum = SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE + ' ' + (row + 1) + ' ';
         output.append(rowNum);
         if (view == ChessGame.TeamColor.WHITE) {
             for (int col = 0; col < cols; col++) {
-                output.append(printBox(row, col));
+                output.append(printBox(row, col, availableMoves, highlightedPiece));
             }
         } else {
             for (int col = cols - 1; col >= 0; col--) {
-                output.append(printBox(row, col));
+                output.append(printBox(row, col, availableMoves, highlightedPiece));
             }
         }
         output.append(rowNum);
@@ -202,12 +189,20 @@ public class ChessBoard {
         return output.toString();
     }
 
-    private String printBox(int row, int col) {
+    private String printBox(int row, int col, Collection<ChessPosition> availableMoves, ChessPosition highlightedPiece) {
         StringBuilder output = new StringBuilder();
-        if (row % 2 != col % 2) {
-            output.append(SET_BG_COLOR_LIGHT_GREY);
+        String gridcolor = row % 2 != col % 2 ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_DARK_GREY;
+        if (highlightedPiece != null) {
+            ChessPosition currPos = new ChessPosition(row + 1, col + 1);
+            if (highlightedPiece.equals(currPos)) {
+                output.append(SET_BG_COLOR_MAGENTA);
+            } else if (availableMoves.contains(currPos)) {
+                output.append(SET_BG_COLOR_GREEN);
+            } else {
+                output.append(gridcolor);
+            }
         } else {
-            output.append(SET_BG_COLOR_DARK_GREY);
+            output.append(gridcolor);
         }
         ChessPiece curr = board[row][col];
         if (curr != null) {

@@ -13,9 +13,18 @@ import java.util.Objects;
  */
 public class ChessGame {
 
-    TeamColor turn;
-    ChessBoard mainBoard;
-    ChessBoard previousBoard;
+    private TeamColor turn;
+    private ChessBoard mainBoard;
+    private ChessBoard previousBoard;
+
+
+    public static void main(String[] argv) {
+        ChessGame game = new ChessGame();
+        System.out.println(game.toString(TeamColor.WHITE, new ChessPosition(1, 1)));
+        System.out.println(game.toString(TeamColor.WHITE, new ChessPosition(1, 2)));
+        System.out.println(game.toString(TeamColor.WHITE, new ChessPosition(2, 4)));
+        System.out.println(game.toString(TeamColor.WHITE, new ChessPosition(2, 6)));
+    }
 
     public ChessGame() {
         turn = TeamColor.WHITE;
@@ -396,19 +405,27 @@ public class ChessGame {
 
     @Override
     public String toString() {
-        StringBuilder output = new StringBuilder();
-
-        output.append(mainBoard.toString());
-
-        return output.toString();
+        return mainBoard.toString();
     }
 
     public String toString(TeamColor view) {
-        StringBuilder output = new StringBuilder();
+        return mainBoard.toString(view);
+    }
 
-        output.append(mainBoard.toString(view));
-
-        return output.toString();
+    public String toString(TeamColor view, ChessPosition pieceToHighligtMoves) {
+        if (pieceToHighligtMoves.isValid(mainBoard) && mainBoard.getPiece(pieceToHighligtMoves) != null) {
+            var moves = validMoves(pieceToHighligtMoves);
+            ArrayList<ChessPosition> availableMoves = null;
+            if (moves != null) {
+                availableMoves = new ArrayList<>();
+                for (var move : moves) {
+                    availableMoves.add(move.getEndPosition());
+                }
+            }
+            return mainBoard.toString(view, availableMoves, pieceToHighligtMoves);
+        } else {
+            return toString(view);
+        }
     }
 
     @Override
