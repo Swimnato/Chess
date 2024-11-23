@@ -76,7 +76,11 @@ public class REPLClient implements MessageHandler.Whole<String> {
     }
 
     private void printPrompt() {
-        outputToUser.print(SET_TEXT_COLOR_WHITE + '[' + loggedIn + ']' + ">> ");
+        if (gameStatus == GameStatus.NOT_PLAYING) {
+            outputToUser.print(SET_TEXT_COLOR_WHITE + '[' + loggedIn + ']' + ">> ");
+        } else {
+            outputToUser.print(SET_TEXT_COLOR_WHITE + '[' + gameStatus + ']' + ">> ");
+        }
     }
 
     private boolean runCommand(String input) throws InvalidSyntaxException, ErrorResponseException {
@@ -128,21 +132,21 @@ public class REPLClient implements MessageHandler.Whole<String> {
                 throw new InvalidSyntaxException("Logout");
             }
         } else if (parser.isCommand("List") && parser.isParameterEqual(0, "Games")) {
-            if (parser.numOfParameters() == 1 && loggedIn == LoginStatus.LOGGED_IN) {
+            if (parser.numOfParameters() == 1 && loggedIn == LoginStatus.LOGGED_IN && gameStatus == GameStatus.NOT_PLAYING) {
                 String response = facade.listGames();
                 outputToUser.println(response);
             } else {
                 throw new InvalidSyntaxException("List Games");
             }
         } else if (parser.isCommand("Create") && parser.isParameterEqual(0, "Game")) {
-            if (parser.numOfParameters() == 2 && loggedIn == LoginStatus.LOGGED_IN) {
+            if (parser.numOfParameters() == 2 && loggedIn == LoginStatus.LOGGED_IN && gameStatus == GameStatus.NOT_PLAYING) {
                 String response = facade.createGame(parser.getParameter(1));
                 outputToUser.println(response);
             } else {
                 throw new InvalidSyntaxException("Create Game");
             }
         } else if (parser.isCommand("Play") && parser.isParameterEqual(0, "Game")) {
-            if (parser.numOfParameters() == 3 && loggedIn == LoginStatus.LOGGED_IN
+            if (parser.numOfParameters() == 3 && loggedIn == LoginStatus.LOGGED_IN && gameStatus == GameStatus.NOT_PLAYING
                     && (parser.isParameterEqual(2, "White") ||
                     parser.isParameterEqual(2, "Black"))) {
                 String response;
@@ -170,11 +174,14 @@ public class REPLClient implements MessageHandler.Whole<String> {
                 String response;
                 try {
                     int gameNum = Integer.parseInt(parser.getParameter(1));
-                    response = facade.getChessGameFromServer(gameNum);
+                    response = facade.observeGame(gameNum);
                 } catch (NumberFormatException e) {
-                    response = facade.getChessGameFromServer(parser.getParameter(1));
+                    response = facade.observeGame(parser.getParameter(1));
                 }
-                outputToUser.println("Observing game " + parser.getParameter(1) + ",\r\n\r\n" + response);
+                outputToUser.println(response);
+
+                playerColor = ChessGame.TeamColor.WHITE;
+                gameStatus = GameStatus.OBSERVING;
             } else {
                 throw new InvalidSyntaxException("Observe Game");
             }
@@ -409,6 +416,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
 
     private enum GameStatus {
         NOT_PLAYING,
-        PLAYING
+        PLAYING,
+        OBSERVING
     }
 }

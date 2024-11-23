@@ -202,9 +202,21 @@ public class ServerFacade {
             if (gameID.getGameID() <= 0) {
                 return "Error Joining Game!";
             }
-            return webSocketFacade.joinGame(desiredColor, gamesList[desiredGame - 1].getGameID(), authToken);
+            return "Joined Game " + webSocketFacade.subscribeToGame(gamesList[desiredGame - 1].getGameID(), authToken);
         } catch (Exception e) {
             throw new InvalidSyntaxException("Play Game");
+        }
+    }
+
+    public String observeGame(String desiredGame) throws InvalidSyntaxException {
+        return observeGame(getGameIndex(desiredGame));
+    }
+
+    public String observeGame(int desiredGame) throws InvalidSyntaxException {
+        try {
+            return "Subscribed to game " + webSocketFacade.subscribeToGame(gamesList[desiredGame - 1].getGameID(), authToken);
+        } catch (IOException e) {
+            throw new InvalidSyntaxException("Observe Game");
         }
     }
 

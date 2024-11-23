@@ -31,6 +31,9 @@ public class CommandParser {
     }
 
     public boolean isParameterEqual(int parameterNum, String valueToCompare) {
+        if (parameters.isEmpty() || parameterNum + 1 > parameters.size()) {
+            return false;
+        }
         return parameters.get(parameterNum).equalsIgnoreCase(valueToCompare);
     }
 

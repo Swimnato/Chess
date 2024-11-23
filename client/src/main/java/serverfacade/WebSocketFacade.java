@@ -43,13 +43,13 @@ public class WebSocketFacade {
         }
     }
 
-    public String joinGame(String desiredColor, int gameID, int authToken) throws IOException, InvalidSyntaxException {
+    public String subscribeToGame(int gameID, int authToken) throws IOException, InvalidSyntaxException {
         connectToWebsocket();
         UserGameCommand joinGameCommand =
                 new UserGameCommand(UserGameCommand.CommandType.CONNECT, Integer.toString(authToken), gameID);
         session.getBasicRemote().sendText(new Gson().toJson(joinGameCommand));
 
-        return "Joined Game Successfully!\r\n";
+        return "Successfully!\r\n";
     }
 
     public String leaveGame() {
