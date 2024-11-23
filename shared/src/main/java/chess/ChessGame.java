@@ -412,9 +412,12 @@ public class ChessGame {
         return mainBoard.toString(view);
     }
 
-    public String toString(TeamColor view, ChessPosition pieceToHighligtMoves) {
-        if (pieceToHighligtMoves.isValid(mainBoard) && mainBoard.getPiece(pieceToHighligtMoves) != null) {
-            var moves = validMoves(pieceToHighligtMoves);
+    public String toString(TeamColor view, ChessPosition pieceToHighlightMoves) {
+        if (pieceToHighlightMoves.isValid(mainBoard) && mainBoard.getPiece(pieceToHighlightMoves) != null) {
+            if (mainBoard.getPiece(pieceToHighlightMoves).getTeamColor() != view) {
+                return "You cannot legaly move your opponent's piece!";
+            }
+            var moves = validMoves(pieceToHighlightMoves);
             ArrayList<ChessPosition> availableMoves = null;
             if (moves != null) {
                 availableMoves = new ArrayList<>();
@@ -422,7 +425,7 @@ public class ChessGame {
                     availableMoves.add(move.getEndPosition());
                 }
             }
-            return mainBoard.toString(view, availableMoves, pieceToHighligtMoves);
+            return mainBoard.toString(view, availableMoves, pieceToHighlightMoves);
         } else {
             return toString(view);
         }
