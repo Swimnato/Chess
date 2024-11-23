@@ -96,4 +96,13 @@ public class SessionManager {
         sessions.computeIfAbsent(gameID, k -> new GameClients());
         sessions.get(gameID).addObserver(session);
     }
+
+    public void removeObserver(int gameID, Session session) {
+        if (session == null || sessions.get(gameID) == null) {
+            return;
+        }
+        var observers = sessions.get(gameID).getObservers();
+        observers.remove(session);
+        sessions.get(gameID).setObservers(observers);
+    }
 }
