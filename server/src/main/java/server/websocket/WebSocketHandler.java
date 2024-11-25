@@ -232,6 +232,8 @@ public class WebSocketHandler {
 
             if (!game.hasPlayer(user.getUsername())) {
                 sessionManager.removeObserver(game.getId(), session);
+                sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                        user.getUsername() + " (Observer) has left the game")));
                 return "";
             } else if (user.getUsername().equals(game.getPlayer1())) {
                 sessionManager.setWhitePlayer(game.getId(), null);
@@ -247,6 +249,8 @@ public class WebSocketHandler {
             }
 
             mainDB.updateGame(game);
+
+            System.out.println(sessionManager.sessions);
 
             sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                     user.getUsername() + " (" + colorOfPlayer + ") has left the game")));

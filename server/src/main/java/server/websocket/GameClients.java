@@ -38,4 +38,9 @@ public class GameClients {
     public void addObserver(Session observer) {
         this.observers.add(observer);
     }
+
+    @Override
+    public String toString() {
+        return "White Player:" + whitePlayer + " Black Player: " + blackPlayer + " Observers: " + observers;
+    }
 }
