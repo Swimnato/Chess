@@ -158,6 +158,9 @@ public class WebSocketHandler {
         } catch (InvalidMoveException e) {
             return (new Gson().toJson(
                     new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Move: " + e.getMessage())));
+        } catch (NumberFormatException e) {
+            return (new Gson().toJson(
+                    new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Session!")));
         }
         return "";
     }
@@ -200,6 +203,9 @@ public class WebSocketHandler {
         } catch (DataAccessException e) {
             return (new Gson().toJson(
                     new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Internal Server Error")));
+        } catch (NumberFormatException e) {
+            return (new Gson().toJson(
+                    new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Session!")));
         }
         return (new Gson().toJson(
                 new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "You have resigned the game successfully")));
@@ -245,6 +251,9 @@ public class WebSocketHandler {
         } catch (DataAccessException e) {
             return (new Gson().toJson(
                     new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Internal Server Error")));
+        } catch (NumberFormatException e) {
+            return (new Gson().toJson(
+                    new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Session!")));
         }
         return (new Gson().toJson(
                 new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "You have left the game successfully")));
