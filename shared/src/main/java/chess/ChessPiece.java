@@ -99,12 +99,12 @@ public class ChessPiece {
         var output = "";
         if (myColor == ChessGame.TeamColor.WHITE) {
             output = switch (myType) {
-                case PAWN -> WHITE_PAWN;
-                case ROOK -> WHITE_ROOK;
-                case KING -> WHITE_KING;
-                case KNIGHT -> WHITE_KNIGHT;
-                case BISHOP -> WHITE_BISHOP;
-                case QUEEN -> WHITE_QUEEN;
+                case PAWN -> BLACK_PAWN;
+                case ROOK -> BLACK_ROOK;
+                case KING -> BLACK_KING;
+                case KNIGHT -> BLACK_KNIGHT;
+                case BISHOP -> BLACK_BISHOP;
+                case QUEEN -> BLACK_QUEEN;
             };
         } else {
             output = switch (myType) {

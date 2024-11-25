@@ -3,6 +3,7 @@ package ui;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
+import chess.datastructures.GameData;
 import com.google.gson.Gson;
 import commandparser.CommandParser;
 import commandparser.ErrorResponseException;
@@ -92,6 +93,10 @@ public class REPLClient implements MessageHandler.Whole<String> {
             printHelpForCommand(parser);
         } else if (parser.isCommand("Quit")) {
             if (parser.numOfParameters() == 0) {
+                if (gameStatus == GameStatus.PLAYING || gameStatus == GameStatus.OBSERVING) {
+                    facade.leaveGame();
+                    gameStatus = GameStatus.NOT_PLAYING;
+                }
                 if (loggedIn == LoginStatus.LOGGED_IN) {
                     String response = facade.logout();
                     outputToUser.println(response);

@@ -191,7 +191,7 @@ public class ChessBoard {
 
     private String printBox(int row, int col, Collection<ChessPosition> availableMoves, ChessPosition highlightedPiece) {
         StringBuilder output = new StringBuilder();
-        String gridcolor = row % 2 != col % 2 ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_DARK_GREY;
+        String gridcolor = row % 2 != col % 2 ? SET_BG_COLOR_CHESS_WHITE : SET_BG_COLOR_CHESS_BLACK;
         if (highlightedPiece != null) {
             ChessPosition currPos = new ChessPosition(row + 1, col + 1);
             if (highlightedPiece.equals(currPos)) {
@@ -206,7 +206,7 @@ public class ChessBoard {
         }
         ChessPiece curr = board[row][col];
         if (curr != null) {
-            output.append(curr.getTeamColor() == ChessGame.TeamColor.WHITE ? SET_TEXT_COLOR_WHITE : SET_TEXT_COLOR_BLACK);
+            output.append(curr.getTeamColor() == ChessGame.TeamColor.WHITE ? SET_TEXT_COLOR_CHESS_WHITE : SET_TEXT_COLOR_CHESS_BLACK);
             output.append(curr);
         } else {
             output.append(EMPTY);
