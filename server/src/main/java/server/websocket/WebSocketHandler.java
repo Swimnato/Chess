@@ -186,19 +186,19 @@ public class WebSocketHandler {
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Only Players can resign the game")));
             } else if (user.getUsername().equals(game.getPlayer1())) {
                 game.getGame().declareWinner(ChessGame.TeamColor.BLACK);
-                colorOfPlayer = ChessGame.TeamColor.WHITE;
+                mainDB.updateGame(game);
+                sessionManager.updateAllButWhite(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                        user.getUsername() + " (White) has resigned the game")));
             } else if (user.getUsername().equals(game.getPlayer2())) {
                 game.getGame().declareWinner(ChessGame.TeamColor.WHITE);
-                colorOfPlayer = ChessGame.TeamColor.BLACK;
+                mainDB.updateGame(game);
+                sessionManager.updateAllButBlack(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                        user.getUsername() + " (Black) has resigned the game")));
             } else {
                 return (new Gson().toJson(
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You have not subscribed to this game!")));
             }
 
-            mainDB.updateGame(game);
-
-            sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                    user.getUsername() + " (" + colorOfPlayer + ") has resigned the game")));
 
         } catch (DataAccessException e) {
             return (new Gson().toJson(
