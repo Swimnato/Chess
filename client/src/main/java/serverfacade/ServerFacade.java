@@ -1,6 +1,7 @@
 package serverfacade;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.datastructures.*;
 import com.google.gson.Gson;
 import commandparser.*;
@@ -294,5 +295,9 @@ public class ServerFacade {
         } catch (IOException e) {
             return SET_TEXT_COLOR_RED + "Could not resign Game!";
         }
+    }
+
+    public String makeMove(ChessMove move) throws IOException {
+        return webSocketFacade.makeMove(move, gameID, authToken);
     }
 }

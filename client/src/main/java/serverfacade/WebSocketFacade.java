@@ -2,10 +2,12 @@ package serverfacade;
 
 import chess.ChessGame;
 import chess.ChessGame.TeamColor;
+import chess.ChessMove;
 import chess.datastructures.GameID;
 import chess.datastructures.JoinGameInfo;
 import com.google.gson.Gson;
 import commandparser.InvalidSyntaxException;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
 import javax.websocket.*;
@@ -66,11 +68,9 @@ public class WebSocketFacade {
         return "";
     }
 
-    public String makeMove() {
-        return "";
-    }
-
-    public String highlightMoves() {
+    public String makeMove(ChessMove move, int gameID, int authToken) throws IOException {
+        MakeMoveCommand makeMoveCommand = new MakeMoveCommand(Integer.toString(authToken), gameID, move);
+        session.getBasicRemote().sendText(new Gson().toJson(makeMoveCommand));
         return "";
     }
 }

@@ -268,7 +268,11 @@ public class REPLClient implements MessageHandler.Whole<String> {
                             SET_TEXT_COLOR_WHITE + " To see valid Moves", true);
                 }
 
-
+                try {
+                    facade.makeMove(move);
+                } catch (Exception e) {
+                    throw new InvalidSyntaxException("There Was A Problem Parsing Your Command! " + e.getMessage(), true);
+                }
             } else {
                 throw new InvalidSyntaxException("Make Move");
             }
@@ -491,17 +495,21 @@ public class REPLClient implements MessageHandler.Whole<String> {
     }
 
     public void onMessage(String message) {
-        ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-        if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
-            currentGame = new Gson().fromJson(serverMessage.getPayload(), ChessGame.class);
+        try {
+            ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+            if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+                currentGame = new Gson().fromJson(serverMessage.getPayload(), ChessGame.class);
+            }
+            outputToUser.println(
+                    switch (serverMessage.getServerMessageType()) {
+                        case NOTIFICATION -> serverMessage.getPayload();
+                        case ERROR -> SET_TEXT_COLOR_RED + serverMessage.getPayload();
+                        case LOAD_GAME -> drawBoard();
+                    }
+            );
+        } catch (Exception e) {
+            outputToUser.println(SET_TEXT_COLOR_RED + "ERROR - UNCAUGHT EXCEPTION: " + e.getMessage());
         }
-        outputToUser.println(
-                switch (serverMessage.getServerMessageType()) {
-                    case NOTIFICATION -> serverMessage.getPayload();
-                    case ERROR -> SET_TEXT_COLOR_RED + serverMessage.getPayload();
-                    case LOAD_GAME -> drawBoard();
-                }
-        );
         printPrompt();
     }
 
