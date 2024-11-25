@@ -179,7 +179,10 @@ public class WebSocketHandler {
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Game ID")));
             }
 
-            ChessGame.TeamColor colorOfPlayer;
+            if (game.getGame().isGameOver()) {
+                return (new Gson().toJson(
+                        new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game Has Ended!" + SET_TEXT_COLOR_WHITE + " ... you should play another though...")));
+            }
 
             if (!game.hasPlayer(user.getUsername())) {
                 return (new Gson().toJson(
