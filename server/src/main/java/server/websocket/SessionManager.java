@@ -64,8 +64,9 @@ public class SessionManager {
         }
         if (!whitePlayer.isOpen()) {
             sessions.get(gameID).setWhitePlayer(null);
+        } else {
+            whitePlayer.getRemote().sendString(message);
         }
-        whitePlayer.getRemote().sendString(message);
     }
 
     public void updateBlackPlayer(int gameID, String message) throws IOException, DataAccessException {
@@ -78,8 +79,9 @@ public class SessionManager {
         }
         if (!blackPlayer.isOpen()) {
             sessions.get(gameID).setBlackPlayer(null);
+        } else {
+            blackPlayer.getRemote().sendString(message);
         }
-        blackPlayer.getRemote().sendString(message);
     }
 
     public void setWhitePlayer(int gameID, Session session) {
