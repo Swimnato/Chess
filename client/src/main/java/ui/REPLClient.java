@@ -285,36 +285,16 @@ public class REPLClient implements MessageHandler.Whole<String> {
         } else if (parser.isCommand("Make") && parser.isParameterEqual(0, "Move")) {
             if ((parser.numOfParameters() <= 4 && parser.numOfParameters() >= 2) && loggedIn == LoginStatus.LOGGED_IN
                     && gameStatus == GameStatus.PLAYING) {
-                String startPosStr;
-                String endPosStr;
-                String promotionPieceStr = null;
-                if (parser.numOfParameters() == 4) { // a7 a9 knight
-                    startPosStr = parser.getParameter(1);
-                    endPosStr = parser.getParameter(2);
-                    promotionPieceStr = parser.getParameter(3);
-                } else if (parser.numOfParameters() == 3) {
-                    if (parser.getParameter(2).length() != 2) { // a7a9 knight
-                        startPosStr = parser.getParameter(1).substring(0, 2);
-                        endPosStr = parser.getParameter(1).substring(2);
-                        promotionPieceStr = parser.getParameter(2);
-                    } else { // a2 a4
-                        startPosStr = parser.getParameter(1);
-                        endPosStr = parser.getParameter(2);
-                    }
-                } else { // a2a4
-                    startPosStr = parser.getParameter(1).substring(0, 2);
-                    endPosStr = parser.getParameter(1).substring(2);
-                }
+                GetMoveFromUserInput moveStr = new GetMoveFromUserInput(parser);
                 ChessMove move;
                 try {
-                    ChessPosition startPos = new ChessPosition(startPosStr);
-                    ChessPosition endPos = new ChessPosition(endPosStr);
-                    ChessPiece.PieceType promotionPiece = ChessPiece.getPieceType(promotionPieceStr);
+                    ChessPosition startPos = new ChessPosition(moveStr.getStartPosStr());
+                    ChessPosition endPos = new ChessPosition(moveStr.getEndPosStr());
+                    ChessPiece.PieceType promotionPiece = ChessPiece.getPieceType(moveStr.getPromotionPieceStr());
                     move = currentGame.getMoveForStartAndEndPositions(startPos, endPos, promotionPiece);
                 } catch (IOException e) {
                     throw new InvalidSyntaxException("Make Move");
                 }
-
                 if (move == null) {
                     throw new InvalidSyntaxException("Invalid Move! use " + SET_TEXT_COLOR_BLUE + "Highlight Legal Moves" +
                             SET_TEXT_COLOR_WHITE + " To see valid Moves", true);
@@ -330,6 +310,44 @@ public class REPLClient implements MessageHandler.Whole<String> {
             }
         }
         return false;
+    }
+
+    private static class GetMoveFromUserInput {
+        private String startPosStr;
+        private String endPosStr;
+        private String promotionPieceStr = null;
+
+        public GetMoveFromUserInput(CommandParser parser) {
+            if (parser.numOfParameters() == 4) { // a7 a9 knight
+                startPosStr = parser.getParameter(1);
+                endPosStr = parser.getParameter(2);
+                promotionPieceStr = parser.getParameter(3);
+            } else if (parser.numOfParameters() == 3) {
+                if (parser.getParameter(2).length() != 2) { // a7a9 knight
+                    startPosStr = parser.getParameter(1).substring(0, 2);
+                    endPosStr = parser.getParameter(1).substring(2);
+                    promotionPieceStr = parser.getParameter(2);
+                } else { // a2 a4
+                    startPosStr = parser.getParameter(1);
+                    endPosStr = parser.getParameter(2);
+                }
+            } else { // a2a4
+                startPosStr = parser.getParameter(1).substring(0, 2);
+                endPosStr = parser.getParameter(1).substring(2);
+            }
+        }
+
+        public String getEndPosStr() {
+            return endPosStr;
+        }
+
+        public String getPromotionPieceStr() {
+            return promotionPieceStr;
+        }
+
+        public String getStartPosStr() {
+            return startPosStr;
+        }
     }
 
     private boolean setupIPAndPortFromUserInput(String[] args) {
