@@ -17,7 +17,7 @@ public class ChessGame {
     private ChessBoard mainBoard;
     private ChessBoard previousBoard;
     private boolean gameOver;
-    private TeamColor winner;
+    private TeamColor winner = null;
 
     public boolean isGameOver() {
         if (!gameOver) {
@@ -26,6 +26,12 @@ public class ChessGame {
                 gameOver = true;
             } else if (isInCheckmate(TeamColor.BLACK)) {
                 winner = TeamColor.WHITE;
+                gameOver = true;
+            } else if (isInStalemate(TeamColor.WHITE)) {
+                winner = null;
+                gameOver = true;
+            } else if (isInStalemate(TeamColor.BLACK)) {
+                winner = null;
                 gameOver = true;
             }
         }

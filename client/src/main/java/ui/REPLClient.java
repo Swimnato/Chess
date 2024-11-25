@@ -260,7 +260,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
             }
         } else if (parser.isCommand("Leave")) {
             if ((parser.numOfParameters() == 0) && loggedIn == LoginStatus.LOGGED_IN
-                    && gameStatus == GameStatus.PLAYING) {
+                    && (gameStatus == GameStatus.PLAYING || gameStatus == GameStatus.OBSERVING)) {
                 outputToUser.println(facade.leaveGame());
                 gameStatus = GameStatus.NOT_PLAYING;
                 return true;
@@ -409,7 +409,11 @@ public class REPLClient implements MessageHandler.Whole<String> {
 
     private String drawBoard() {
         if (currentGame.isGameOver()) {
-            return "\r\n" + currentGame.toString(playerColor) + SET_TEXT_COLOR_BLUE + "Game is over, " + currentGame.getWinner() + " Won!\r\n";
+            if (currentGame.getWinner() != null) {
+                return "\r\n" + currentGame.toString(playerColor) + SET_TEXT_COLOR_BLUE + "Game is over, " + currentGame.getWinner() + " Won!\r\n";
+            } else {
+                return "\r\n" + currentGame.toString(playerColor) + SET_TEXT_COLOR_BLUE + "Game ended in a stalemate, nobody wins!\r\n";
+            }
         } else {
             return "\r\n" + currentGame.toString(playerColor);
         }

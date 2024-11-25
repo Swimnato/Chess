@@ -16,7 +16,7 @@ public class HelpForCommands {
                     "<username> <password> <email>" + SET_TEXT_COLOR_LIGHT_GREY + " - To create an account on the server");
             outputToUser.println(SET_TEXT_COLOR_BLUE + "\tLogin " + SET_TEXT_COLOR_GREEN +
                     "<username> <password>" + SET_TEXT_COLOR_LIGHT_GREY + " - To play chess");
-        } else {
+        } else if (gameStatus == REPLClient.GameStatus.NOT_PLAYING) {
             outputToUser.println(SET_TEXT_COLOR_BLUE + "\tCreate Game " + SET_TEXT_COLOR_GREEN +
                     "<name>" + SET_TEXT_COLOR_LIGHT_GREY + " - Create a game on the server");
             outputToUser.println(SET_TEXT_COLOR_BLUE + "\tList Games " + SET_TEXT_COLOR_LIGHT_GREY + " - List the games on the server");
@@ -25,6 +25,15 @@ public class HelpForCommands {
             outputToUser.println(SET_TEXT_COLOR_BLUE + "\tObserve Game " + SET_TEXT_COLOR_GREEN + "<#>" + SET_TEXT_COLOR_LIGHT_GREY +
                     " - List the games on the server");
             outputToUser.println(SET_TEXT_COLOR_BLUE + "\tlogout " + SET_TEXT_COLOR_LIGHT_GREY + " - To logout of the server");
+        } else if (gameStatus == REPLClient.GameStatus.PLAYING) {
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tHighlight Legal Moves " + SET_TEXT_COLOR_GREEN + "<position>" + SET_TEXT_COLOR_LIGHT_GREY +
+                    " Shows available moves for a piece.");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tMake Move " + SET_TEXT_COLOR_GREEN + "<start position> <end position>" + SET_TEXT_COLOR_LIGHT_GREY +
+                    " Moves a Piece on the board.");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tLeave " + SET_TEXT_COLOR_LIGHT_GREY + " Leave current game");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tResign " + SET_TEXT_COLOR_LIGHT_GREY + " Resigns the current game to your opponent");
+        } else if (gameStatus == REPLClient.GameStatus.OBSERVING) {
+
         }
         outputToUser.println(SET_TEXT_COLOR_BLUE + "\tQuit " + SET_TEXT_COLOR_LIGHT_GREY + " - To close the client");
         outputToUser.println(SET_TEXT_COLOR_BLUE + "\tHelp " + SET_TEXT_COLOR_LIGHT_GREY + " - Display available commands");

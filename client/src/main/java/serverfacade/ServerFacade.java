@@ -217,7 +217,8 @@ public class ServerFacade {
 
     public String observeGame(int desiredGame) throws InvalidSyntaxException {
         try {
-            return "Subscribed to game " + webSocketFacade.subscribeToGame(gamesList[desiredGame - 1].getGameID(), authToken);
+            this.gameID = gamesList[desiredGame - 1].getGameID();
+            return "Subscribed to game " + webSocketFacade.subscribeToGame(gameID, authToken);
         } catch (IOException e) {
             throw new InvalidSyntaxException("Observe Game");
         }

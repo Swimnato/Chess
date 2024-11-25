@@ -154,8 +154,13 @@ public class WebSocketHandler {
             }
 
             if (game.getGame().isGameOver()) {
-                sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                        user.getUsername() + " (" + colorOfPlayer + ") has won!")));
+                if (game.getGame().getWinner() != null) {
+                    sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                            user.getUsername() + " (" + game.getGame().getWinner() + ") has won!")));
+                } else {
+                    sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                            "Stalemate! Nobody Wins!")));
+                }
             }
 
 
@@ -239,8 +244,9 @@ public class WebSocketHandler {
                 return (new Gson().toJson(
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You have not subscribed to this game!")));
             }
-
-            mainDB.updateGame(game);
+            if (!game.getGame().isGameOver()) {
+                mainDB.updateGame(game);
+            }
 
             System.out.println(sessionManager.sessions);
 
