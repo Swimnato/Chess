@@ -276,8 +276,9 @@ public class REPLClient implements MessageHandler.Whole<String> {
         } else if (parser.isCommand("Resign")) {
             if ((parser.numOfParameters() == 0) && loggedIn == LoginStatus.LOGGED_IN
                     && gameStatus == GameStatus.PLAYING) {
-                outputToUser.println(facade.resignGame());
-                gameStatus = GameStatus.NOT_PLAYING;
+                String result = (facade.resignGame());
+                outputToUser.println(result);
+                gameStatus = result.isEmpty() ? GameStatus.NOT_PLAYING : gameStatus;
                 return true;
             } else {
                 throw new InvalidSyntaxException("Resign");
