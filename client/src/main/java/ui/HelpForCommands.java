@@ -28,8 +28,8 @@ public class HelpForCommands {
         } else if (gameStatus == REPLClient.GameStatus.PLAYING) {
             outputToUser.println(SET_TEXT_COLOR_BLUE + "\tHighlight Legal Moves " + SET_TEXT_COLOR_GREEN + "<position>" + SET_TEXT_COLOR_LIGHT_GREY +
                     " Shows available moves for a piece.");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tMake Move " + SET_TEXT_COLOR_GREEN + "<start position> <end position>" + SET_TEXT_COLOR_LIGHT_GREY +
-                    " Moves a Piece on the board.");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tMake Move " + SET_TEXT_COLOR_GREEN + "<start position> <end position>" +
+                    SET_TEXT_COLOR_LIGHT_GREY + " Moves a Piece on the board.");
             outputToUser.println(SET_TEXT_COLOR_BLUE + "\tLeave " + SET_TEXT_COLOR_LIGHT_GREY + " Leave current game");
             outputToUser.println(SET_TEXT_COLOR_BLUE + "\tResign " + SET_TEXT_COLOR_LIGHT_GREY + " Resigns the current game to your opponent");
             outputToUser.println(SET_TEXT_COLOR_BLUE + "\tRedraw Board " + SET_TEXT_COLOR_LIGHT_GREY + " Redraws the chess board");

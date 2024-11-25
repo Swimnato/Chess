@@ -106,7 +106,6 @@ public class ChessGame {
             return new HashSet<>() {
             };
         }
-
         ChessPiece.PieceType currentType = currentPiece.getPieceType();
         TeamColor currentColor = currentPiece.getTeamColor();
         ArrayList<ChessMove> output = new ArrayList<>();
@@ -123,7 +122,6 @@ public class ChessGame {
             }
             mainBoard = new ChessBoard(boardBackup);
         }
-
         return output;
     }
 
@@ -138,7 +136,6 @@ public class ChessGame {
             }
             mainBoard = new ChessBoard(backupBoard);
         }
-
         //check for castling
         if (currentPiece.isFirstMove() && !isInCheck(currentPiece.getTeamColor())) {
             var toAdd = checkSidesForCastling(startPosition, currentPiece);
@@ -146,13 +143,11 @@ public class ChessGame {
                 output.addAll(toAdd);
             }
         }
-
         return output;
     }
 
     private Collection<ChessMove> checkSidesForCastling(ChessPosition startPosition, ChessPiece currentKing) {
         var output = new HashSet<ChessMove>();
-
         for (short side = -1; side < 2; side += 2) {
             int row = startPosition.getRow();
             int col = startPosition.getColumn() + side;
@@ -176,7 +171,6 @@ public class ChessGame {
                 }
             }
         }
-
         return output;
     }
 
@@ -214,7 +208,6 @@ public class ChessGame {
         var row = startPosition.getRow();
         var col = startPosition.getColumn();
         int direction = (currentPiece.getTeamColor() == TeamColor.WHITE ? 1 : -1);
-
         //now we check for enpassant
         for (short side = -1; side < 2; side += 2) {
             ChessPosition pieceToSidePos = new ChessPosition(row, col + side);
@@ -232,7 +225,6 @@ public class ChessGame {
                 }
             }
         }
-
         return currentMoveset;
     }
 
@@ -240,7 +232,6 @@ public class ChessGame {
                                                ChessPosition pieceToSidePos, ChessPosition startPosition, int row, int col,
                                                int side, int direction) {
         var output = new HashSet<ChessMove>();
-
         if (spaceToSideBackAStepPos.isValid(mainBoard)) {
             ChessPiece spaceToSideBackAStep = previousBoard.getPiece(spaceToSideBackAStepPos);
             if (spaceToSideBackAStep != null && spaceToSideBackAStep.getTeamColor() != currentPiece.getTeamColor() &&
@@ -253,7 +244,6 @@ public class ChessGame {
                 }
             }
         }
-
         return output;
     }
 
@@ -338,7 +328,6 @@ public class ChessGame {
         return output;
     }
 
-
     private ChessPosition kingPosition(TeamColor teamColor) {
         ChessPiece currentKing = null;
         ChessPosition kingPos = null;
@@ -401,8 +390,7 @@ public class ChessGame {
     }
 
     /**
-     * Determines if the given team is in stalemate, which here is defined as having
-     * no valid moves
+     * Determines if the given team is in stalemate, which here is defined as having no valid moves
      *
      * @param teamColor which team to check for stalemate
      * @return True if the specified team is in stalemate, otherwise false
