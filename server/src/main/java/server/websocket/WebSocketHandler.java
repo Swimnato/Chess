@@ -111,6 +111,8 @@ public class WebSocketHandler {
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You cannot play out of turn!")));
             }
 
+            ChessGame.TeamColor colorOfPlayer = game.getGame().getTeamTurn();
+
 
             game.getGame().makeMove(command.getMove());
 
@@ -119,9 +121,9 @@ public class WebSocketHandler {
             sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, new Gson().toJson(game.getGame()))));
 
             var updateMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                    user.getUsername() + " (" + game.getGame().getTeamTurn() + ") made move: " + command.getMove().toString(true));
+                    user.getUsername() + " (" + colorOfPlayer + ") made move: " + command.getMove().toString(true));
 
-            if (game.getGame().getTeamTurn() == ChessGame.TeamColor.BLACK) {
+            if (colorOfPlayer == ChessGame.TeamColor.WHITE) {
                 sessionManager.updateAllButWhite(game.getId(), new Gson().toJson(updateMessage));
             } else {
                 sessionManager.updateAllButBlack(game.getId(), new Gson().toJson(updateMessage));
@@ -129,7 +131,7 @@ public class WebSocketHandler {
 
             if (game.getGame().isGameOver()) {
                 sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                        user.getUsername() + " (" + game.getGame().getTeamTurn() + ") has won!")));
+                        user.getUsername() + " (" + colorOfPlayer + ") has won!")));
             }
 
 
