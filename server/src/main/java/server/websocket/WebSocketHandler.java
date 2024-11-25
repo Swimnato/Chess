@@ -4,7 +4,6 @@ import chess.ChessGame;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
-import org.eclipse.jetty.util.IO;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -17,8 +16,6 @@ import websocket.messages.ServerMessage;
 import static chess.ui.EscapeSequences.*;
 
 import java.io.IOException;
-
-import static websocket.commands.UserGameCommand.CommandType.*;
 
 @WebSocket
 public class WebSocketHandler {
@@ -64,9 +61,9 @@ public class WebSocketHandler {
 
             if (!game.hasPlayer(user.getUsername())) {
                 sessionManager.addObserver(game.getId(), session);
-            } else if (game.getPlayer1().equals(user.getUsername())) {
+            } else if (user.getUsername().equals(game.getPlayer1())) {
                 sessionManager.setWhitePlayer(game.getId(), session);
-            } else if (game.getPlayer2().equals(user.getUsername())) {
+            } else if (user.getUsername().equals(game.getPlayer2())) {
                 sessionManager.setBlackPlayer(game.getId(), session);
             }
 
@@ -101,22 +98,20 @@ public class WebSocketHandler {
             if (!game.hasPlayer(user.getUsername())) {
                 return (new Gson().toJson(
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Observers cannot make moves!")));
-            } else if (game.getPlayer1().equals(user.getUsername())) {
-                if (game.getGame().getTeamTurn() != ChessGame.TeamColor.WHITE) {
-                    return (new Gson().toJson(
-                            new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You cannot play out of turn!")));
-                }
+            } else if (user.getUsername().equals(game.getPlayer1())) {
                 colorOfPlayer = ChessGame.TeamColor.WHITE;
-            } else if (game.getPlayer2().equals(user.getUsername())) {
-                if (game.getGame().getTeamTurn() != ChessGame.TeamColor.BLACK) {
-                    return (new Gson().toJson(
-                            new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You cannot play out of turn!")));
-                }
+            } else if (user.getUsername().equals(game.getPlayer2())) {
                 colorOfPlayer = ChessGame.TeamColor.BLACK;
             } else {
                 return (new Gson().toJson(
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You have not subscribed to this game!")));
             }
+
+            if (game.getGame().getTeamTurn() != colorOfPlayer) {
+                return (new Gson().toJson(
+                        new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You cannot play out of turn!")));
+            }
+
 
             game.getGame().makeMove(command.getMove());
 
@@ -125,7 +120,7 @@ public class WebSocketHandler {
             sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(game.getGame()));
 
             var updateMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                    user.getUsername() + "(" + colorOfPlayer + ") made move: " + command.getMove().toString(true));
+                    user.getUsername() + " (" + colorOfPlayer + ") made move: " + command.getMove().toString(true));
 
             if (colorOfPlayer == ChessGame.TeamColor.WHITE) {
                 sessionManager.updateAllButWhite(game.getId(), new Gson().toJson(updateMessage));
@@ -135,7 +130,7 @@ public class WebSocketHandler {
 
             if (game.getGame().isGameOver()) {
                 sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                        user.getUsername() + "(" + colorOfPlayer + ") has won!")));
+                        user.getUsername() + " (" + colorOfPlayer + ") has won!")));
             }
 
 
@@ -168,11 +163,11 @@ public class WebSocketHandler {
             if (!game.hasPlayer(user.getUsername())) {
                 return (new Gson().toJson(
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Only Players can resign the game")));
-            } else if (game.getPlayer1().equals(user.getUsername())) {
-                game.getGame().declairWinner(ChessGame.TeamColor.BLACK);
+            } else if (user.getUsername().equals(game.getPlayer1())) {
+                game.getGame().declareWinner(ChessGame.TeamColor.BLACK);
                 colorOfPlayer = ChessGame.TeamColor.WHITE;
-            } else if (game.getPlayer2().equals(user.getUsername())) {
-                game.getGame().declairWinner(ChessGame.TeamColor.WHITE);
+            } else if (user.getUsername().equals(game.getPlayer2())) {
+                game.getGame().declareWinner(ChessGame.TeamColor.WHITE);
                 colorOfPlayer = ChessGame.TeamColor.BLACK;
             } else {
                 return (new Gson().toJson(
@@ -182,7 +177,7 @@ public class WebSocketHandler {
             mainDB.updateGame(game);
 
             sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                    user.getUsername() + "(" + colorOfPlayer + ") has resigned the game")));
+                    user.getUsername() + " (" + colorOfPlayer + ") has resigned the game")));
 
         } catch (DataAccessException e) {
             return (new Gson().toJson(
@@ -211,11 +206,11 @@ public class WebSocketHandler {
             if (!game.hasPlayer(user.getUsername())) {
                 sessionManager.removeObserver(game.getId(), session);
                 return "";
-            } else if (game.getPlayer1().equals(user.getUsername())) {
+            } else if (user.getUsername().equals(game.getPlayer1())) {
                 sessionManager.setWhitePlayer(game.getId(), null);
                 colorOfPlayer = ChessGame.TeamColor.WHITE;
                 game.setPlayer1(null);
-            } else if (game.getPlayer2().equals(user.getUsername())) {
+            } else if (user.getUsername().equals(game.getPlayer2())) {
                 sessionManager.setBlackPlayer(game.getId(), null);
                 colorOfPlayer = ChessGame.TeamColor.BLACK;
                 game.setPlayer2(null);
@@ -227,7 +222,7 @@ public class WebSocketHandler {
             mainDB.updateGame(game);
 
             sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
-                    user.getUsername() + "(" + colorOfPlayer + ") has left the game")));
+                    user.getUsername() + " (" + colorOfPlayer + ") has left the game")));
 
         } catch (DataAccessException e) {
             return (new Gson().toJson(

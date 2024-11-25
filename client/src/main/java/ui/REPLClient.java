@@ -167,7 +167,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
             }
         } else if (parser.isCommand("Redraw") && parser.isParameterEqual(0, "Board")) {
             if (parser.numOfParameters() == 1 && loggedIn == LoginStatus.LOGGED_IN) {
-                outputToUser.println("\r\n" + currentGame.toString(playerColor));
+                outputToUser.println(drawBoard());
             } else {
                 throw new InvalidSyntaxException("Redraw Board");
             }
@@ -227,9 +227,18 @@ public class REPLClient implements MessageHandler.Whole<String> {
         } else if (parser.isCommand("Leave")) {
             if ((parser.numOfParameters() == 0) && loggedIn == LoginStatus.LOGGED_IN
                     && gameStatus == GameStatus.PLAYING) {
-                facade.leaveGame();
+                outputToUser.println(facade.leaveGame());
+                gameStatus = GameStatus.NOT_PLAYING;
             } else {
                 throw new InvalidSyntaxException("Leave");
+            }
+        } else if (parser.isCommand("Resign")) {
+            if ((parser.numOfParameters() == 0) && loggedIn == LoginStatus.LOGGED_IN
+                    && gameStatus == GameStatus.PLAYING) {
+                outputToUser.println(facade.resignGame());
+                gameStatus = GameStatus.NOT_PLAYING;
+            } else {
+                throw new InvalidSyntaxException("Resign");
             }
         } else {
             outputToUser.println(SET_TEXT_COLOR_RED + "Unrecognized command! Use \"Help\" to find a list of available commands!");
@@ -441,6 +450,14 @@ public class REPLClient implements MessageHandler.Whole<String> {
         return input.toString();
     }
 
+    private String drawBoard() {
+        if (currentGame.isGameOver()) {
+            return "\r\n" + currentGame.toString(playerColor) + SET_TEXT_COLOR_BLUE + "Game is over, " + currentGame.getWinner() + " Won!\r\n";
+        } else {
+            return "\r\n" + currentGame.toString(playerColor);
+        }
+    }
+
     public void onMessage(String message) {
         ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
         if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
@@ -450,7 +467,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
                 switch (serverMessage.getServerMessageType()) {
                     case NOTIFICATION -> serverMessage.getPayload();
                     case ERROR -> SET_TEXT_COLOR_RED + serverMessage.getPayload();
-                    case LOAD_GAME -> "\r\n" + currentGame.toString(playerColor);
+                    case LOAD_GAME -> drawBoard();
                 }
         );
         printPrompt();

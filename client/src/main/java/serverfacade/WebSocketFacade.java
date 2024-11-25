@@ -52,13 +52,17 @@ public class WebSocketFacade {
         return "Successfully!\r\n";
     }
 
-    public String leaveGame(int gameID, int authToken) {
-        UserGameCommand joinGameCommand =
+    public String leaveGame(int gameID, int authToken) throws IOException {
+        UserGameCommand leaveGameCommand =
                 new UserGameCommand(UserGameCommand.CommandType.LEAVE, Integer.toString(authToken), gameID);
+        session.getBasicRemote().sendText(new Gson().toJson(leaveGameCommand));
         return "";
     }
 
-    public String resignGame() {
+    public String resignGame(int gameID, int authToken) throws IOException {
+        UserGameCommand resignGameCommand =
+                new UserGameCommand(UserGameCommand.CommandType.RESIGN, Integer.toString(authToken), gameID);
+        session.getBasicRemote().sendText(new Gson().toJson(resignGameCommand));
         return "";
     }
 

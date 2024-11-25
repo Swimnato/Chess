@@ -280,7 +280,19 @@ public class ServerFacade {
         return !makeRequest("", "GET", null, null).isEmpty();
     }
 
-    public void leaveGame() {
-        webSocketFacade.leaveGame(gameID, authToken);
+    public String leaveGame() {
+        try {
+            return webSocketFacade.leaveGame(gameID, authToken);
+        } catch (IOException e) {
+            return SET_TEXT_COLOR_RED + "Could not leave Game!";
+        }
+    }
+
+    public String resignGame() {
+        try {
+            return webSocketFacade.resignGame(gameID, authToken);
+        } catch (IOException e) {
+            return SET_TEXT_COLOR_RED + "Could not resign Game!";
+        }
     }
 }

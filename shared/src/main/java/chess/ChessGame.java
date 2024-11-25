@@ -32,9 +32,13 @@ public class ChessGame {
         return gameOver;
     }
 
-    public void declairWinner(TeamColor winner) {
+    public void declareWinner(TeamColor winner) {
         this.winner = winner;
         gameOver = true;
+    }
+
+    public TeamColor getWinner() {
+        return winner;
     }
 
     public ChessGame() {
