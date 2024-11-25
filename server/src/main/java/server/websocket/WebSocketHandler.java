@@ -258,7 +258,6 @@ public class WebSocketHandler {
             return (new Gson().toJson(
                     new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Session!")));
         }
-        return (new Gson().toJson(
-                new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "You have left the game successfully")));
+        return "";
     }
 }
