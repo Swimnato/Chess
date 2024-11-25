@@ -25,10 +25,13 @@ public class ServerMessage {
         switch (serverMessageType) {
             case ERROR:
                 errorMessage = payload;
+                break;
             case LOAD_GAME:
                 game = payload;
+                break;
             case NOTIFICATION:
                 message = payload;
+                break;
         }
     }
 

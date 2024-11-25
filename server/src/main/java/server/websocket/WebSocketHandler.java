@@ -46,7 +46,7 @@ public class WebSocketHandler {
         }
     }
 
-    private String connect(UserGameCommand command, Session session) {
+    private String connect(UserGameCommand command, Session session) throws IOException {
         try {
             var user = mainDB.getUser(Integer.parseInt(command.getAuthToken()));
             if (user == null) {
@@ -60,12 +60,20 @@ public class WebSocketHandler {
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Game ID")));
             }
 
+            String messageToOtherUsers = user.getUsername() + " Has Joined the Game as ";
+
             if (!game.hasPlayer(user.getUsername())) {
+                messageToOtherUsers = messageToOtherUsers + "Observer";
+                sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, messageToOtherUsers)));
                 sessionManager.addObserver(game.getId(), session);
             } else if (user.getUsername().equals(game.getPlayer1())) {
+                messageToOtherUsers = messageToOtherUsers + "White";
                 sessionManager.setWhitePlayer(game.getId(), session);
+                sessionManager.updateAllButWhite(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, messageToOtherUsers)));
             } else if (user.getUsername().equals(game.getPlayer2())) {
+                messageToOtherUsers = messageToOtherUsers + "Black";
                 sessionManager.setBlackPlayer(game.getId(), session);
+                sessionManager.updateAllButBlack(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, messageToOtherUsers)));
             }
 
             return new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, new Gson().toJson(game.getGame())));
