@@ -32,14 +32,17 @@ public class HelpForCommands {
                     " Moves a Piece on the board.");
             outputToUser.println(SET_TEXT_COLOR_BLUE + "\tLeave " + SET_TEXT_COLOR_LIGHT_GREY + " Leave current game");
             outputToUser.println(SET_TEXT_COLOR_BLUE + "\tResign " + SET_TEXT_COLOR_LIGHT_GREY + " Resigns the current game to your opponent");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tRedraw Board " + SET_TEXT_COLOR_LIGHT_GREY + " Redraws the chess board");
         } else if (gameStatus == REPLClient.GameStatus.OBSERVING) {
-
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tLeave " + SET_TEXT_COLOR_LIGHT_GREY + " Leave current game");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tRedraw Board " + SET_TEXT_COLOR_LIGHT_GREY + " Redraws the chess board");
         }
         outputToUser.println(SET_TEXT_COLOR_BLUE + "\tQuit " + SET_TEXT_COLOR_LIGHT_GREY + " - To close the client");
         outputToUser.println(SET_TEXT_COLOR_BLUE + "\tHelp " + SET_TEXT_COLOR_LIGHT_GREY + " - Display available commands");
     }
 
-    public static void printHelpForCommand(CommandParser input, REPLClient.LoginStatus loggedIn, REPLClient.GameStatus gameStatus, PrintStream outputToUser) throws InvalidSyntaxException {
+    public static void printHelpForCommand(CommandParser input, REPLClient.LoginStatus loggedIn,
+                                           REPLClient.GameStatus gameStatus, PrintStream outputToUser) throws InvalidSyntaxException {
         if (input.numOfParameters() == 0) {
             printAvailableCommands(loggedIn, gameStatus, outputToUser);
             return;
@@ -123,8 +126,28 @@ public class HelpForCommands {
             outputToUser.println(SET_TEXT_COLOR_GREEN + "\t<command> " + SET_TEXT_COLOR_LIGHT_GREY +
                     "(Optional) - The desired command that will be explained. " +
                     "If not given, the system will display all available commands.");
-        } else {
+        } else if (!isOtherCommand(input, loggedIn, gameStatus, outputToUser)) {
             throw new InvalidSyntaxException("Help");
         }
+    }
+
+    private static boolean isOtherCommand(CommandParser input, REPLClient.LoginStatus loggedIn,
+                                          REPLClient.GameStatus gameStatus, PrintStream outputToUser) {
+        if (input.isParameterEqual(0, "Leave")) {
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "Leave" + SET_TEXT_COLOR_LIGHT_GREY
+                    + " Leaves the current game you are playing or observing");
+            outputToUser.println("Syntax:");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tLeave");
+            outputToUser.println(SET_TEXT_COLOR_WHITE + "Parameters:");
+            outputToUser.println(SET_TEXT_COLOR_GREEN + "\tNone");
+        } else if (input.isParameterEqual(0, "Resign")) {
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "Leave" + SET_TEXT_COLOR_LIGHT_GREY
+                    + " Resigns the current game to the other player, observers cannot resign for players");
+            outputToUser.println("Syntax:");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tResign");
+            outputToUser.println(SET_TEXT_COLOR_WHITE + "Parameters:");
+            outputToUser.println(SET_TEXT_COLOR_GREEN + "\tNone");
+        }
+        return false;
     }
 }

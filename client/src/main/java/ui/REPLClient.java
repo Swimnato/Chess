@@ -96,6 +96,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
                 if (gameStatus == GameStatus.PLAYING || gameStatus == GameStatus.OBSERVING) {
                     facade.leaveGame();
                     gameStatus = GameStatus.NOT_PLAYING;
+                    outputToUser.println("Left Game");
                 }
                 if (loggedIn == LoginStatus.LOGGED_IN) {
                     String response = facade.logout();
@@ -164,7 +165,9 @@ public class REPLClient implements MessageHandler.Whole<String> {
                     response = facade.joinGame(parser.getParameter(1), parser.getParameter(2).toUpperCase());
                 }
                 outputToUser.println(response);
-                gameStatus = GameStatus.PLAYING;
+                if (response.isEmpty()) {
+                    gameStatus = GameStatus.PLAYING;
+                }
                 return true;
             } else {
                 throw new InvalidSyntaxException("Play Game");
