@@ -202,9 +202,6 @@ public class WebSocketHandler {
                 return (new Gson().toJson(
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You have not subscribed to this game!")));
             }
-
-            sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
-                    new Gson().toJson(game.getGame()))));
         } catch (DataAccessException e) {
             return (new Gson().toJson(
                     new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Internal Server Error")));
