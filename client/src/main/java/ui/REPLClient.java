@@ -233,16 +233,12 @@ public class REPLClient implements MessageHandler.Whole<String> {
                     outputToUser.println("Game Is Over, No More Moves! (You should play another though ;) )");
                     return true;
                 }
-
                 String coords;
                 if (parser.numOfParameters() == 3) {
                     coords = parser.getParameter(2).toLowerCase();
-
-
                 } else {
                     coords = parser.getParameter(2);
                 }
-
                 ChessPosition piece;
                 if (coords.length() != 2) {
                     throw new InvalidSyntaxException("Highlight Legal Moves");
@@ -252,7 +248,6 @@ public class REPLClient implements MessageHandler.Whole<String> {
                 } catch (IOException e) {
                     throw new InvalidSyntaxException("Highlight Legal Moves");
                 }
-
                 if (!piece.isValid(currentGame.getBoard())) {
                     outputToUser.println("Invalid Chess Coordinates! \r\n They should be structured <col char> <row num> \r\n" +
                             "also use" + SET_TEXT_COLOR_BLUE + " \"Help Highlight Legal Moves\" " + SET_TEXT_COLOR_WHITE + " to get more help");
@@ -307,7 +302,6 @@ public class REPLClient implements MessageHandler.Whole<String> {
                     throw new InvalidSyntaxException("Invalid Move! use " + SET_TEXT_COLOR_BLUE + "Highlight Legal Moves" +
                             SET_TEXT_COLOR_WHITE + " To see valid Moves", true);
                 }
-
                 try {
                     facade.makeMove(move);
                 } catch (Exception e) {

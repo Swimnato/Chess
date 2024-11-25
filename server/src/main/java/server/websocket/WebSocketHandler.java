@@ -25,6 +25,8 @@ public class WebSocketHandler {
     private DataStorage mainDB;
     Services services;
     SessionManager sessionManager = new SessionManager();
+    GameData game;
+    UserData user;
 
     public WebSocketHandler(DataStorage desiredStorage) {
         mainDB = desiredStorage;
@@ -53,18 +55,24 @@ public class WebSocketHandler {
         }
     }
 
+    private boolean updateUserAndBoard(UserGameCommand command) throws NumberFormatException, DataAccessException {
+        user = mainDB.getUser(Integer.parseInt(command.getAuthToken()));
+        if (user == null) {
+            return false;
+        }
+
+        game = mainDB.getGame(command.getGameID());
+        if (game == null) {
+            return false;
+        }
+        return true;
+    }
+
     private String connect(UserGameCommand command, Session session) throws IOException {
         try {
-            var user = mainDB.getUser(Integer.parseInt(command.getAuthToken()));
-            if (user == null) {
+            if (!updateUserAndBoard(command)) {
                 return (new Gson().toJson(
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Session")));
-            }
-
-            var game = mainDB.getGame(command.getGameID());
-            if (game == null) {
-                return (new Gson().toJson(
-                        new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Game ID")));
             }
 
             String messageToOtherUsers = user.getUsername() + " Has Joined the Game as ";
@@ -105,16 +113,9 @@ public class WebSocketHandler {
 
     private String makeMove(MakeMoveCommand command) throws IOException {
         try {
-            var user = mainDB.getUser(Integer.parseInt(command.getAuthToken()));
-            if (user == null) {
+            if (!updateUserAndBoard(command)) {
                 return (new Gson().toJson(
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Session")));
-            }
-
-            var game = mainDB.getGame(command.getGameID());
-            if (game == null) {
-                return (new Gson().toJson(
-                        new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Game ID")));
             }
 
             if (game.getGame().isGameOver()) {
@@ -173,16 +174,9 @@ public class WebSocketHandler {
 
     private String resign(UserGameCommand command, Session session) throws IOException {
         try {
-            var user = mainDB.getUser(Integer.parseInt(command.getAuthToken()));
-            if (user == null) {
+            if (!updateUserAndBoard(command)) {
                 return (new Gson().toJson(
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Session")));
-            }
-
-            var game = mainDB.getGame(command.getGameID());
-            if (game == null) {
-                return (new Gson().toJson(
-                        new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Game ID")));
             }
 
             if (game.getGame().isGameOver()) {
@@ -224,13 +218,7 @@ public class WebSocketHandler {
 
     private String leave(UserGameCommand command, Session session) throws IOException {
         try {
-            var game = mainDB.getGame(command.getGameID());
-            if (game == null) {
-                return (new Gson().toJson(
-                        new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Game ID")));
-            }
-            var user = mainDB.getUser(Integer.parseInt(command.getAuthToken()));
-            if (user == null) {
+            if (!updateUserAndBoard(command)) {
                 return (new Gson().toJson(
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Session")));
             }
