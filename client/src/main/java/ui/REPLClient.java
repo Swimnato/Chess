@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
+import java.util.Collection;
 
 import static chess.ui.EscapeSequences.*;
 
@@ -239,6 +240,37 @@ public class REPLClient implements MessageHandler.Whole<String> {
                 gameStatus = GameStatus.NOT_PLAYING;
             } else {
                 throw new InvalidSyntaxException("Resign");
+            }
+        } else if (parser.isCommand("Make") && parser.isParameterEqual(0, "Move")) {
+            if (((parser.numOfParameters() == 3 && parser.getParameter(1).length() == 2 && parser.getParameter(2).length() == 2)
+                    || (parser.numOfParameters() == 2 && parser.getParameter(1).length() == 4)) && loggedIn == LoginStatus.LOGGED_IN
+                    && gameStatus == GameStatus.PLAYING) {
+                String startPosStr;
+                String endPosStr;
+                if (parser.numOfParameters() == 2) {
+                    startPosStr = parser.getParameter(1).substring(0, 2);
+                    endPosStr = parser.getParameter(1).substring(2);
+                } else {
+                    startPosStr = parser.getParameter(1);
+                    endPosStr = parser.getParameter(2);
+                }
+                ChessMove move;
+                try {
+                    ChessPosition startPos = new ChessPosition(startPosStr);
+                    ChessPosition endPos = new ChessPosition(endPosStr);
+                    move = currentGame.getMoveForStartAndEndPositions(startPos, endPos);
+                } catch (IOException e) {
+                    throw new InvalidSyntaxException("Make Move");
+                }
+
+                if (move == null) {
+                    throw new InvalidSyntaxException("Invalid Move! use " + SET_TEXT_COLOR_BLUE + "Highlight Legal Moves" +
+                            SET_TEXT_COLOR_WHITE + " To see valid Moves", true);
+                }
+
+
+            } else {
+                throw new InvalidSyntaxException("Make Move");
             }
         } else {
             outputToUser.println(SET_TEXT_COLOR_RED + "Unrecognized command! Use \"Help\" to find a list of available commands!");

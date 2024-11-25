@@ -47,6 +47,16 @@ public class ChessGame {
         mainBoard.resetBoard();
     }
 
+    public ChessMove getMoveForStartAndEndPositions(ChessPosition start, ChessPosition end) {
+        Collection<ChessMove> movesForStartPos = validMoves(start);
+        for (var validMove : movesForStartPos) {
+            if (start.equals(validMove.getStartPosition()) && end.equals(validMove.getEndPosition())) {
+                return validMove;
+            }
+        }
+        return null;
+    }
+
     /**
      * @return Which team's turn it is
      */
