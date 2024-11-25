@@ -53,10 +53,16 @@ public class ChessGame {
         mainBoard.resetBoard();
     }
 
-    public ChessMove getMoveForStartAndEndPositions(ChessPosition start, ChessPosition end) {
+    public ChessMove getMoveForStartAndEndPositions(ChessPosition start, ChessPosition end, ChessPiece.PieceType promotionPiece) {
         Collection<ChessMove> movesForStartPos = validMoves(start);
         for (var validMove : movesForStartPos) {
-            if (start.equals(validMove.getStartPosition()) && end.equals(validMove.getEndPosition())) {
+            if (promotionPiece == null) {
+                if (start.equals(validMove.getStartPosition()) && end.equals(validMove.getEndPosition())
+                        && validMove.getPromotionPiece() == null) {
+                    return validMove;
+                }
+            } else if (start.equals(validMove.getStartPosition()) && end.equals(validMove.getEndPosition())
+                    && promotionPiece.equals(validMove.getPromotionPiece())) {
                 return validMove;
             }
         }
@@ -446,9 +452,6 @@ public class ChessGame {
 
     public String toString(TeamColor view, ChessPosition pieceToHighlightMoves) {
         if (pieceToHighlightMoves.isValid(mainBoard) && mainBoard.getPiece(pieceToHighlightMoves) != null) {
-            if (mainBoard.getPiece(pieceToHighlightMoves).getTeamColor() != view) {
-                return "You cannot legaly move your opponent's piece!";
-            }
             var moves = validMoves(pieceToHighlightMoves);
             ArrayList<ChessPosition> availableMoves = null;
             if (moves != null) {

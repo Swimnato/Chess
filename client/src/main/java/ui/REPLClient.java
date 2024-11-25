@@ -2,6 +2,7 @@ package ui;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import chess.datastructures.GameData;
 import com.google.gson.Gson;
@@ -282,23 +283,34 @@ public class REPLClient implements MessageHandler.Whole<String> {
                 throw new InvalidSyntaxException("Resign");
             }
         } else if (parser.isCommand("Make") && parser.isParameterEqual(0, "Move")) {
-            if (((parser.numOfParameters() == 3 && parser.getParameter(1).length() == 2 && parser.getParameter(2).length() == 2)
-                    || (parser.numOfParameters() == 2 && parser.getParameter(1).length() == 4)) && loggedIn == LoginStatus.LOGGED_IN
+            if ((parser.numOfParameters() <= 4 && parser.numOfParameters() >= 2) && loggedIn == LoginStatus.LOGGED_IN
                     && gameStatus == GameStatus.PLAYING) {
                 String startPosStr;
                 String endPosStr;
-                if (parser.numOfParameters() == 2) {
-                    startPosStr = parser.getParameter(1).substring(0, 2);
-                    endPosStr = parser.getParameter(1).substring(2);
-                } else {
+                String promotionPieceStr = null;
+                if (parser.numOfParameters() == 4) { // a7 a9 knight
                     startPosStr = parser.getParameter(1);
                     endPosStr = parser.getParameter(2);
+                    promotionPieceStr = parser.getParameter(3);
+                } else if (parser.numOfParameters() == 3) {
+                    if (parser.getParameter(2).length() != 2) { // a7a9 knight
+                        startPosStr = parser.getParameter(1).substring(0, 2);
+                        endPosStr = parser.getParameter(1).substring(2);
+                        promotionPieceStr = parser.getParameter(2);
+                    } else { // a2 a4
+                        startPosStr = parser.getParameter(1);
+                        endPosStr = parser.getParameter(2);
+                    }
+                } else { // a2a4
+                    startPosStr = parser.getParameter(1).substring(0, 2);
+                    endPosStr = parser.getParameter(1).substring(2);
                 }
                 ChessMove move;
                 try {
                     ChessPosition startPos = new ChessPosition(startPosStr);
                     ChessPosition endPos = new ChessPosition(endPosStr);
-                    move = currentGame.getMoveForStartAndEndPositions(startPos, endPos);
+                    ChessPiece.PieceType promotionPiece = ChessPiece.getPieceType(promotionPieceStr);
+                    move = currentGame.getMoveForStartAndEndPositions(startPos, endPos, promotionPiece);
                 } catch (IOException e) {
                     throw new InvalidSyntaxException("Make Move");
                 }

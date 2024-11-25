@@ -2,6 +2,7 @@ package chess;
 
 import chess.rules.*;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import static chess.ui.EscapeSequences.*;
@@ -41,6 +42,21 @@ public class ChessPiece {
         myColor = toCopy.getTeamColor();
         myType = toCopy.getPieceType();
         this.firstMove = firstMove;
+    }
+
+    public static PieceType getPieceType(String input) throws IOException {
+        if (input == null) {
+            return null;
+        }
+        return switch (input.toUpperCase()) {
+            case "KING" -> PieceType.KING;
+            case "QUEEN" -> PieceType.QUEEN;
+            case "BISHOP" -> PieceType.BISHOP;
+            case "KNIGHT" -> PieceType.KNIGHT;
+            case "ROOK" -> PieceType.ROOK;
+            case "PAWN" -> PieceType.PAWN;
+            default -> null;
+        };
     }
 
     public boolean isFirstMove() {
