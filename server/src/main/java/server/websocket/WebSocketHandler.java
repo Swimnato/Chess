@@ -70,16 +70,19 @@ public class WebSocketHandler {
 
             if (!game.hasPlayer(user.getUsername())) {
                 messageToOtherUsers = messageToOtherUsers + "Observer";
-                sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, messageToOtherUsers)));
+                sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(
+                        ServerMessage.ServerMessageType.NOTIFICATION, messageToOtherUsers)));
                 sessionManager.addObserver(game.getId(), session);
             } else if (user.getUsername().equals(game.getPlayer1())) {
                 messageToOtherUsers = messageToOtherUsers + "White";
                 sessionManager.setWhitePlayer(game.getId(), session);
-                sessionManager.updateAllButWhite(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, messageToOtherUsers)));
+                sessionManager.updateAllButWhite(game.getId(), new Gson().toJson(new ServerMessage(
+                        ServerMessage.ServerMessageType.NOTIFICATION, messageToOtherUsers)));
             } else if (user.getUsername().equals(game.getPlayer2())) {
                 messageToOtherUsers = messageToOtherUsers + "Black";
                 sessionManager.setBlackPlayer(game.getId(), session);
-                sessionManager.updateAllButBlack(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, messageToOtherUsers)));
+                sessionManager.updateAllButBlack(game.getId(), new Gson().toJson(new ServerMessage(
+                        ServerMessage.ServerMessageType.NOTIFICATION, messageToOtherUsers)));
             }
 
             return new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, new Gson().toJson(game.getGame())));
@@ -115,7 +118,8 @@ public class WebSocketHandler {
 
             if (game.getGame().isGameOver()) {
                 return (new Gson().toJson(
-                        new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game Has Ended!" + SET_TEXT_COLOR_WHITE + " ... you should play another though...")));
+                        new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game Has Ended!" + SET_TEXT_COLOR_WHITE +
+                                " ... you should play another though...")));
             }
 
             if (!game.hasPlayer(user.getUsername())) {
@@ -135,7 +139,8 @@ public class WebSocketHandler {
 
             mainDB.updateGame(game);
 
-            sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, new Gson().toJson(game.getGame()))));
+            sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
+                    new Gson().toJson(game.getGame()))));
 
             var updateMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                     user.getUsername() + " (" + colorOfPlayer + ") made move: " + command.getMove().toString(true));
@@ -181,7 +186,8 @@ public class WebSocketHandler {
 
             if (game.getGame().isGameOver()) {
                 return (new Gson().toJson(
-                        new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game Has Ended!" + SET_TEXT_COLOR_WHITE + " ... you should play another though...")));
+                        new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Game Has Ended!" + SET_TEXT_COLOR_WHITE +
+                                " ... you should play another though...")));
             }
 
             if (!game.hasPlayer(user.getUsername())) {
