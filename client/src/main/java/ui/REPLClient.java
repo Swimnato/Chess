@@ -165,7 +165,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
                     response = facade.joinGame(parser.getParameter(1), parser.getParameter(2).toUpperCase());
                 }
                 outputToUser.println(response);
-                if (response.isEmpty()) {
+                if (response.contains("Joined Game Successfully!")) {
                     gameStatus = GameStatus.PLAYING;
                 }
                 return true;
@@ -258,6 +258,8 @@ public class REPLClient implements MessageHandler.Whole<String> {
                     outputToUser.println(currentGame.toString(playerColor, piece));
                 }
                 return true;
+            } else if (parser.numOfParameters() == 2) {
+                outputToUser.println(currentGame.toString(playerColor, true));
             } else {
                 throw new InvalidSyntaxException("Highlight Legal Moves");
             }

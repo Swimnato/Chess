@@ -47,7 +47,7 @@ public class HelpForCommands {
             printAvailableCommands(loggedIn, gameStatus, outputToUser);
             return;
         }
-        if (input.numOfParameters() > 2) {
+        if (input.numOfParameters() > 3) {
             throw new InvalidSyntaxException("Help");
         }
         if (input.isParameterEqual(0, "Register")) {
@@ -140,6 +140,7 @@ public class HelpForCommands {
             outputToUser.println(SET_TEXT_COLOR_BLUE + "\tLeave");
             outputToUser.println(SET_TEXT_COLOR_WHITE + "Parameters:");
             outputToUser.println(SET_TEXT_COLOR_GREEN + "\tNone");
+            return true;
         } else if (input.isParameterEqual(0, "Resign")) {
             outputToUser.println(SET_TEXT_COLOR_BLUE + "Leave" + SET_TEXT_COLOR_LIGHT_GREY
                     + " Resigns the current game to the other player, observers cannot resign for players");
@@ -147,6 +148,47 @@ public class HelpForCommands {
             outputToUser.println(SET_TEXT_COLOR_BLUE + "\tResign");
             outputToUser.println(SET_TEXT_COLOR_WHITE + "Parameters:");
             outputToUser.println(SET_TEXT_COLOR_GREEN + "\tNone");
+            return true;
+        } else if (input.isParameterEqual(0, "Redraw") &&
+                input.isParameterEqual(1, "Board")) {
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "Redraw Board" + SET_TEXT_COLOR_LIGHT_GREY
+                    + " Redraws the board to the console");
+            outputToUser.println("Syntax:");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tRedraw Board");
+            outputToUser.println(SET_TEXT_COLOR_WHITE + "Parameters:");
+            outputToUser.println(SET_TEXT_COLOR_GREEN + "\tNone");
+            return true;
+        } else if (input.isParameterEqual(0, "Highlight")
+                && input.isParameterEqual(1, "Legal")
+                && input.isParameterEqual(2, "Moves")) {
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "Highlight Legal Moves" + SET_TEXT_COLOR_LIGHT_GREY
+                    + " Shows available chess moves ");
+            outputToUser.println("Syntax:");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tHighlight Legal Moves");
+            outputToUser.println(SET_TEXT_COLOR_WHITE + "Parameters:");
+            outputToUser.println(SET_TEXT_COLOR_GREEN + "\t<chess position> " + SET_TEXT_COLOR_LIGHT_GREY +
+                    "(Optional) - The desired piece you want to see legal moves for. " +
+                    "If not given, the system will display all available moves. It should be " +
+                    "inputted as [Column Letter][Column Number] with no space");
+            return true;
+        } else if (input.isParameterEqual(0, "Make")
+                && input.isParameterEqual(1, "Move")) {
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "Make Move" + SET_TEXT_COLOR_LIGHT_GREY
+                    + " Moves a piece on the chess board ");
+            outputToUser.println("Syntax:");
+            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tMake Move" + SET_TEXT_COLOR_GREEN + "\t<start position> "
+                    + "\t<end position> ");
+            outputToUser.println(SET_TEXT_COLOR_WHITE + "Parameters:");
+            outputToUser.println(SET_TEXT_COLOR_GREEN + "\t<start position> " + SET_TEXT_COLOR_LIGHT_GREY +
+                    "The desired piece you want to move. " +
+                    "inputted as [Column Letter][Column Number] with no space");
+            outputToUser.println(SET_TEXT_COLOR_GREEN + "\t<start position> " + SET_TEXT_COLOR_LIGHT_GREY +
+                    "The desired location you want to move to. " +
+                    "inputted as [Column Letter][Column Number] with no space");
+            outputToUser.println(SET_TEXT_COLOR_GREEN + "\t<promotion piece> " + SET_TEXT_COLOR_LIGHT_GREY +
+                    "(Conditional) - If you are moving a pawn to the edge of the chess board, you should specify" +
+                    " what you want it to be promoted to");
+            return true;
         }
         return false;
     }

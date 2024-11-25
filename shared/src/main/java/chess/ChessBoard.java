@@ -153,7 +153,7 @@ public class ChessBoard {
         return toString(view, null, null);
     }
 
-    public String toString(ChessGame.TeamColor view, Collection<ChessPosition> availableMoves, ChessPosition highlightedPiece) {
+    public String toString(ChessGame.TeamColor view, Collection<ChessPosition> availableMoves, Collection<ChessPosition> highlightedPiece) {
         StringBuilder output = new StringBuilder();
         output.append(SET_TEXT_BOLD);
         final String rowLetters = printColumnNumbers(view);
@@ -171,7 +171,7 @@ public class ChessBoard {
         return output.toString();
     }
 
-    private String printRow(int row, ChessGame.TeamColor view, Collection<ChessPosition> availableMoves, ChessPosition highlightedPiece) {
+    private String printRow(int row, ChessGame.TeamColor view, Collection<ChessPosition> availableMoves, Collection<ChessPosition> highlightedPiece) {
         StringBuilder output = new StringBuilder();
         final String rowNum = SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE + ' ' + (row + 1) + ' ';
         output.append(rowNum);
@@ -189,12 +189,12 @@ public class ChessBoard {
         return output.toString();
     }
 
-    private String printBox(int row, int col, Collection<ChessPosition> availableMoves, ChessPosition highlightedPiece) {
+    private String printBox(int row, int col, Collection<ChessPosition> availableMoves, Collection<ChessPosition> highlightedPiece) {
         StringBuilder output = new StringBuilder();
         String gridcolor = row % 2 != col % 2 ? SET_BG_COLOR_CHESS_WHITE : SET_BG_COLOR_CHESS_BLACK;
         if (highlightedPiece != null) {
             ChessPosition currPos = new ChessPosition(row + 1, col + 1);
-            if (highlightedPiece.equals(currPos)) {
+            if (highlightedPiece.contains(currPos)) {
                 output.append(SET_BG_COLOR_MAGENTA);
             } else if (availableMoves.contains(currPos)) {
                 output.append(SET_BG_COLOR_GREEN);

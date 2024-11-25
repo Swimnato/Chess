@@ -457,7 +457,32 @@ public class ChessGame {
                     availableMoves.add(move.getEndPosition());
                 }
             }
-            return mainBoard.toString(view, availableMoves, pieceToHighlightMoves);
+            ArrayList<ChessPosition> piecesToHighlightMoves = new ArrayList<>();
+            piecesToHighlightMoves.add(pieceToHighlightMoves);
+            return mainBoard.toString(view, availableMoves, piecesToHighlightMoves);
+        } else {
+            return toString(view);
+        }
+    }
+
+    public String toString(TeamColor view, boolean allValidMoves) {
+        if (view != null && allValidMoves) {
+            var moves = getAllTeamMoves(view);
+            ArrayList<ChessPosition> availableMoves = null;
+            ArrayList<ChessPosition> piecesToHighlightMoves = null;
+            if (moves != null) {
+                availableMoves = new ArrayList<>();
+                piecesToHighlightMoves = new ArrayList<>();
+                for (var move : moves) {
+                    if (!availableMoves.contains(move.getEndPosition())) {
+                        availableMoves.add(move.getEndPosition());
+                    }
+                    if (!piecesToHighlightMoves.contains(move.getStartPosition())) {
+                        piecesToHighlightMoves.add(move.getStartPosition());
+                    }
+                }
+            }
+            return mainBoard.toString(view, availableMoves, piecesToHighlightMoves);
         } else {
             return toString(view);
         }
