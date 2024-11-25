@@ -5,6 +5,7 @@ import chess.InvalidMoveException;
 import chess.datastructures.GameData;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
+import org.eclipse.jetty.util.IO;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -32,17 +33,22 @@ public class WebSocketHandler {
     public void onMessage(Session session, String message) throws IOException {
         UserGameCommand userGameCommand = new Gson().fromJson(message, UserGameCommand.class);
 
-        String response = switch (userGameCommand.getCommandType()) {
-            case CONNECT -> connect(userGameCommand, session);
-            case MAKE_MOVE -> makeMove(new Gson().fromJson(message, MakeMoveCommand.class));
-            case RESIGN -> resign(userGameCommand, session);
-            case LEAVE -> leave(userGameCommand, session);
-            default -> new Gson().toJson(
-                    new ServerMessage(ServerMessage.ServerMessageType.ERROR, "ERROR, UNKNOWN COMMAND"));
-        };
+        try {
+            String response = switch (userGameCommand.getCommandType()) {
+                case CONNECT -> connect(userGameCommand, session);
+                case MAKE_MOVE -> makeMove(new Gson().fromJson(message, MakeMoveCommand.class));
+                case RESIGN -> resign(userGameCommand, session);
+                case LEAVE -> leave(userGameCommand, session);
+                default -> new Gson().toJson(
+                        new ServerMessage(ServerMessage.ServerMessageType.ERROR, "ERROR, UNKNOWN COMMAND"));
+            };
 
-        if (!response.isEmpty()) {
-            session.getRemote().sendString(response);
+            if (!response.isEmpty()) {
+                session.getRemote().sendString(response);
+            }
+        } catch (IOException e) {
+            session.getRemote().sendString(new Gson().toJson(
+                    new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Request Sent To Server!")));
         }
     }
 
@@ -80,6 +86,9 @@ public class WebSocketHandler {
         } catch (DataAccessException e) {
             return (new Gson().toJson(
                     new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Internal Server Error")));
+        } catch (NumberFormatException e) {
+            return (new Gson().toJson(
+                    new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Session!")));
         }
     }
 
