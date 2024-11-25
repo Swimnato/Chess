@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="client:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="dd6c5c66-f55f-4298-b513-88f2d1793285" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExportToHTMLSettings">
+    <option name="OUTPUT_DIRECTORY" value="C:\Users\swimn\OneDrive\Documents\College\CS240\Chess\shared\htmlReport" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="Interface" />
+      </list>
+    </option>
+  </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="jdkForImporter" value="17" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2mPA9pg0bicrZCyKSXdibv78CHR" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.ChessGame.executor&quot;: &quot;Run&quot;,
+    &quot;Application.DatabaseDataAccess.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main (1).executor&quot;: &quot;Debug&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Debug&quot;,
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;JUnit.All in server.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.All in shared.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.BishopMoveTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.CastlingTests.castleWhite.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.CastlingTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.CastlingTests.noCastleAfterMove.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ChessBoardTests.defaultGameBoard.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ChessBoardTests.getAddPiece.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ChessMoveTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ChessPositionTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.CommandParserTests.parseParameters.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.CommandParserTests.parseSingleCommand.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.CommandParserTests.removeWhitespace.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataAccessTest.createInvalidGames.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataAccessTest.createUsers.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataAccessTest.createUsersFail.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataAccessTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataAccessTest.getInvalidAuth.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataAccessTest.getInvalidGame.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataAccessTest.hasInvalidAuth.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataAccessTest.makeInvalidAuth.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataAccessTest.updateInvalidGames.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataStorageTest.createGame.executor&quot;: &quot;Debug&quot;,
+    &quot;JUnit.DataStorageTest.createGames.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataStorageTest.deleteAuth.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataStorageTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataStorageTest.getAuth.executor&quot;: &quot;Debug&quot;,
+    &quot;JUnit.DataStorageTest.getGames.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataStorageTest.getGamesForUser.executor&quot;: &quot;Coverage&quot;,
+    &quot;JUnit.DataStorageTest.getUser.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DataStorageTest.listGames.executor&quot;: &quot;Debug&quot;,
+    &quot;JUnit.DataStorageTest.updateGames.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.EnPassantTests.enPassantWhiteRight.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.EnPassantTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.FullGameTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.GameStatusTests.cannotEscapeCheckByCapturingThreateningPiece.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.GameStatusTests.escapeCheckByCapturingThreateningPiece.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.GameStatusTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.KingMoveTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.KnightMoveTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.MakeMoveTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.PawnMoveTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.QueenMoveTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.RookMoveTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServerFacadeTests.clearFail.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServerFacadeTests.createBadGame.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServerFacadeTests.createGames.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServerFacadeTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServerFacadeTests.joinGames.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServerFacadeTests.listGames.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServerFacadeTests.loginFail.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServerFacadeTests.loginUser.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServerFacadeTests.logout.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServerFacadeTests.registerAUser.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.clearTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.clearUsersTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.createGame.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.createGameNoAuth.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.createGames.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.joinGameSameColor.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.joinGameSameColorP2.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.joinGameTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.joinGameWOAuth.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.joinInvalidGame.executor&quot;: &quot;Coverage&quot;,
+    &quot;JUnit.ServicesTest.listGames.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.loginBadTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.loginTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.logoutInvalid.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.logoutUser.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.register.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ServicesTest.registerTwice.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.StandardAPITests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.StandardAPITests.goodJoin.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.StandardAPITests.staticFiles.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ValidMovesTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ValidMovesTests.forcedMove.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.WebSocketTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.passoff.chess in shared.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.passoff.chess.extracredit in shared.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.passoff.chess.game in shared.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.passoff.server in server.executor&quot;: &quot;Run&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/swimn/OneDrive/Documents/College/CS240/Chess&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;File.Encoding&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\swimn\OneDrive\Documents\College\CS240\Chess\server\src\main\java" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\swimn\OneDrive\Documents\College\CS240\Chess\server\src\main" />
+      <recent name="C:\Users\Administrator\OneDrive\Documents\College\CS240\Chess\server\src\test\java" />
+      <recent name="C:\Users\Administrator\OneDrive\Documents\College\CS240\Chess\server\src" />
+      <recent name="C:\Users\Administrator\OneDrive\Documents\College\CS240\Chess\server\src\main\java" />
+      <recent name="C:\Users\Administrator\OneDrive\Documents\College\CS240\Chess\server" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.WebSocketTests">
+    <configuration name="ChessGame" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="chess.ChessGame" />
+      <module name="shared" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="chess.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Main (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="server" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Main" type="Application" factoryName="Application" singleton="false" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="client" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ServerFacadeTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="client" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="client" />
+      <option name="MAIN_CLASS_NAME" value="client.ServerFacadeTests" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="WebSocketTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="server" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="passoff.server.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="passoff.server" />
+      <option name="MAIN_CLASS_NAME" value="passoff.server.WebSocketTests" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.ChessGame" />
+      <item itemvalue="Application.Main" />
+      <item itemvalue="Application.Main (1)" />
+      <item itemvalue="JUnit.ServerFacadeTests" />
+      <item itemvalue="JUnit.WebSocketTests" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.WebSocketTests" />
+        <item itemvalue="Application.Main (1)" />
+        <item itemvalue="Application.Main" />
+        <item itemvalue="Application.ChessGame" />
+        <item itemvalue="JUnit.ServerFacadeTests" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="dd6c5c66-f55f-4298-b513-88f2d1793285" name="Changes" comment="" />
+      <created>1726967688375</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1726967688375</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Chess$ServicesTest_joinInvalidGame.ic" NAME="ServicesTest.joinInvalidGame Coverage Results" MODIFIED="1729546036919" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>passoff.server.*</FILTER>
+      <FILTER>server.Services</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Chess$passoff_server_in_server.ic" NAME="passoff.server in server Coverage Results" MODIFIED="1729551748823" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>passoff.server.*</FILTER>
+      <FILTER>server.Server</FILTER>
+      <FILTER>server.Services</FILTER>
+      <FILTER>server.MemoryDataAccess</FILTER>
+      <FILTER>server.UniqueIDGenerator</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Chess$DataStorageTest_getGamesForUser.ic" NAME="DataStorageTest.getGamesForUser Coverage Results" MODIFIED="1729550916517" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>passoff.server.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Chess$DataStorageTest.ic" NAME="DataStorageTest Coverage Results" MODIFIED="1729551533678" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>passoff.server.*</FILTER>
+      <FILTER>server.MemoryDataAccess</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Chess$ServicesTest.ic" NAME="ServicesTest Coverage Results" MODIFIED="1729547776687" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>passoff.server.*</FILTER>
+      <FILTER>server.Services</FILTER>
+    </SUITE>
+  </component>
+</project>
