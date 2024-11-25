@@ -90,7 +90,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
     private boolean runCommand(String input) throws InvalidSyntaxException, ErrorResponseException {
         CommandParser parser = new CommandParser(input);
         if (parser.isCommand("Help")) {
-            printHelpForCommand(parser);
+            HelpForCommands.printHelpForCommand(parser, loggedIn, gameStatus, outputToUser);
         } else if (parser.isCommand("Quit")) {
             if (parser.numOfParameters() == 0) {
                 if (gameStatus == GameStatus.PLAYING || gameStatus == GameStatus.OBSERVING) {
@@ -109,33 +109,28 @@ public class REPLClient implements MessageHandler.Whole<String> {
             } else {
                 throw new InvalidSyntaxException("Quit");
             }
-        } else if (parser.isCommand("Register")) {
-            if (parser.numOfParameters() == 3 && loggedIn == LoginStatus.LOGGED_OUT) {
-                String response = facade.register(parser.getParameter(0), parser.getParameter(1), parser.getParameter(2));
-                outputToUser.println(response);
-                if (response.equals("Registered Successfully!")) {
-                    loggedIn = LoginStatus.LOGGED_IN;
-                }
-            } else {
-                throw new InvalidSyntaxException("Register");
-            }
-        } else if (parser.isCommand("Login")) {
-            if (parser.numOfParameters() == 2 && loggedIn == LoginStatus.LOGGED_OUT) {
-                String response = facade.login(parser.getParameter(0), parser.getParameter(1));
-                outputToUser.println(response);
-                if (response.equals("Logged In Successfully!")) {
-                    loggedIn = LoginStatus.LOGGED_IN;
-                }
-            } else {
-                throw new InvalidSyntaxException("Login");
-            }
-        } else if (parser.isCommand("Logout")) {
+        } else if (checkAndRunLoggedOutCommand(parser)) {
+            return true;
+        } else if (checkAndRunLoggedInCommand(parser)) {
+            return true;
+        } else if (checkAndRunPlayingGameCommand(parser)) {
+            return true;
+        } else {
+            outputToUser.println(SET_TEXT_COLOR_RED + "Unrecognized command! Use \"Help\" to find a list of available commands!");
+        }
+
+        return true;
+    }
+
+    public boolean checkAndRunLoggedInCommand(CommandParser parser) throws InvalidSyntaxException, ErrorResponseException {
+        if (parser.isCommand("Logout")) {
             if (parser.numOfParameters() == 0 && loggedIn == LoginStatus.LOGGED_IN) {
                 String response = facade.logout();
                 outputToUser.println(response);
                 if (response.equals("Logged Out Successfully!")) {
                     loggedIn = LoginStatus.LOGGED_OUT;
                 }
+                return true;
             } else {
                 throw new InvalidSyntaxException("Logout");
             }
@@ -143,6 +138,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
             if (parser.numOfParameters() == 1 && loggedIn == LoginStatus.LOGGED_IN && gameStatus == GameStatus.NOT_PLAYING) {
                 String response = facade.listGames();
                 outputToUser.println(response);
+                return true;
             } else {
                 throw new InvalidSyntaxException("List Games");
             }
@@ -150,6 +146,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
             if (parser.numOfParameters() == 2 && loggedIn == LoginStatus.LOGGED_IN && gameStatus == GameStatus.NOT_PLAYING) {
                 String response = facade.createGame(parser.getParameter(1));
                 outputToUser.println(response);
+                return true;
             } else {
                 throw new InvalidSyntaxException("Create Game");
             }
@@ -168,14 +165,9 @@ public class REPLClient implements MessageHandler.Whole<String> {
                 }
                 outputToUser.println(response);
                 gameStatus = GameStatus.PLAYING;
+                return true;
             } else {
                 throw new InvalidSyntaxException("Play Game");
-            }
-        } else if (parser.isCommand("Redraw") && parser.isParameterEqual(0, "Board")) {
-            if (parser.numOfParameters() == 1 && loggedIn == LoginStatus.LOGGED_IN) {
-                outputToUser.println(drawBoard());
-            } else {
-                throw new InvalidSyntaxException("Redraw Board");
             }
         } else if (parser.isCommand("Observe") && parser.isParameterEqual(0, "Game")) {
             if (parser.numOfParameters() == 2 && loggedIn == LoginStatus.LOGGED_IN) {
@@ -190,8 +182,48 @@ public class REPLClient implements MessageHandler.Whole<String> {
 
                 playerColor = ChessGame.TeamColor.WHITE;
                 gameStatus = GameStatus.OBSERVING;
+                return true;
             } else {
                 throw new InvalidSyntaxException("Observe Game");
+            }
+        }
+        return false;
+    }
+
+    public boolean checkAndRunLoggedOutCommand(CommandParser parser) throws InvalidSyntaxException, ErrorResponseException {
+        if (parser.isCommand("Register")) {
+            if (parser.numOfParameters() == 3 && loggedIn == LoginStatus.LOGGED_OUT) {
+                String response = facade.register(parser.getParameter(0), parser.getParameter(1), parser.getParameter(2));
+                outputToUser.println(response);
+                if (response.equals("Registered Successfully!")) {
+                    loggedIn = LoginStatus.LOGGED_IN;
+                }
+                return true;
+            } else {
+                throw new InvalidSyntaxException("Register");
+            }
+        } else if (parser.isCommand("Login")) {
+            if (parser.numOfParameters() == 2 && loggedIn == LoginStatus.LOGGED_OUT) {
+                String response = facade.login(parser.getParameter(0), parser.getParameter(1));
+                outputToUser.println(response);
+                if (response.equals("Logged In Successfully!")) {
+                    loggedIn = LoginStatus.LOGGED_IN;
+                }
+                return true;
+            } else {
+                throw new InvalidSyntaxException("Login");
+            }
+        }
+        return false;
+    }
+
+    public boolean checkAndRunPlayingGameCommand(CommandParser parser) throws InvalidSyntaxException, ErrorResponseException {
+        if (parser.isCommand("Redraw") && parser.isParameterEqual(0, "Board")) {
+            if (parser.numOfParameters() == 1 && loggedIn == LoginStatus.LOGGED_IN) {
+                outputToUser.println(drawBoard());
+                return true;
+            } else {
+                throw new InvalidSyntaxException("Redraw Board");
             }
         } else if (parser.isCommand("Highlight") && parser.isParameterEqual(0, "Legal")
                 && parser.isParameterEqual(1, "Moves")) {
@@ -227,6 +259,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
                 } else {
                     outputToUser.println(currentGame.toString(playerColor, piece));
                 }
+                return true;
             } else {
                 throw new InvalidSyntaxException("Highlight Legal Moves");
             }
@@ -235,6 +268,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
                     && gameStatus == GameStatus.PLAYING) {
                 outputToUser.println(facade.leaveGame());
                 gameStatus = GameStatus.NOT_PLAYING;
+                return true;
             } else {
                 throw new InvalidSyntaxException("Leave");
             }
@@ -243,6 +277,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
                     && gameStatus == GameStatus.PLAYING) {
                 outputToUser.println(facade.resignGame());
                 gameStatus = GameStatus.NOT_PLAYING;
+                return true;
             } else {
                 throw new InvalidSyntaxException("Resign");
             }
@@ -278,125 +313,12 @@ public class REPLClient implements MessageHandler.Whole<String> {
                 } catch (Exception e) {
                     throw new InvalidSyntaxException("There Was A Problem Parsing Your Command! " + e.getMessage(), true);
                 }
+                return true;
             } else {
                 throw new InvalidSyntaxException("Make Move");
             }
-        } else {
-            outputToUser.println(SET_TEXT_COLOR_RED + "Unrecognized command! Use \"Help\" to find a list of available commands!");
         }
-
-        return true;
-    }
-
-
-    private void printAvailableCommands() {
-        if (loggedIn == LoginStatus.LOGGED_OUT) {
-            outputToUser.println("List Of Available Commands:");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tRegister " + SET_TEXT_COLOR_GREEN +
-                    "<username> <password> <email>" + SET_TEXT_COLOR_LIGHT_GREY + " - To create an account on the server");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tLogin " + SET_TEXT_COLOR_GREEN +
-                    "<username> <password>" + SET_TEXT_COLOR_LIGHT_GREY + " - To play chess");
-        } else {
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tCreate Game " + SET_TEXT_COLOR_GREEN +
-                    "<name>" + SET_TEXT_COLOR_LIGHT_GREY + " - Create a game on the server");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tList Games " + SET_TEXT_COLOR_LIGHT_GREY + " - List the games on the server");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tPlay Game " + SET_TEXT_COLOR_GREEN + "<#> <color>" + SET_TEXT_COLOR_LIGHT_GREY +
-                    " - List the games on the server");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tObserve Game " + SET_TEXT_COLOR_GREEN + "<#>" + SET_TEXT_COLOR_LIGHT_GREY +
-                    " - List the games on the server");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tlogout " + SET_TEXT_COLOR_LIGHT_GREY + " - To logout of the server");
-        }
-        outputToUser.println(SET_TEXT_COLOR_BLUE + "\tQuit " + SET_TEXT_COLOR_LIGHT_GREY + " - To close the client");
-        outputToUser.println(SET_TEXT_COLOR_BLUE + "\tHelp " + SET_TEXT_COLOR_LIGHT_GREY + " - Display available commands");
-    }
-
-    private void printHelpForCommand(CommandParser input) throws InvalidSyntaxException {
-        if (input.numOfParameters() == 0) {
-            printAvailableCommands();
-            return;
-        }
-        if (input.numOfParameters() > 2) {
-            throw new InvalidSyntaxException("Help");
-        }
-        if (input.isParameterEqual(0, "Register")) {
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "Register" + SET_TEXT_COLOR_LIGHT_GREY +
-                    ": This is a command to create an account on the created server. This can only be used when logged out.");
-            outputToUser.println("Syntax:");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tRegister " + SET_TEXT_COLOR_GREEN + "<username> <password> <email>");
-            outputToUser.println("Parameters:");
-            outputToUser.println(SET_TEXT_COLOR_GREEN + "\t<username> " + SET_TEXT_COLOR_LIGHT_GREY +
-                    "This is your chosen alias on the server, or what you wish to be called.");
-            outputToUser.println(SET_TEXT_COLOR_GREEN + "\t<password> " + SET_TEXT_COLOR_LIGHT_GREY +
-                    "A password, to keep your account safe, something you will remember.");
-            outputToUser.println(SET_TEXT_COLOR_GREEN + "\t<email> " + SET_TEXT_COLOR_LIGHT_GREY + "How you can be reached by the server operator.");
-        } else if (input.isParameterEqual(0, "Login")) {
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "Login" + SET_TEXT_COLOR_LIGHT_GREY +
-                    ": This is a command to login into a server. This can only be used when logged out. " +
-                    "If you need to create an account, use " + SET_TEXT_COLOR_BLUE + "\tRegister ");
-            outputToUser.println("Syntax:");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tLogin " + SET_TEXT_COLOR_GREEN + "<username> <password>");
-            outputToUser.println("Parameters:");
-            outputToUser.println(SET_TEXT_COLOR_GREEN + "\t<username> " + SET_TEXT_COLOR_LIGHT_GREY + "Your Username on the server.");
-            outputToUser.println(SET_TEXT_COLOR_GREEN + "\t<password> " + SET_TEXT_COLOR_LIGHT_GREY + "Your Password.");
-        } else if (input.isParameterEqual(0, "Logout")) {
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "Logout" + SET_TEXT_COLOR_LIGHT_GREY +
-                    ": This is a command to logout of a server. Must be logged in to use.");
-            outputToUser.println("Syntax:");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tLogout");
-            outputToUser.println("Parameters:");
-            outputToUser.println(SET_TEXT_COLOR_GREEN + "\tNone");
-        } else if (input.isParameterEqual(0, "Create") && input.isParameterEqual(1, "Game")) {
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "Create Game" + SET_TEXT_COLOR_LIGHT_GREY +
-                    ": This is a command to create a game on the server.");
-            outputToUser.println("Syntax:");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tCreate Game " + SET_TEXT_COLOR_GREEN + "<name>");
-            outputToUser.println("Parameters:");
-            outputToUser.println(SET_TEXT_COLOR_GREEN + "\t<name> " + SET_TEXT_COLOR_LIGHT_GREY + "The name of the game.");
-        } else if (input.isParameterEqual(0, "Play") && input.isParameterEqual(1, "Game")) {
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "Play Game" + SET_TEXT_COLOR_LIGHT_GREY + ": This is a command to join a game on the server.");
-            outputToUser.println("Syntax:");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tPlay Game " + SET_TEXT_COLOR_GREEN + "<#> <color>");
-            outputToUser.println("Parameters:");
-            outputToUser.println(SET_TEXT_COLOR_GREEN + "\t<#> " + SET_TEXT_COLOR_LIGHT_GREY +
-                    "The number it appeared using the " + SET_TEXT_COLOR_BLUE + "List Games" + SET_TEXT_COLOR_LIGHT_GREY + " Command");
-            outputToUser.println(SET_TEXT_COLOR_GREEN + "\t<color> " + SET_TEXT_COLOR_LIGHT_GREY +
-                    "The desired chess color [" + SET_TEXT_COLOR_WHITE + "WHITE" + SET_TEXT_COLOR_LIGHT_GREY +
-                    "/" + SET_TEXT_COLOR_DARK_GREY + "BLACK" + SET_TEXT_COLOR_LIGHT_GREY + "].");
-        } else if (input.isParameterEqual(0, "Observe") &&
-                input.isParameterEqual(1, "Game")) {
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "Observe Game" + SET_TEXT_COLOR_LIGHT_GREY +
-                    ": This is a command to observe a game on the server.");
-            outputToUser.println("Syntax:");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tPlay Game " + SET_TEXT_COLOR_GREEN + "<#>");
-            outputToUser.println("Parameters:");
-            outputToUser.println(SET_TEXT_COLOR_GREEN + "\t<#> " + SET_TEXT_COLOR_LIGHT_GREY +
-                    "The number it appeared using the " + SET_TEXT_COLOR_BLUE + "List Games" + SET_TEXT_COLOR_LIGHT_GREY + " Command");
-        } else if (input.isParameterEqual(0, "List") && input.isParameterEqual(1, "Games")) {
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "List Games" + SET_TEXT_COLOR_LIGHT_GREY +
-                    ": This is a command to show all games on the server.");
-            outputToUser.println("Syntax:");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tList Games");
-            outputToUser.println("Parameters:");
-            outputToUser.println(SET_TEXT_COLOR_GREEN + "\tNone");
-        } else if (input.isParameterEqual(0, "Quit")) {
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "Quit" + SET_TEXT_COLOR_LIGHT_GREY + " Stops the client.");
-            outputToUser.println("Syntax:");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tQuit");
-            outputToUser.println(SET_TEXT_COLOR_WHITE + "Parameters:");
-            outputToUser.println(SET_TEXT_COLOR_GREEN + "\tNone");
-        } else if (input.isParameterEqual(0, "Help")) {
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "Help" + SET_TEXT_COLOR_LIGHT_GREY
-                    + " Shows available commands, alternativly can be used to learn more " +
-                    "about a given command.");
-            outputToUser.println("Syntax:");
-            outputToUser.println(SET_TEXT_COLOR_BLUE + "\tHelp");
-            outputToUser.println(SET_TEXT_COLOR_WHITE + "Parameters:");
-            outputToUser.println(SET_TEXT_COLOR_GREEN + "\t<command> " + SET_TEXT_COLOR_LIGHT_GREY +
-                    "(Optional) - The desired command that will be explained. " +
-                    "If not given, the system will display all available commands.");
-        } else {
-            throw new InvalidSyntaxException("Help");
-        }
+        return false;
     }
 
     private boolean setupIPAndPortFromUserInput(String[] args) {
@@ -518,12 +440,12 @@ public class REPLClient implements MessageHandler.Whole<String> {
         printPrompt();
     }
 
-    private enum LoginStatus {
+    public enum LoginStatus {
         LOGGED_IN,
         LOGGED_OUT
     }
 
-    private enum GameStatus {
+    public enum GameStatus {
         NOT_PLAYING,
         PLAYING,
         OBSERVING

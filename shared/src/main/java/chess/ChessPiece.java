@@ -97,25 +97,14 @@ public class ChessPiece {
     @Override
     public String toString() {
         var output = "";
-        if (myColor == ChessGame.TeamColor.WHITE) {
-            output = switch (myType) {
-                case PAWN -> BLACK_PAWN;
-                case ROOK -> BLACK_ROOK;
-                case KING -> BLACK_KING;
-                case KNIGHT -> BLACK_KNIGHT;
-                case BISHOP -> BLACK_BISHOP;
-                case QUEEN -> BLACK_QUEEN;
-            };
-        } else {
-            output = switch (myType) {
-                case PAWN -> BLACK_PAWN;
-                case ROOK -> BLACK_ROOK;
-                case KING -> BLACK_KING;
-                case KNIGHT -> BLACK_KNIGHT;
-                case BISHOP -> BLACK_BISHOP;
-                case QUEEN -> BLACK_QUEEN;
-            };
-        }
+        output = switch (myType) {
+            case PAWN -> BLACK_PAWN;
+            case ROOK -> BLACK_ROOK;
+            case KING -> BLACK_KING;
+            case KNIGHT -> BLACK_KNIGHT;
+            case BISHOP -> BLACK_BISHOP;
+            case QUEEN -> BLACK_QUEEN;
+        };
         return output;
     }
 

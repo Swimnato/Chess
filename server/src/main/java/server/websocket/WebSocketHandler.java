@@ -3,6 +3,7 @@ package server.websocket;
 import chess.ChessGame;
 import chess.InvalidMoveException;
 import chess.datastructures.GameData;
+import chess.datastructures.UserData;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import org.eclipse.jetty.util.IO;
@@ -208,7 +209,8 @@ public class WebSocketHandler {
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "You have not subscribed to this game!")));
             }
 
-
+            sessionManager.updateAllPlayers(game.getId(), new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME,
+                    new Gson().toJson(game.getGame()))));
         } catch (DataAccessException e) {
             return (new Gson().toJson(
                     new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Internal Server Error")));
@@ -222,16 +224,15 @@ public class WebSocketHandler {
 
     private String leave(UserGameCommand command, Session session) throws IOException {
         try {
-            var user = mainDB.getUser(Integer.parseInt(command.getAuthToken()));
-            if (user == null) {
-                return (new Gson().toJson(
-                        new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Session")));
-            }
-
             var game = mainDB.getGame(command.getGameID());
             if (game == null) {
                 return (new Gson().toJson(
                         new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Game ID")));
+            }
+            var user = mainDB.getUser(Integer.parseInt(command.getAuthToken()));
+            if (user == null) {
+                return (new Gson().toJson(
+                        new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Session")));
             }
 
             ChessGame.TeamColor colorOfPlayer;

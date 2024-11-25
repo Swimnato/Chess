@@ -25,8 +25,8 @@ public class WebSocketFacade {
     URI uri;
     MessageHandler.Whole handler;
 
-    WebSocketFacade(String URL, MessageHandler.Whole handler) throws URISyntaxException {
-        uri = new URI(URL.replace("http", "ws") + "/ws");
+    WebSocketFacade(String url, MessageHandler.Whole handler) throws URISyntaxException {
+        uri = new URI(url.replace("http", "ws") + "/ws");
         this.handler = handler;
     }
 
