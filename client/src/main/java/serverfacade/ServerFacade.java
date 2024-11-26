@@ -25,6 +25,28 @@ public class ServerFacade {
     private static final String BAD_SESSION = SET_TEXT_COLOR_RED + "Bad Session!";
     private WebSocketFacade webSocketFacade;
 
+    public ChessGame.TeamColor getTeamColorOfPlayer(String username) {
+        for (var game : gamesList) {
+            if (game.getGameID() == gameID) {
+                if (game.getWhiteUsername().equals(username)) {
+                    return ChessGame.TeamColor.WHITE;
+                } else if (game.getBlackUsername().equals(username)) {
+                    return ChessGame.TeamColor.BLACK;
+                }
+            }
+        }
+        return ChessGame.TeamColor.WHITE;
+    }
+
+    public String getUsernameOfColor(ChessGame.TeamColor color) {
+        for (var game : gamesList) {
+            if (game.getGameID() == gameID) {
+                return color == ChessGame.TeamColor.WHITE ? game.getWhiteUsername() : game.getBlackUsername();
+            }
+        }
+        return color.toString();
+    }
+
     public ServerFacade(int port, String ip, MessageHandler.Whole handler) throws URISyntaxException {
         this.ip = ip;
         this.port = port;

@@ -297,6 +297,8 @@ public class REPLClient implements MessageHandler.Whole<String> {
                 }
                 String result = (facade.resignGame());
                 outputToUser.println(result);
+                currentGame.declareWinner(playerColor == ChessGame.TeamColor.WHITE ?
+                        ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE);
                 return true;
             } else {
                 throw new InvalidSyntaxException("Resign");
@@ -462,16 +464,26 @@ public class REPLClient implements MessageHandler.Whole<String> {
     }
 
     private String drawBoard() {
+        try {
+            facade.listGames();
+        } catch (Exception e) {
+            outputToUser.println("There was a problem reaching the server! " + SET_BG_COLOR_RED + e.getMessage());
+        }
+        var oponentColor = playerColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
         if (currentGame.isGameOver()) {
             if (currentGame.getWinner() != null) {
-                return "\r\n" + currentGame.toString(playerColor) + SET_TEXT_COLOR_BLUE + "Game is over, " + currentGame.getWinner() + " Won!\r\n";
+                return "\r\n" + currentGame.toString(playerColor) + SET_TEXT_COLOR_BLUE + "Game is over, " +
+                        facade.getUsernameOfColor(currentGame.getWinner()) + " Won!\r\n";
             } else {
                 return "\r\n" + currentGame.toString(playerColor) + SET_TEXT_COLOR_BLUE + "Game ended in a stalemate, nobody wins!\r\n";
             }
+        } else if (gameStatus == GameStatus.OBSERVING && (currentGame.isInCheck(playerColor) ||
+                currentGame.isInCheck(oponentColor))) {
+            return "\r\n" + currentGame.toString(playerColor) + SET_TEXT_COLOR_BLUE + facade.getUsernameOfColor(oponentColor) + " is in check!";
         } else if (currentGame.isInCheck(playerColor)) {
             return "\r\n" + currentGame.toString(playerColor) + SET_TEXT_COLOR_BLUE + "You are in check!";
-        } else if (currentGame.isInCheck(playerColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE)) {
-            return "\r\n" + currentGame.toString(playerColor) + SET_TEXT_COLOR_BLUE + "Opponent is in check!";
+        } else if (currentGame.isInCheck(oponentColor)) {
+            return "\r\n" + currentGame.toString(playerColor) + SET_TEXT_COLOR_BLUE + facade.getUsernameOfColor(oponentColor) + " is in check!";
         } else {
             return "\r\n" + currentGame.toString(playerColor);
         }
@@ -490,6 +502,12 @@ public class REPLClient implements MessageHandler.Whole<String> {
                         case LOAD_GAME -> drawBoard();
                     }
             );
+            if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION &&
+                    serverMessage.getPayload().contains("has resigned the game")) {
+                currentGame.declareWinner(facade.getTeamColorOfPlayer(
+                        new CommandParser(serverMessage.getPayload()).getCommand()) == ChessGame.TeamColor.WHITE ?
+                        ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE);
+            }
         } catch (Exception e) {
             outputToUser.println(SET_TEXT_COLOR_RED + "ERROR - UNCAUGHT EXCEPTION: " + e.getMessage());
         }
