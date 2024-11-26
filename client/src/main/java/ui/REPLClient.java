@@ -232,7 +232,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
         } else if (parser.isCommand("Highlight") && parser.isParameterEqual(0, "Legal")
                 && parser.isParameterEqual(1, "Moves")) {
             if ((parser.numOfParameters() == 3 || parser.numOfParameters() == 4) && loggedIn == LoginStatus.LOGGED_IN
-                    && gameStatus == GameStatus.PLAYING) {
+                    && gameStatus != GameStatus.NOT_PLAYING) {
                 if (currentGame.isGameOver()) {
                     outputToUser.println("Game Is Over, No More Moves! (You should play another though ;) )");
                     return true;
@@ -276,9 +276,27 @@ public class REPLClient implements MessageHandler.Whole<String> {
         } else if (parser.isCommand("Resign")) {
             if ((parser.numOfParameters() == 0) && loggedIn == LoginStatus.LOGGED_IN
                     && gameStatus == GameStatus.PLAYING) {
+                boolean gotConfirmation = false;
+                while (!gotConfirmation) {
+                    outputToUser.print("Are you sure you want to resign this game? you will " +
+                            "automatically loose (yes/no)");
+                    printPrompt();
+                    String confirmation = "";
+                    try {
+                        confirmation = getLineInputFromUser().toLowerCase();
+                    } catch (Exception e) {
+                        outputToUser.print("Unrecognized input, Are you sure you want to resign this game? " +
+                                "you will automatically loose (yes/no)");
+                        printPrompt();
+                    }
+                    if (confirmation.contains("yes") || confirmation.equals("y")) {
+                        gotConfirmation = true;
+                    } else if (confirmation.contains("no") || confirmation.equals("n")) {
+                        return true;
+                    }
+                }
                 String result = (facade.resignGame());
                 outputToUser.println(result);
-                gameStatus = result.isEmpty() ? GameStatus.NOT_PLAYING : gameStatus;
                 return true;
             } else {
                 throw new InvalidSyntaxException("Resign");
@@ -293,7 +311,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
                     ChessPosition endPos = new ChessPosition(moveStr.getEndPosStr());
                     ChessPiece.PieceType promotionPiece = ChessPiece.getPieceType(moveStr.getPromotionPieceStr());
                     move = currentGame.getMoveForStartAndEndPositions(startPos, endPos, promotionPiece);
-                } catch (IOException e) {
+                } catch (IOException | NumberFormatException e) {
                     throw new InvalidSyntaxException("Make Move");
                 }
                 if (move == null) {
@@ -450,6 +468,10 @@ public class REPLClient implements MessageHandler.Whole<String> {
             } else {
                 return "\r\n" + currentGame.toString(playerColor) + SET_TEXT_COLOR_BLUE + "Game ended in a stalemate, nobody wins!\r\n";
             }
+        } else if (currentGame.isInCheck(playerColor)) {
+            return "\r\n" + currentGame.toString(playerColor) + SET_TEXT_COLOR_BLUE + "You are in check!";
+        } else if (currentGame.isInCheck(playerColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE)) {
+            return "\r\n" + currentGame.toString(playerColor) + SET_TEXT_COLOR_BLUE + "Opponent is in check!";
         } else {
             return "\r\n" + currentGame.toString(playerColor);
         }

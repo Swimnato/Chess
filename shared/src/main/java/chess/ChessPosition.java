@@ -23,7 +23,7 @@ public class ChessPosition {
         this.col = toCopy.getColumn();
     }
 
-    public ChessPosition(String toConvert) throws IOException {
+    public ChessPosition(String toConvert) throws IOException, NumberFormatException {
         if (toConvert.length() != 2) {
             throw new IOException("Invalid String to Convert to Chess Position");
         }
