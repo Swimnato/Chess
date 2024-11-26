@@ -126,7 +126,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
 
     public boolean checkAndRunLoggedInCommand(CommandParser parser) throws InvalidSyntaxException, ErrorResponseException {
         if (parser.isCommand("Logout")) {
-            if (parser.numOfParameters() == 0 && loggedIn == LoginStatus.LOGGED_IN) {
+            if (parser.numOfParameters() == 0 && loggedIn == LoginStatus.LOGGED_IN && gameStatus == GameStatus.NOT_PLAYING) {
                 String response = facade.logout();
                 outputToUser.println(response);
                 if (response.equals("Logged Out Successfully!")) {
@@ -174,7 +174,7 @@ public class REPLClient implements MessageHandler.Whole<String> {
                 throw new InvalidSyntaxException("Play Game");
             }
         } else if (parser.isCommand("Observe") && parser.isParameterEqual(0, "Game")) {
-            if (parser.numOfParameters() == 2 && loggedIn == LoginStatus.LOGGED_IN) {
+            if (parser.numOfParameters() == 2 && loggedIn == LoginStatus.LOGGED_IN && gameStatus == GameStatus.NOT_PLAYING) {
                 String response;
                 try {
                     int gameNum = Integer.parseInt(parser.getParameter(1));
@@ -504,9 +504,13 @@ public class REPLClient implements MessageHandler.Whole<String> {
             );
             if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION &&
                     serverMessage.getPayload().contains("has resigned the game")) {
-                currentGame.declareWinner(facade.getTeamColorOfPlayer(
-                        new CommandParser(serverMessage.getPayload()).getCommand()) == ChessGame.TeamColor.WHITE ?
-                        ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE);
+                if (gameStatus == GameStatus.OBSERVING) {
+                    currentGame.declareWinner(facade.getTeamColorOfPlayer(
+                            new CommandParser(serverMessage.getPayload()).getCommand()) == ChessGame.TeamColor.WHITE ?
+                            ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE);
+                } else {
+                    currentGame.declareWinner(playerColor);
+                }
             }
         } catch (Exception e) {
             outputToUser.println(SET_TEXT_COLOR_RED + "ERROR - UNCAUGHT EXCEPTION: " + e.getMessage());
